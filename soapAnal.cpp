@@ -117,7 +117,8 @@ double* getP0(double* x, double* y, double* z,double* r2, double* alphas, double
 
   double* P0 = (double*) malloc(Nsize*Nsize*sizeof(double));
 
-  double sums = 0;
+  double sumsInner = 0;
+  double sumsOuter = 0;
   double oneO1Palpha;// = (double*) malloc(Nsize*sizeof(double));
   double oneO1PalphaSqrt;// = (double*) malloc(Nsize*sizeof(double));
 
@@ -133,18 +134,19 @@ double* getP0(double* x, double* y, double* z,double* r2, double* alphas, double
 
   for(int n = 0; n < Nsize; n++){
     for(int nd = 0; nd < Nsize; nd++){
-      sums = 0;
+      sumsOuter = 0;
       for(int k = 0; k < Nsize; k++){
         for(int kd = 0; kd < Nsize; kd++){
+          sumsInner = 0;
           for(int i = 0; i < Asize; i++){
             for(int j = 0; j < Asize; j++){
-              sums += exp(-alphaO1Palpha[n]*r2[i] - alphaO1Palpha[nd]*r2[j]);
+              sumsInner += exp(-alphaO1Palpha[n]*r2[i] - alphaO1Palpha[nd]*r2[j]);
             }
           }
-          sums +=  betas[n*Nsize + k]*betas[nd*Nsize + kd]*oneO1PalphaSqrtCubed[k]*oneO1PalphaSqrtCubed[kd]*sums;
+          sumsOuter +=  betas[n*Nsize + k]*betas[nd*Nsize + kd]*oneO1PalphaSqrtCubed[k]*oneO1PalphaSqrtCubed[kd]*sumsInner;
         }
       }
-          P0[Nsize*n + nd] = PI2*0.25*sums; 
+          P0[Nsize*n + nd] = PI2*0.25*sumsOuter; 
     }
   }
 
@@ -156,7 +158,7 @@ double* getP0(double* x, double* y, double* z,double* r2, double* alphas, double
 //-----------------------------------------------------------
 //-----------------------------------------------------------
 int main(int argc, char* argv[]) {
-int Asize = 1000;
+int Asize = 2;
 int Nsize = 3;
 double* x = (double*) malloc(Asize*sizeof(double));
 double* y = (double*) malloc(Asize*sizeof(double));
@@ -164,12 +166,12 @@ double* z = (double*) malloc(Asize*sizeof(double));
 double* alphas = getAlphas();
 double* betas = getBetas();
 
-x[0] = 7.0;
-x[1] = -7.0;
-y[0] = 7.0;
-y[1] = -7.0;
-z[0] = 7.0;
-z[1] = -7.0;
+x[0] = 1.0;
+x[1] = -1.0;
+y[0] = 1.0;
+y[1] = -1.0;
+z[0] = 1.0;
+z[1] = -1.0;
 
 //cout << "AA"<< endl;
 
@@ -197,7 +199,7 @@ cout << alphas[5*9 + 4] << endl;
 double* P0 = getP0(x,y,z,r2,alphas, betas ,Asize, Nsize);
 
 
-cout << P0[1*Nsize*Asize + 0*Nsize + 0] << endl;
+cout << P0[0*Nsize*Asize + 0*Nsize + 0] << endl;
 cout << f[8*Asize*Asize + 0*Asize + 0] << endl;
 
 free(x);
