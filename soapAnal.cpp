@@ -8,7 +8,7 @@ using namespace std;
 //using namespace arma;
 
 #define PI 3.14159265358979
-#define PI2 6.28318530717959
+#define PI2 9.86960440108936
 #define PIHALF 1.57079632679490
 
 //-----------------------------------------------------------
@@ -126,7 +126,7 @@ double* getP0(double* x, double* y, double* z,double* r2, double* alphas, double
   double* oneO1PalphaSqrtCubed = (double*) malloc(Nsize*sizeof(double));
 
   for(int n = 0; n < Nsize; n++){
-    oneO1Palpha = 1.0/(1.00000000123+alphas[n]);
+    oneO1Palpha = 1.0/(1.00000000+alphas[n]);
     oneO1PalphaSqrt = sqrt(oneO1Palpha);
     oneO1PalphaSqrtCubed[n] = oneO1PalphaSqrt*oneO1Palpha;
     alphaO1Palpha[n] = alphas[n]*oneO1Palpha;
