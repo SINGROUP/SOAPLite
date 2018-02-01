@@ -140,7 +140,7 @@ double* getP0(double* x, double* y, double* z,double* r2, double* alphas, double
           sumsInner = 0;
           for(int i = 0; i < Asize; i++){
             for(int j = 0; j < Asize; j++){
-              sumsInner += exp(-alphaO1Palpha[n]*r2[i] - alphaO1Palpha[nd]*r2[j]);
+              sumsInner += exp(-alphaO1Palpha[k]*r2[i] - alphaO1Palpha[kd]*r2[j]);
             }
           }
           sumsOuter +=  betas[n*Nsize + k]*betas[nd*Nsize + kd]*oneO1PalphaSqrtCubed[k]*oneO1PalphaSqrtCubed[kd]*sumsInner;
