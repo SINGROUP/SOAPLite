@@ -292,7 +292,7 @@ double* getP3(double* x, double* y, double* z,double* r2, double* alphas, double
 
   for(int i = 0; i < Asize; i++){
     for(int j = 0; j < Asize; j++){
-      ReXStripe[i*Asize + j] = 2.5*ReX[2*Asize*Asize + i*Asize + j] + z[i]*z[j]*(15.0*ReX[Asize*Asize+i*Asize + j] + zxy233[i]*zxy233[j]) + 1.5*zxy4[i]*zxy4[j]*ReX[i*Asize + j];
+      ReXStripe[i*Asize + j] = 2.5*ReX[2*Asize*Asize + i*Asize + j] + z[i]*z[j]*(15.0*ReX[Asize*Asize + i*Asize + j] + zxy233[i]*zxy233[j]) + 1.5*zxy4[i]*zxy4[j]*ReX[i*Asize + j];
     }
   }
 
@@ -313,11 +313,86 @@ double* getP3(double* x, double* y, double* z,double* r2, double* alphas, double
           P3[Nsize*n + nd] = 7.0*PI2*0.0625*sumsOuter; 
     }
   }
+    for(int i = 0; i < Nsize; i++){
+           for(int j = 0; j < Nsize; j++){
+            cout << betas[3*Nsize*Nsize + i*Nsize + j] << " ";
+           }
+           cout << endl;
+    }
 
   free(oneO1PalphaSqrt9);
   free(alphaO1Palpha);
 
   return P3; 
+}
+//-----------------------------------------------------------
+//-----------------------------------------------------------
+double* getP4(double* x, double* y, double* z,double* r2, double* alphas, double* betas , int Asize, int Nsize, double* ReX){
+
+  double* P4 = (double*) malloc(Nsize*Nsize*sizeof(double));
+
+  double sumsInner = 0;
+  double sumsOuter = 0;
+  double oneO1Palpha;
+  double oneO1PalphaSqrt;
+  double z2=0;
+
+  double* alphaO1Palpha = (double*) malloc(Nsize*sizeof(double));
+  double* oneO1PalphaSqrt9 = (double*) malloc(Nsize*sizeof(double));
+  double* ReXStripe = (double*) malloc(Asize*Asize*sizeof(double));
+  double* zr7 = (double*) malloc(Asize*sizeof(double));
+  double* zr73 = (double*) malloc(Asize*sizeof(double));
+  double* zr35 = (double*) malloc(Asize*sizeof(double));
+
+  for(int n = 0; n < Nsize; n++){
+    oneO1Palpha = 1.0/(1.00000000+alphas[4*Nsize + n]);
+    oneO1PalphaSqrt = sqrt(oneO1Palpha);
+    oneO1PalphaSqrt9[n] = oneO1PalphaSqrt*oneO1Palpha*oneO1Palpha*oneO1Palpha*oneO1Palpha;
+    alphaO1Palpha[n] = alphas[4*Nsize + n]*oneO1Palpha;
+  }
+
+
+  for(int i = 0; i < Asize; i++){
+    z2 = z[i]*z[i];
+    zr7[i] = 7.0*z2 - r2[i];
+    zr73[i] = 7.0*z2 - 3.0*r2[i];
+    zr35[i] = 35*z2*z2 - 30*z2*r2[i] + 3*r2[i]*r2[i];
+  }
+
+  for(int i = 0; i < Asize; i++){
+    for(int j = 0; j < Asize; j++){
+      ReXStripe[i*Asize + j] = 35.0*ReX[3*Asize*Asize + i*Asize + j] + z[i]*z[j]*(280*ReX[2*Asize*Asize + i*Asize + j] + 40*zr73[i]*zr73[j]*ReX[i*Asize + j]) + 20*zr7[i]*zr7[j]*ReX[Asize*Asize + i*Asize + j] + zr35[i]*zr35[j];
+    }
+  }
+
+  for(int n = 0; n < Nsize; n++){
+    for(int nd = 0; nd < Nsize; nd++){
+      sumsOuter = 0;
+      for(int k = 0; k < Nsize; k++){
+        for(int kd = 0; kd < Nsize; kd++){
+          sumsInner = 0;
+          for(int i = 0; i < Asize; i++){
+            for(int j = 0; j < Asize; j++){
+              sumsInner += ReXStripe[i*Asize + j]*exp(-alphaO1Palpha[k]*r2[i]-alphaO1Palpha[kd]*r2[j]);
+            }
+          }
+          sumsOuter +=  betas[4*Nsize*Nsize + n*Nsize + k]*betas[4*Nsize*Nsize+nd*Nsize + kd]*oneO1PalphaSqrt9[k]*oneO1PalphaSqrt9[kd]*sumsInner;
+        }
+      }
+          P4[Nsize*n + nd] = 9.0*PI2*0.00390625*sumsOuter; 
+    }
+  }
+    for(int i = 0; i < Nsize; i++){
+           for(int j = 0; j < Nsize; j++){
+            cout << betas[4*Nsize*Nsize + i*Nsize + j] << " ";
+           }
+           cout << endl;
+    }
+
+  free(oneO1PalphaSqrt9);
+  free(alphaO1Palpha);
+
+  return P4; 
 }
 //-----------------------------------------------------------
 //-----------------------------------------------------------
@@ -344,27 +419,26 @@ double* P0 = getP0(x,y,z,r2,alphas, betas ,Asize, Nsize);
 double* P1 = getP1(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
 double* P2 = getP2(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
 double* P3 = getP3(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
+double* P4 = getP4(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
 
 
-  for(int i = 0; i <Nsize ; i++){
-    for(int j = 0; j <Nsize ; j++){
-      cout << "P0_00: " << P0[ i*Nsize + j] << endl;
-    }
-  }
-  for(int i = 0; i <Nsize ; i++){
-    for(int j = 0; j <Nsize ; j++){
-      cout << "P1_00: " << P1[i*Nsize + j] << endl;
-    }
-  }
   for(int i = 0; i <Nsize ; i++){
     for(int j = 0; j <Nsize ; j++){
       cout << " P2_" << i + 1 << j + 1 <<" : " << P2[i*Nsize + j];
     }
     cout << endl;
   }
+    cout << endl;
   for(int i = 0; i <Nsize ; i++){
     for(int j = 0; j <Nsize ; j++){
       cout << " P3_" << i + 1 << j + 1 <<" : " << P3[i*Nsize + j];
+    }
+    cout << endl;
+  }
+    cout << endl;
+  for(int i = 0; i <Nsize ; i++){
+    for(int j = 0; j <Nsize ; j++){
+      cout << " P4_" << i + 1 << j + 1 <<" : " << P4[i*Nsize + j];
     }
     cout << endl;
   }
