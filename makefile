@@ -1,2 +1,2 @@
 all:
-	g++ soapAnal.cpp -lm
+	g++ -O3  soapAnal.cpp -lm

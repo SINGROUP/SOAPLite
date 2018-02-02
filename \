@@ -1,0 +1,33 @@
+#include<iostream>
+//#include<armadillo>
+//#include"../Header/myArmadillo.h"
+//#include"../Header/myMath.h"
+//#include"../Header/mySoap.h"
+
+using namespace std;
+//using namespace arma;
+
+
+double* getReals(double* x, double* y, int size) {
+
+for(int i = 0; i < sozi; i++){
+double P =x[i]*x[j] + y[i]*y[j];
+double M =x[i]*y[j] - y[i]*x[j]; 
+
+double P2 =P*P; double M2 =M*M; 
+double P4 =P2*P2; double M4 =M2*M2; 
+double P6 =P4*P2; double M6 =M4*M2; 
+double P8 =P4*P4; double M8 =M4*M4; 
+
+Re[0] = P;
+Re[1] = P - M;
+Re[2] = P*(P2 - 3*M2);
+Re[3] = P4 + M4 - 6*P2*M2;
+Re[4] = P*(P4 - 10*P2*M2 + 5*M4);
+Re[5] = P6 - M6  - 15*(P4*M2 + P2*M4);
+Re[6] = P*(P6 - 7*M6 - 21*P4*M2 + 35*P2*M4);
+Re[7] = P8 + M8 - 28*(P6*M2 + P2*M6) + 70*P4*M4;
+Re[8] = P*(P8 + 9*M8 - 36*P6*M2 + 126*P4*M4 - 84*P2*M6);
+
+return 0;
+}
