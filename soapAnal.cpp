@@ -14,13 +14,13 @@ using namespace std;
 
 //-----------------------------------------------------------
 //-----------------------------------------------------------
-double* getAlphas(){
-  double f;
-  double* alphas = (double*) malloc(5*10*sizeof(double));
+float* getAlphas(){
+  float f;
+  float* alphas = (float*) malloc(5*10*sizeof(float));
   FILE * pFile;
   pFile = fopen ("alphas.dat","r");
   for(int i = 0; i < 50; i++){
-    fscanf (pFile, "%lf", &alphas[i]);
+    fscanf (pFile, "%f", &alphas[i]);
     //  rewind (pFile);
   }
   fclose (pFile);
@@ -28,13 +28,13 @@ double* getAlphas(){
 }
 //-----------------------------------------------------------
 //-----------------------------------------------------------
-double* getBetas(){
-  double f;
-  double* betas = (double*) malloc(5*5*10*sizeof(double));
+float* getBetas(){
+  float f;
+  float* betas = (float*) malloc(5*5*10*sizeof(float));
   FILE * pFile;
   pFile = fopen ("betas.dat","r");
   for(int i = 0; i < 5*5*10; i++){
-    fscanf (pFile, "%lf", &betas[i]);
+    fscanf (pFile, "%f", &betas[i]);
     //  rewind (pFile);
   }
   fclose (pFile);
@@ -42,21 +42,22 @@ double* getBetas(){
 }
 //-----------------------------------------------------------
 //-----------------------------------------------------------
-double* getReals(double* x, double* y, int size) {
+float* getReals(float* x, float* y, int size) {
 
-  double* P = (double*) malloc(size*size*sizeof(double));
-  double* M = (double*) malloc(size*size*sizeof(double));
-  double* P2 = (double*) malloc(size*size*sizeof(double));
-  double* M2 = (double*) malloc(size*size*sizeof(double));
-  double* P4 = (double*) malloc(size*size*sizeof(double));
-  double* M4 = (double*) malloc(size*size*sizeof(double));
-  double* P6 = (double*) malloc(size*size*sizeof(double));
-  double* M6 = (double*) malloc(size*size*sizeof(double));
-  double* P8 = (double*) malloc(size*size*sizeof(double));
-  double* M8 = (double*) malloc(size*size*sizeof(double));
+  float* P = (float*) malloc(size*size*sizeof(float));
+  float* M = (float*) malloc(size*size*sizeof(float));
+  float* P2 = (float*) malloc(size*size*sizeof(float));
+  float* M2 = (float*) malloc(size*size*sizeof(float));
+  float* P4 = (float*) malloc(size*size*sizeof(float));
+  float* M4 = (float*) malloc(size*size*sizeof(float));
+  float* P6 = (float*) malloc(size*size*sizeof(float));
+  float* M6 = (float*) malloc(size*size*sizeof(float));
+  float* P8 = (float*) malloc(size*size*sizeof(float));
+  float* M8 = (float*) malloc(size*size*sizeof(float));
   
-  double* Re = (double*) malloc(9*size*size*sizeof(double));
+  float* Re = (float*) malloc(9*size*size*sizeof(float));
   
+//#pragma omp parallel for schedule(static,chunk) 
   for(int i = 0; i < size; i++){
     for(int j = 0; j < size; j++){
   
@@ -69,6 +70,7 @@ double* getReals(double* x, double* y, int size) {
     }
   }
   
+//#pragma omp parallel for schedule(static,chunk) 
   for(int i = 0; i < size; i++){
     for(int j = 0; j < size; j++){
   
@@ -92,6 +94,7 @@ double* getReals(double* x, double* y, int size) {
                                  + 126*P4[i*size+j]*M4[i*size+j] - 84*P2[i*size+j]*M6[i*size+j]);
     }
   }
+
   free(P);  free(M); free(P2); free(M2); free(P4); free(M4); free(P6); free(M6); free(P8); free(M8);
   
   return Re;
@@ -99,9 +102,9 @@ double* getReals(double* x, double* y, int size) {
 }
 //-----------------------------------------------------------
 //-----------------------------------------------------------
-double* getR2(double* x, double* y, double* z, int size){
+float* getR2(float* x, float* y, float* z, int size){
 
-  double* r2s = (double*) malloc(size*sizeof(double));
+  float* r2s = (float*) malloc(size*sizeof(float));
 
   for(int i = 0; i < size; i++){
        r2s[i] = x[i]*x[i] + y[i]*y[i] + z[i]*z[i]; 
@@ -112,17 +115,17 @@ double* getR2(double* x, double* y, double* z, int size){
 }
 //-----------------------------------------------------------
 //-----------------------------------------------------------
-double* getP0(double* x, double* y, double* z,double* r2, double* alphas, double* betas , int Asize, int Nsize){
+float* getP0(float* x, float* y, float* z,float* r2, float* alphas, float* betas , int Asize, int Nsize){
 
-  double* P0 = (double*) malloc(Nsize*Nsize*sizeof(double));
+  float* P0 = (float*) malloc(Nsize*Nsize*sizeof(float));
 
-  double sumsInner = 0;
-  double sumsOuter = 0;
-  double oneO1Palpha;// = (double*) malloc(Nsize*sizeof(double));
-  double oneO1PalphaSqrt;// = (double*) malloc(Nsize*sizeof(double));
+  float sumsInner = 0;
+  float sumsOuter = 0;
+  float oneO1Palpha;// = (float*) malloc(Nsize*sizeof(float));
+  float oneO1PalphaSqrt;// = (float*) malloc(Nsize*sizeof(float));
 
-  double* alphaO1Palpha = (double*) malloc(Nsize*sizeof(double));
-  double* oneO1PalphaSqrtCubed = (double*) malloc(Nsize*sizeof(double));
+  float* alphaO1Palpha = (float*) malloc(Nsize*sizeof(float));
+  float* oneO1PalphaSqrtCubed = (float*) malloc(Nsize*sizeof(float));
 
   for(int n = 0; n < Nsize; n++){
     oneO1Palpha = 1.0/(1.00000000+alphas[n]);
@@ -131,6 +134,7 @@ double* getP0(double* x, double* y, double* z,double* r2, double* alphas, double
     alphaO1Palpha[n] = alphas[n]*oneO1Palpha;
   }
 
+//#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
     for(int nd = 0; nd < Nsize; nd++){
       sumsOuter = 0;
@@ -156,18 +160,18 @@ double* getP0(double* x, double* y, double* z,double* r2, double* alphas, double
 }
 //-----------------------------------------------------------
 //-----------------------------------------------------------
-double* getP1(double* x, double* y, double* z,double* r2, double* alphas, double* betas , int Asize, int Nsize, double* ReX){
+float* getP1(float* x, float* y, float* z,float* r2, float* alphas, float* betas , int Asize, int Nsize, float* ReX){
 
-  double* P1 = (double*) malloc(Nsize*Nsize*sizeof(double));
+  float* P1 = (float*) malloc(Nsize*Nsize*sizeof(float));
 
-  double sumsInner = 0;
-  double sumsOuter = 0;
-  double oneO1Palpha;
-  double oneO1PalphaSqrt;
+  float sumsInner = 0;
+  float sumsOuter = 0;
+  float oneO1Palpha;
+  float oneO1PalphaSqrt;
 
-  double* alphaO1Palpha = (double*) malloc(Nsize*sizeof(double));
-  double* oneO1PalphaSqrt5 = (double*) malloc(Nsize*sizeof(double));
-  double* ReXStripe = (double*) malloc(Asize*Asize*sizeof(double));
+  float* alphaO1Palpha = (float*) malloc(Nsize*sizeof(float));
+  float* oneO1PalphaSqrt5 = (float*) malloc(Nsize*sizeof(float));
+  float* ReXStripe = (float*) malloc(Asize*Asize*sizeof(float));
 
   for(int n = 0; n < Nsize; n++){
     oneO1Palpha = 1.0/(1.00000000+alphas[Nsize + n]);
@@ -181,6 +185,7 @@ double* getP1(double* x, double* y, double* z,double* r2, double* alphas, double
     }
   }
 
+//#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
     for(int nd = 0; nd < Nsize; nd++){
       sumsOuter = 0;
@@ -201,24 +206,25 @@ double* getP1(double* x, double* y, double* z,double* r2, double* alphas, double
 
  free(oneO1PalphaSqrt5);
  free(alphaO1Palpha);
+ free(ReXStripe);
 
  return P1; 
 }
 //-----------------------------------------------------------
 //-----------------------------------------------------------
-double* getP2(double* x, double* y, double* z,double* r2, double* alphas, double* betas , int Asize, int Nsize, double* ReX){
+float* getP2(float* x, float* y, float* z,float* r2, float* alphas, float* betas , int Asize, int Nsize, float* ReX){
 
-  double* P2 = (double*) malloc(Nsize*Nsize*sizeof(double));
+  float* P2 = (float*) malloc(Nsize*Nsize*sizeof(float));
 
-  double sumsInner = 0;
-  double sumsOuter = 0;
-  double oneO1Palpha;
-  double oneO1PalphaSqrt;
+  float sumsInner = 0;
+  float sumsOuter = 0;
+  float oneO1Palpha;
+  float oneO1PalphaSqrt;
 
-  double* alphaO1Palpha = (double*) malloc(Nsize*sizeof(double));
-  double* oneO1PalphaSqrt7 = (double*) malloc(Nsize*sizeof(double));
-  double* ReXStripe = (double*) malloc(Asize*Asize*sizeof(double));
-  double* zxy2 = (double*) malloc(Asize*sizeof(double));
+  float* alphaO1Palpha = (float*) malloc(Nsize*sizeof(float));
+  float* oneO1PalphaSqrt7 = (float*) malloc(Nsize*sizeof(float));
+  float* ReXStripe = (float*) malloc(Asize*Asize*sizeof(float));
+  float* zxy2 = (float*) malloc(Asize*sizeof(float));
 
   for(int n = 0; n < Nsize; n++){
     oneO1Palpha = 1.0/(1.00000000+alphas[2*Nsize + n]);
@@ -238,6 +244,7 @@ double* getP2(double* x, double* y, double* z,double* r2, double* alphas, double
     }
   }
 
+//#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
     for(int nd = 0; nd < Nsize; nd++){
       sumsOuter = 0;
@@ -258,25 +265,27 @@ double* getP2(double* x, double* y, double* z,double* r2, double* alphas, double
 
   free(oneO1PalphaSqrt7);
   free(alphaO1Palpha);
+  free(ReXStripe);
+  free(zxy2);
 
   return P2; 
 }
 //-----------------------------------------------------------
 //-----------------------------------------------------------
-double* getP3(double* x, double* y, double* z,double* r2, double* alphas, double* betas , int Asize, int Nsize, double* ReX){
+float* getP3(float* x, float* y, float* z,float* r2, float* alphas, float* betas , int Asize, int Nsize, float* ReX){
 
-  double* P3 = (double*) malloc(Nsize*Nsize*sizeof(double));
+  float* P3 = (float*) malloc(Nsize*Nsize*sizeof(float));
 
-  double sumsInner = 0;
-  double sumsOuter = 0;
-  double oneO1Palpha;
-  double oneO1PalphaSqrt;
+  float sumsInner = 0;
+  float sumsOuter = 0;
+  float oneO1Palpha;
+  float oneO1PalphaSqrt;
 
-  double* alphaO1Palpha = (double*) malloc(Nsize*sizeof(double));
-  double* oneO1PalphaSqrt9 = (double*) malloc(Nsize*sizeof(double));
-  double* ReXStripe = (double*) malloc(Asize*Asize*sizeof(double));
-  double* zxy4 = (double*) malloc(Asize*sizeof(double));
-  double* zxy233 = (double*) malloc(Asize*sizeof(double));
+  float* alphaO1Palpha = (float*) malloc(Nsize*sizeof(float));
+  float* oneO1PalphaSqrt9 = (float*) malloc(Nsize*sizeof(float));
+  float* ReXStripe = (float*) malloc(Asize*Asize*sizeof(float));
+  float* zxy4 = (float*) malloc(Asize*sizeof(float));
+  float* zxy233 = (float*) malloc(Asize*sizeof(float));
 
   for(int n = 0; n < Nsize; n++){
     oneO1Palpha = 1.0/(1.00000000+alphas[3*Nsize + n]);
@@ -297,6 +306,7 @@ double* getP3(double* x, double* y, double* z,double* r2, double* alphas, double
     }
   }
 
+//#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
     for(int nd = 0; nd < Nsize; nd++){
       sumsOuter = 0;
@@ -314,36 +324,39 @@ double* getP3(double* x, double* y, double* z,double* r2, double* alphas, double
           P3[Nsize*n + nd] = 7.0*PI2*0.0625*sumsOuter; 
     }
   }
-    for(int i = 0; i < Nsize; i++){
-           for(int j = 0; j < Nsize; j++){
-            cout << betas[3*Nsize*Nsize + i*Nsize + j] << " ";
-           }
-           cout << endl;
-    }
+//    for(int i = 0; i < Nsize; i++){
+//           for(int j = 0; j < Nsize; j++){
+//            cout << betas[3*Nsize*Nsize + i*Nsize + j] << " ";
+//           }
+//           cout << endl;
+//    }
 
   free(oneO1PalphaSqrt9);
   free(alphaO1Palpha);
+  free(ReXStripe);
+  free(zxy4);
+  free(zxy233);
 
   return P3; 
 }
 //-----------------------------------------------------------
 //-----------------------------------------------------------
-double* getP4(double* x, double* y, double* z,double* r2, double* alphas, double* betas , int Asize, int Nsize, double* ReX){
+float* getP4(float* x, float* y, float* z,float* r2, float* alphas, float* betas , int Asize, int Nsize, float* ReX){
 
-  double* P4 = (double*) malloc(Nsize*Nsize*sizeof(double));
+  float* P4 = (float*) malloc(Nsize*Nsize*sizeof(float));
 
-  double sumsInner = 0;
-  double sumsOuter = 0;
-  double oneO1Palpha;
-  double oneO1PalphaSqrt;
-  double z2=0;
+  float sumsInner = 0;
+  float sumsOuter = 0;
+  float oneO1Palpha;
+  float oneO1PalphaSqrt;
+  float z2=0;
 
-  double* alphaO1Palpha = (double*) malloc(Nsize*sizeof(double));
-  double* oneO1PalphaSqrt11 = (double*) malloc(Nsize*sizeof(double));
-  double* ReXStripe = (double*) malloc(Asize*Asize*sizeof(double));
-  double* zr7 = (double*) malloc(Asize*sizeof(double));
-  double* zr73 = (double*) malloc(Asize*sizeof(double));
-  double* zr35 = (double*) malloc(Asize*sizeof(double));
+  float* alphaO1Palpha = (float*) malloc(Nsize*sizeof(float));
+  float* oneO1PalphaSqrt11 = (float*) malloc(Nsize*sizeof(float));
+  float* ReXStripe = (float*) malloc(Asize*Asize*sizeof(float));
+  float* zr7 = (float*) malloc(Asize*sizeof(float));
+  float* zr73 = (float*) malloc(Asize*sizeof(float));
+  float* zr35 = (float*) malloc(Asize*sizeof(float));
 
   for(int n = 0; n < Nsize; n++){
     oneO1Palpha = 1.0/(1.00000000+alphas[4*Nsize + n]);
@@ -366,6 +379,7 @@ double* getP4(double* x, double* y, double* z,double* r2, double* alphas, double
     }
   }
 
+//#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
     for(int nd = 0; nd < Nsize; nd++){
       sumsOuter = 0;
@@ -383,37 +397,41 @@ double* getP4(double* x, double* y, double* z,double* r2, double* alphas, double
           P4[Nsize*n + nd] = 9.0*PI2*0.00390625*sumsOuter; 
     }
   }
-    for(int i = 0; i < Nsize; i++){
-           for(int j = 0; j < Nsize; j++){
-            cout << betas[4*Nsize*Nsize + i*Nsize + j] << " ";
-           }
-           cout << endl;
-    }
+//    for(int i = 0; i < Nsize; i++){
+//           for(int j = 0; j < Nsize; j++){
+//            cout << betas[4*Nsize*Nsize + i*Nsize + j] << " ";
+//           }
+//           cout << endl;
+//    }
 
   free(oneO1PalphaSqrt11);
   free(alphaO1Palpha);
+  free(ReXStripe);
+  free(zr7);
+  free(zr73);
+  free(zr35);
 
   return P4; 
 }
 //-----------------------------------------------------------
 //-----------------------------------------------------------
-double* getP5(double* x, double* y, double* z,double* r2, double* alphas, double* betas , int Asize, int Nsize, double* ReX){
+float* getP5(float* x, float* y, float* z,float* r2, float* alphas, float* betas , int Asize, int Nsize, float* ReX){
 
-  double* P5 = (double*) malloc(Nsize*Nsize*sizeof(double));
+  float* P5 = (float*) malloc(Nsize*Nsize*sizeof(float));
 
-  double sumsInner = 0;
-  double sumsOuter = 0;
-  double oneO1Palpha;
-  double oneO1PalphaSqrt;
-  double z2=0;
+  float sumsInner = 0;
+  float sumsOuter = 0;
+  float oneO1Palpha;
+  float oneO1PalphaSqrt;
+  float z2=0;
 
-  double* alphaO1Palpha = (double*) malloc(Nsize*sizeof(double));
-  double* oneO1PalphaSqrt13 = (double*) malloc(Nsize*sizeof(double));
-  double* ReXStripe = (double*) malloc(Asize*Asize*sizeof(double));
-  double* zr9 = (double*) malloc(Asize*sizeof(double));
-  double* zr3 = (double*) malloc(Asize*sizeof(double));
-  double* zr21 = (double*) malloc(Asize*sizeof(double));
-  double* zr63 = (double*) malloc(Asize*sizeof(double));
+  float* alphaO1Palpha = (float*) malloc(Nsize*sizeof(float));
+  float* oneO1PalphaSqrt13 = (float*) malloc(Nsize*sizeof(float));
+  float* ReXStripe = (float*) malloc(Asize*Asize*sizeof(float));
+  float* zr9 = (float*) malloc(Asize*sizeof(float));
+  float* zr3 = (float*) malloc(Asize*sizeof(float));
+  float* zr21 = (float*) malloc(Asize*sizeof(float));
+  float* zr63 = (float*) malloc(Asize*sizeof(float));
 
   for(int n = 0; n < Nsize; n++){
     oneO1Palpha = 1.0/(1.00000000+alphas[5*Nsize + n]);
@@ -437,6 +455,7 @@ double* getP5(double* x, double* y, double* z,double* r2, double* alphas, double
     }
   }
 
+//#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
     for(int nd = 0; nd < Nsize; nd++){
       sumsOuter = 0;
@@ -454,38 +473,43 @@ double* getP5(double* x, double* y, double* z,double* r2, double* alphas, double
           P5[Nsize*n + nd] = 11.0*PI2*0.00390625*sumsOuter; 
     }
   }
-    for(int i = 0; i < Nsize; i++){
-           for(int j = 0; j < Nsize; j++){
-            cout << betas[5*Nsize*Nsize + i*Nsize + j] << " ";
-           }
-           cout << endl;
-    }
+//    for(int i = 0; i < Nsize; i++){
+//           for(int j = 0; j < Nsize; j++){
+//            cout << betas[5*Nsize*Nsize + i*Nsize + j] << " ";
+//           }
+//           cout << endl;
+//    }
 
   free(oneO1PalphaSqrt13);
   free(alphaO1Palpha);
+  free(ReXStripe);
+  free(zr9); 
+  free(zr3); 
+  free(zr21);
+  free(zr63);
 
   return P5; 
 }
 //-----------------------------------------------------------
 //-----------------------------------------------------------
-double* getP6(double* x, double* y, double* z,double* r2, double* alphas, double* betas , int Asize, int Nsize, double* ReX){
+float* getP6(float* x, float* y, float* z,float* r2, float* alphas, float* betas , int Asize, int Nsize, float* ReX){
 
-  double* P6 = (double*) malloc(Nsize*Nsize*sizeof(double));
+  float* P6 = (float*) malloc(Nsize*Nsize*sizeof(float));
 
-  double sumsInner = 0;
-  double sumsOuter = 0;
-  double oneO1Palpha;
-  double oneO1PalphaSqrt;
-  double z2=0;
+  float sumsInner = 0;
+  float sumsOuter = 0;
+  float oneO1Palpha;
+  float oneO1PalphaSqrt;
+  float z2=0;
 
-  double* alphaO1Palpha = (double*) malloc(Nsize*sizeof(double));
-  double* oneO1PalphaSqrt15 = (double*) malloc(Nsize*sizeof(double));
-  double* ReXStripe = (double*) malloc(Asize*Asize*sizeof(double));
-  double* zr11 = (double*) malloc(Asize*sizeof(double));
-  double* zr113 = (double*) malloc(Asize*sizeof(double));
-  double* zr3311 = (double*) malloc(Asize*sizeof(double));
-  double* zr3330 = (double*) malloc(Asize*sizeof(double));
-  double* zr231 = (double*) malloc(Asize*sizeof(double));
+  float* alphaO1Palpha = (float*) malloc(Nsize*sizeof(float));
+  float* oneO1PalphaSqrt15 = (float*) malloc(Nsize*sizeof(float));
+  float* ReXStripe = (float*) malloc(Asize*Asize*sizeof(float));
+  float* zr11 = (float*) malloc(Asize*sizeof(float));
+  float* zr113 = (float*) malloc(Asize*sizeof(float));
+  float* zr3311 = (float*) malloc(Asize*sizeof(float));
+  float* zr3330 = (float*) malloc(Asize*sizeof(float));
+  float* zr231 = (float*) malloc(Asize*sizeof(float));
 
   for(int n = 0; n < Nsize; n++){
     oneO1Palpha = 1.0/(1.00000000+alphas[6*Nsize + n]);
@@ -510,6 +534,7 @@ double* getP6(double* x, double* y, double* z,double* r2, double* alphas, double
     }
   }
 
+//#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
     for(int nd = 0; nd < Nsize; nd++){
       sumsOuter = 0;
@@ -527,28 +552,34 @@ double* getP6(double* x, double* y, double* z,double* r2, double* alphas, double
           P6[Nsize*n + nd] = 13.0*PI2*9.765625e-4*sumsOuter; 
     }
   }
-    for(int i = 0; i < Nsize; i++){
-           for(int j = 0; j < Nsize; j++){
-            cout << betas[6*Nsize*Nsize + i*Nsize + j] << " ";
-           }
-           cout << endl;
-    }
+//    for(int i = 0; i < Nsize; i++){
+//           for(int j = 0; j < Nsize; j++){
+//            cout << betas[6*Nsize*Nsize + i*Nsize + j] << " ";
+//           }
+//           cout << endl;
+//    }
 
   free(oneO1PalphaSqrt15);
   free(alphaO1Palpha);
+  free(ReXStripe);
+  free(zr11);
+  free(zr113);
+  free(zr3311);
+  free(zr3330);
+  free(zr231);
 
   return P6; 
 }
 //-----------------------------------------------------------
 //-----------------------------------------------------------
 int main(int argc, char* argv[]) {
-int Asize = 500;
+int Asize = 10000;
 int Nsize = 5;
-double* x = (double*) malloc(Asize*sizeof(double));
-double* y = (double*) malloc(Asize*sizeof(double));
-double* z = (double*) malloc(Asize*sizeof(double));
-double* alphas = getAlphas();
-double* betas = getBetas();
+float* x = (float*) malloc(Asize*sizeof(float));
+float* y = (float*) malloc(Asize*sizeof(float));
+float* z = (float*) malloc(Asize*sizeof(float));
+float* alphas = getAlphas();
+float* betas = getBetas();
 
 x[0] = 0.1;
 x[1] = -1.0;
@@ -557,51 +588,71 @@ y[1] = -1.0;
 z[0] = 1.0;
 z[1] = -1.0;
 
-double* r2 = getR2(x, y, z, Asize);
-double* ReX = getReals(x, y,Asize); 
-double* P0;
-double* P1;
-double* P2;
-double* P3;
-double* P4;
-double* P5;
-double* P6;
+float* r2 = getR2(x, y, z, Asize);
+float* ReX = getReals(x, y,Asize); 
+float* P0;
+float* P1;
+float* P2;
+float* P3;
+float* P4;
+float* P5;
+float* P6;
 
 #pragma omp parallel sections
 {
     #pragma omp section
     { 
         P0 = getP0(x,y,z,r2,alphas, betas ,Asize, Nsize);
+//        cout << "Done P0" << endl;
     }
     #pragma omp section
     { 
         P1 = getP1(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
+//        cout << "Done P1" << endl;
     }
     #pragma omp section
     { 
         P2 = getP2(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
+//        cout << "Done P2" << endl;
     }
     #pragma omp section
     { 
         P3 = getP3(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
+//        cout << "Done P3" << endl;
     }
     #pragma omp section
     { 
         P4 = getP4(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
+//        cout << "Done P4" << endl;
     }
     #pragma omp section
     { 
         P5 = getP5(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
+//        cout << "Done P5" << endl;
     }
     #pragma omp section
     { 
         P6 = getP6(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
+//        cout << "Done P6" << endl;
     }
 
 }
 
+  for(int i = 0; i <Nsize ; i++){
+    for(int j = 0; j <Nsize ; j++){
+      cout << " P0_" << i + 1 << j + 1 <<" : " << P0[i*Nsize + j];
+    }
+    cout << endl;
+  }
+    cout << endl;
 
-
+  for(int i = 0; i <Nsize ; i++){
+    for(int j = 0; j <Nsize ; j++){
+      cout << " P1_" << i + 1 << j + 1 <<" : " << P1[i*Nsize + j];
+    }
+    cout << endl;
+  }
+    cout << endl;
   for(int i = 0; i <Nsize ; i++){
     for(int j = 0; j <Nsize ; j++){
       cout << " P2_" << i + 1 << j + 1 <<" : " << P2[i*Nsize + j];
@@ -637,8 +688,15 @@ double* P6;
     cout << endl;
   }
 
-//free(x);
-//free(y);
-//free(f);
+free(x);
+free(y);
+free(z);
+free(P0);
+free(P1);
+free(P2);
+free(P3);
+free(P4);
+free(P5);
+free(P6);
 
 }
