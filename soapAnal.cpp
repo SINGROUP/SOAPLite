@@ -612,12 +612,13 @@ double* getP7(double* x, double* y, double* z,double* r2, double* alphas, double
 
   for(int i = 0; i < Asize; i++){
     for(int j = 0; j < Asize; j++){
-      ReXStripe[i*Asize + j] = 105.75*ReX[6*Asize*Asize + i*Asize + j]
+      ReXStripe[i*Asize + j] =
+          105.75*ReX[6*Asize*Asize + i*Asize + j]
         + z[i]*z[j]*(1498.5*ReX[5*Asize*Asize + i*Asize + j]
         + 225*zr133[i]*zr133[j]*ReX[3*Asize*Asize + i*Asize + j]
+        + 5.25*zr1436[i]*zr1436[j]*ReX[2*Asize*Asize + i*Asize + j]
         + zr4296[i]*zr4296[j])
         + 56.25*zr13[i]*zr13[j]*ReX[4*Asize*Asize + i*Asize + j]
-        + 5.25*zr1436[i]*zr1436[j]*ReX[2*Asize*Asize + i*Asize + j]
         + 10.5*zr1431[i]*zr1431[j]*ReX[Asize*Asize + i*Asize + j]
         + 1.75*zr4294[i]*zr4294[j]*ReX[i*Asize + j];
     }
