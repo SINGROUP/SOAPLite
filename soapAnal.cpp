@@ -42,6 +42,45 @@ double* getBetas(){
 }
 //-----------------------------------------------------------
 //-----------------------------------------------------------
+int* getInfo(int* totalAN, int* Ntypes){
+  FILE* pFile;
+   cout << "AA" << endl;
+   cout << "AB" << endl;
+  //Getting meta data
+  pFile = fopen("metadata.dat","r");
+    fscanf(pFile, "%i", totalAN);
+    fscanf(pFile, "%i", Ntypes);
+  fclose (pFile);
+  //Getting atom type counts
+  int* typeNs = (int*) malloc(sizeof(int)*Ntypes[0]);
+  pFile = fopen("atomtypecount.dat","r");
+  for(int i=0; i < Ntypes[0]; i++){
+    fscanf(pFile, "%d", &typeNs[i]);
+  }
+  fclose (pFile);
+  return typeNs;
+}
+//-----------------------------------------------------------
+//-----------------------------------------------------------
+double* getPos(double* x, double* y, double* z, int* totalAN, int* Ntypes, int* typeNs, int*types){
+  FILE* pFile;
+  //Getting atom types and positions
+  pFile = fopen("type_pos.dat","r");
+  int marcher=0;
+  for(int i=0; i < Ntypes[0]; i++){
+    fscanf(pFile, "%d", &types[i]);
+    for(int j=0; j < typeNs[i] ; j++){
+      fscanf(pFile, "%lf", &x[marcher]);
+      fscanf(pFile, "%lf", &y[marcher]);
+      fscanf(pFile, "%lf", &z[marcher]);
+      marcher++;
+    }
+  }
+  fclose (pFile);
+//  return betas;
+}
+//-----------------------------------------------------------
+//-----------------------------------------------------------
 double* getReals(double* x, double* y, int size) {
 
   double* P = (double*) malloc(size*size*sizeof(double));
@@ -644,12 +683,12 @@ double* getP7(double* x, double* y, double* z,double* r2, double* alphas, double
           P7[Nsize*n + nd] = 15.0*PI2*9.765625e-4*sumsOuter;
     }
   }
-    for(int i = 0; i < Nsize; i++){
-           for(int j = 0; j < Nsize; j++){
-            cout << betas[7*Nsize*Nsize + i*Nsize + j] << " ";
-           }
-           cout << endl;
-    }
+//    for(int i = 0; i < Nsize; i++){
+//           for(int j = 0; j < Nsize; j++){
+//            cout << betas[7*Nsize*Nsize + i*Nsize + j] << " ";
+//           }
+//           cout << endl;
+//    }
 
   free(oneO1PalphaSqrt17);
   free(alphaO1Palpha);
@@ -744,12 +783,12 @@ double* getP8(double* x, double* y, double* z,double* r2, double* alphas, double
           P8[Nsize*n + nd] = 17.0*PI2*1.52587890625e-05*sumsOuter;
     }
   }
-    for(int i = 0; i < Nsize; i++){
-           for(int j = 0; j < Nsize; j++){
-            cout << betas[8*Nsize*Nsize + i*Nsize + j] << " ";
-           }
-           cout << endl;
-    }
+//    for(int i = 0; i < Nsize; i++){
+//           for(int j = 0; j < Nsize; j++){
+//            cout << betas[8*Nsize*Nsize + i*Nsize + j] << " ";
+//           }
+//           cout << endl;
+//    }
 
   free(oneO1PalphaSqrt19);
   free(alphaO1Palpha);
@@ -849,12 +888,12 @@ double* getP9(double* x, double* y, double* z,double* r2, double* alphas, double
           P9[Nsize*n + nd] = 19.0*PI2*1.52587890625e-05*sumsOuter;
     }
   }
-    for(int i = 0; i < Nsize; i++){
-           for(int j = 0; j < Nsize; j++){
-            cout << betas[9*Nsize*Nsize + i*Nsize + j] << " ";
-           }
-           cout << endl;
-    }
+//    for(int i = 0; i < Nsize; i++){
+//           for(int j = 0; j < Nsize; j++){
+//            cout << betas[9*Nsize*Nsize + i*Nsize + j] << " ";
+//           }
+//           cout << endl;
+//    }
 
   free(oneO1PalphaSqrt21);
   free(alphaO1Palpha);
@@ -873,20 +912,38 @@ double* getP9(double* x, double* y, double* z,double* r2, double* alphas, double
 //-----------------------------------------------------------
 //-----------------------------------------------------------
 int main(int argc, char* argv[]) {
-int Asize = 1000;
+int*  totalAN = (int*) malloc(sizeof(int));
+int*  Ntypes = (int*) malloc(sizeof(int));
 int Nsize = 5;
-double* x = (double*) malloc(Asize*sizeof(double));
-double* y = (double*) malloc(Asize*sizeof(double));
-double* z = (double*) malloc(Asize*sizeof(double));
-double* alphas = getAlphas();
-double* betas = getBetas();
+double* x;// = (double*) malloc(Asize*sizeof(double));
+double* y;// = (double*) malloc(Asize*sizeof(double));
+double* z;// = (double*) malloc(Asize*sizeof(double));
+int*types;
+double* alphas = getAlphas(); double* betas = getBetas();
 
-x[0] = 0.1;
-x[1] = -1.0;
-y[0] = 1.0;
-y[1] = -1.0;
-z[0] = 1.0;
-z[1] = -1.0;
+int* typeNs = getInfo(totalAN, Ntypes);
+  x = (double*) malloc(sizeof(double)*totalAN[0]);
+  y = (double*) malloc(sizeof(double)*totalAN[0]);
+  z = (double*) malloc(sizeof(double)*totalAN[0]);
+  types = (int*) malloc(sizeof(int)*Ntypes[0]);
+  getPos(x, y, z, totalAN, Ntypes, typeNs, types);
+
+int Asize = totalAN[0];
+
+cout << "x0 " <<x[79] << endl;
+cout << "y0 " <<y[79] << endl;
+cout << "z0 " <<z[79] << endl;
+cout << "Ntypes " <<Ntypes[0] << endl;
+cout << "typeNs " <<typeNs[0] << endl;
+cout << "types " <<types[0] << endl;
+cout << "totalAN " <<totalAN[0] << endl;
+
+//x[0] = 0.1;
+//x[1] = -1.0;
+//y[0] = 1.0;
+//y[1] = -1.0;
+//z[0] = 1.0;
+//z[1] = -1.0;
 
 double* r2 = getR2(x, y, z, Asize);
 double* ReX = getReals(x, y,Asize);
@@ -951,76 +1008,76 @@ double* P7; double* P8; double* P9;
 
 }
 
-  for(int i = 0; i <Nsize ; i++){
-    for(int j = 0; j <Nsize ; j++){
-      cout << " P0_" << i + 1 << j + 1 <<" : " << P0[i*Nsize + j];
-    }
-    cout << endl;
-  }
-    cout << endl;
-
-  for(int i = 0; i <Nsize ; i++){
-    for(int j = 0; j <Nsize ; j++){
-      cout << " P1_" << i + 1 << j + 1 <<" : " << P1[i*Nsize + j];
-    }
-    cout << endl;
-  }
-    cout << endl;
-  for(int i = 0; i <Nsize ; i++){
-    for(int j = 0; j <Nsize ; j++){
-      cout << " P2_" << i + 1 << j + 1 <<" : " << P2[i*Nsize + j];
-    }
-    cout << endl;
-  }
-    cout << endl;
-  for(int i = 0; i <Nsize ; i++){
-    for(int j = 0; j <Nsize ; j++){
-      cout << " P3_" << i + 1 << j + 1 <<" : " << P3[i*Nsize + j];
-    }
-    cout << endl;
-  }
-    cout << endl;
-  for(int i = 0; i <Nsize ; i++){
-    for(int j = 0; j <Nsize ; j++){
-      cout << " P4_" << i + 1 << j + 1 <<" : " << P4[i*Nsize + j];
-    }
-    cout << endl;
-  }
-    cout << endl;
-  for(int i = 0; i <Nsize ; i++){
-    for(int j = 0; j <Nsize ; j++){
-      cout << " P5_" << i + 1 << j + 1 <<" : " << P5[i*Nsize + j];
-    }
-    cout << endl;
-  }
-    cout << endl;
-  for(int i = 0; i <Nsize ; i++){
-    for(int j = 0; j <Nsize ; j++){
-      cout << " P6_" << i + 1 << j + 1 <<" : " << P6[i*Nsize + j];
-    }
-    cout << endl;
-  }
-    cout << endl;
-  for(int i = 0; i <Nsize ; i++){
-    for(int j = 0; j <Nsize ; j++){
-      cout << " P7_" << i + 1 << j + 1 <<" : " << P7[i*Nsize + j];
-    }
-    cout << endl;
-  }
-    cout << endl;
-  for(int i = 0; i <Nsize ; i++){
-    for(int j = 0; j <Nsize ; j++){
-      cout << " P8_" << i + 1 << j + 1 <<" : " << P8[i*Nsize + j];
-    }
-    cout << endl;
-  }
-    cout << endl;
-  for(int i = 0; i <Nsize ; i++){
-    for(int j = 0; j <Nsize ; j++){
-      cout << " P9_" << i + 1 << j + 1 <<" : " << P9[i*Nsize + j];
-    }
-    cout << endl;
-  }
+//  for(int i = 0; i <Nsize ; i++){
+//    for(int j = 0; j <Nsize ; j++){
+//      cout << " P0_" << i + 1 << j + 1 <<" : " << P0[i*Nsize + j];
+//    }
+//    cout << endl;
+//  }
+//    cout << endl;
+//
+//  for(int i = 0; i <Nsize ; i++){
+//    for(int j = 0; j <Nsize ; j++){
+//      cout << " P1_" << i + 1 << j + 1 <<" : " << P1[i*Nsize + j];
+//    }
+//    cout << endl;
+//  }
+//    cout << endl;
+//  for(int i = 0; i <Nsize ; i++){
+//    for(int j = 0; j <Nsize ; j++){
+//      cout << " P2_" << i + 1 << j + 1 <<" : " << P2[i*Nsize + j];
+//    }
+//    cout << endl;
+//  }
+//    cout << endl;
+//  for(int i = 0; i <Nsize ; i++){
+//    for(int j = 0; j <Nsize ; j++){
+//      cout << " P3_" << i + 1 << j + 1 <<" : " << P3[i*Nsize + j];
+//    }
+//    cout << endl;
+//  }
+//    cout << endl;
+//  for(int i = 0; i <Nsize ; i++){
+//    for(int j = 0; j <Nsize ; j++){
+//      cout << " P4_" << i + 1 << j + 1 <<" : " << P4[i*Nsize + j];
+//    }
+//    cout << endl;
+//  }
+//    cout << endl;
+//  for(int i = 0; i <Nsize ; i++){
+//    for(int j = 0; j <Nsize ; j++){
+//      cout << " P5_" << i + 1 << j + 1 <<" : " << P5[i*Nsize + j];
+//    }
+//    cout << endl;
+//  }
+//    cout << endl;
+//  for(int i = 0; i <Nsize ; i++){
+//    for(int j = 0; j <Nsize ; j++){
+//      cout << " P6_" << i + 1 << j + 1 <<" : " << P6[i*Nsize + j];
+//    }
+//    cout << endl;
+//  }
+//    cout << endl;
+//  for(int i = 0; i <Nsize ; i++){
+//    for(int j = 0; j <Nsize ; j++){
+//      cout << " P7_" << i + 1 << j + 1 <<" : " << P7[i*Nsize + j];
+//    }
+//    cout << endl;
+//  }
+//    cout << endl;
+//  for(int i = 0; i <Nsize ; i++){
+//    for(int j = 0; j <Nsize ; j++){
+//      cout << " P8_" << i + 1 << j + 1 <<" : " << P8[i*Nsize + j];
+//    }
+//    cout << endl;
+//  }
+//    cout << endl;
+//  for(int i = 0; i <Nsize ; i++){
+//    for(int j = 0; j <Nsize ; j++){
+//      cout << " P9_" << i + 1 << j + 1 <<" : " << P9[i*Nsize + j];
+//    }
+//    cout << endl;
+//  }
 
 free(x);
 free(y);
