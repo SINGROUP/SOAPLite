@@ -126,11 +126,7 @@ int getFilteredPos(double* x, double* y, double* z, double* Apos, double* Hpos,
       X = Apos[shiftType + 3*i    ] - Hpos[3*Ihpos    ];
       Y = Apos[shiftType + 3*i + 1] - Hpos[3*Ihpos + 1];
       Z = Apos[shiftType + 3*i + 2] - Hpos[3*Ihpos + 2];
-//      cout << "XYZ " << X*X + Y*Y + Z*Z  << endl;
-//      cout << "X " << X<< endl;
-//      cout << "Y " << Y<< endl;
-//      cout << "Z " << Z<< endl;
-      if(X*X + Y*Y + Z*Z < 49.0){
+      if( X*X + Y*Y + Z*Z < 49.0 ){
         x[count] = X;
         y[count] = Y;
         z[count] = Z;
@@ -166,6 +162,7 @@ double* getReals(double* x, double* y, int size) {
       p4[i*size+j] =p2[i*size+j]*p2[i*size+j];   m4[i*size+j] =m2[i*size+j]*m2[i*size+j];
       p6[i*size+j] =p4[i*size+j]*p2[i*size+j];   m6[i*size+j] =m4[i*size+j]*m2[i*size+j];
       p8[i*size+j] =p4[i*size+j]*p4[i*size+j];   m8[i*size+j] =m4[i*size+j]*m4[i*size+j];
+
     }
   }
 
@@ -193,8 +190,16 @@ double* getReals(double* x, double* y, int size) {
                                  + 126*p4[i*size+j]*m4[i*size+j] - 84*p2[i*size+j]*m6[i*size+j]);
     }
   }
+//  for (int i = 0; i < 9; i++) {
+//  for (int j = 0; j < size; j++) {
+ // for (int k = 0; k < size; k++) {
+//    cout << "Re: " << Re[i*size*size + j*size + k] << endl;
+//  }
+//  }
+//  }
 
   free(p);  free(m); free(p2); free(m2); free(p4); free(m4); free(p6); free(m6); free(p8); free(m8);
+
   return Re;
 
 }
@@ -213,7 +218,8 @@ double* getR2(double* x, double* y, double* z, int size){
 }
 //-----------------------------------------------------------
 //-----------------------------------------------------------
-double* getP0(double* x, double* y, double* z,double* r2, double* alphas, double* betas , int Asize, int Nsize){
+double* getP0(double* x, double* y, double* z,double* r2, double* alphas,
+   double* betas, int Asize, int Nsize){
 
   double* P0 = (double*) malloc(Nsize*Nsize*sizeof(double));
 
@@ -580,18 +586,23 @@ double* getP5(double* x, double* y, double* z,double* r2, double* alphas, double
     alphaO1Palpha[n] = alphas[5*Nsize + n]*oneO1Palpha;
   }
 
-
   for(int i = 0; i < Asize; i++){
     z2 = z[i]*z[i];
     zr9[i] = 9.0*z2 - r2[i];
     zr3[i] = 3.0*z2 - r2[i];
     zr21[i] = 21*z2*z2 - 14*z2*r2[i] + r2[i]*r2[i];
     zr63[i] = 63*z2*z2 - 70*z2*r2[i] + 15*r2[i]*r2[i];
+//    cout << "z " << z2 << endl;
+//    cout << "z " << zr9[i] << endl;
+//    cout << "z " << zr3[i] << endl;
+ //   cout << "z " <<zr21[i] << endl;
+  //  cout << "z " <<zr63[i] << endl;
   }
 
   for(int i = 0; i < Asize; i++){
     for(int j = 0; j < Asize; j++){
       ReXStripe[i*Asize + j] = 31.5*ReX[4*Asize*Asize + i*Asize + j] + z[i]*z[j]*(315*ReX[3*Asize*Asize + i*Asize + j] + 420*zr3[i]*zr3[j]*ReX[Asize*Asize + i*Asize + j] + zr63[i]*zr63[j]) + 17.5*zr9[i]*zr9[j]*ReX[2*Asize*Asize + i*Asize + j] + 15*zr21[i]*zr21[j]*ReX[i*Asize + j];
+//      cout <<"AAA " << ReXStripe[i*Asize + j]<< endl;
     }
   }
 
@@ -608,6 +619,7 @@ double* getP5(double* x, double* y, double* z,double* r2, double* alphas, double
             }
           }
           sumsOuter +=  betas[5*Nsize*Nsize + n*Nsize + k]*betas[5*Nsize*Nsize+nd*Nsize + kd]*oneO1PalphaSqrt13[k]*oneO1PalphaSqrt13[kd]*sumsInner;
+//              cout << "outer " << oneO1PalphaSqrt13[k] << endl;
         }
       }
           P5[Nsize*n + nd] = 11.0*PI2*0.00390625*sumsOuter;
@@ -627,7 +639,9 @@ double* getP5(double* x, double* y, double* z,double* r2, double* alphas, double
   free(zr3);
   free(zr21);
   free(zr63);
-
+//  for(int n = 0; n < Nsize*Nsize; n++){
+//      cout << "P5" <<P5[n] << endl;
+ // }
   return P5;
 }
 //-----------------------------------------------------------
@@ -1065,15 +1079,7 @@ types = (int*) malloc(sizeof(int)*Ntypes[0]);
 
 int Asize = 0;
 double* Apos = getApos(totalAN, Ntypes, typeNs, types);
-double* Hpos = getHpos(999);
-
-//cout << "x0 " << x[39] << endl;
-//cout << "y0 " << y[39] << endl;
-//cout << "z0 " << z[39] << endl;
-//cout << "Ntypes " <<Ntypes[0] << endl;
-//cout << "typeNs " <<typeNs[0] << endl;
-//cout << "types " <<types[0] << endl;
-//cout << "totalAN " <<totalAN[0] << endl;
+double* Hpos = getHpos(99);
 
 //x[0] = 0.1;
 //x[1] = -1.0;
@@ -1082,78 +1088,70 @@ double* Hpos = getHpos(999);
 //z[0] = 1.0;
 //z[1] = -1.0;
 
-double* r2 = getR2(x, y, z, Asize);
-double* ReX = getReals(x, y,Asize);
 
 double* P0;
 double* P1; double* P2; double* P3;
 double* P4; double* P5; double* P6;
 double* P7; double* P8; double* P9;
 
-for(int i = 0; i < 999; i++){
+for(int i = 0; i < 99; i++){
 for(int j = 0; j < Ntypes[0]; j++){
 
 cout << i << endl;
 
 Asize = getFilteredPos(x, y, z, Apos, Hpos, typeNs, i, j);
+double* r2 = getR2(x, y, z, Asize);
+double* ReX = getReals(x, y,Asize);
 
-for(int k = 0; k < Asize; k++){
+cout << endl;
 
-cout << "x" << k << " "<< x[k] << endl;
-cout << "y" << k << " "<< y[k] << endl;
-cout << "z" << k << " "<< z[k] << endl;
+#pragma omp parallel sections
+{
+    #pragma omp section
+    {
+        P0 = getP0(x,y,z,r2,alphas, betas ,Asize, Nsize);
+    }
+    #pragma omp section
+    {
+        P1 = getP1(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
+    }
+    #pragma omp section
+    {
+        P2 = getP2(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
+    }
+    #pragma omp section
+    {
+        P3 = getP3(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
+    }
+    #pragma omp section
+    {
+        P4 = getP4(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
+    }
+    #pragma omp section
+    {
+        P5 = getP5(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
+    }
+    #pragma omp section
+    {
+        P6 = getP6(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
+    }
+    #pragma omp section
+    {
+        P7 = getP7(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
+    }
+    #pragma omp section
+    {
+        P8 = getP8(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
+    }
+    #pragma omp section
+    {
+        P9 = getP9(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
+    }
 
 }
-
-cout << "count: "<< Asize << endl;
-
-////#pragma omp parallel sections
-////{
-////    #pragma omp section
-////    {
-        P0 = getP0(x,y,z,r2,alphas, betas ,Asize, Nsize);
-////    }
-////    #pragma omp section
-////    {
-        P1 = getP1(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-////    }
-////    #pragma omp section
-////    {
-        P2 = getP2(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-////    }
-////    #pragma omp section
-////    {
-        P3 = getP3(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-////    }
-////    #pragma omp section
-////    {
-        P4 = getP4(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-////    }
-////    #pragma omp section
-////    {
-        P5 = getP5(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-////    }
-////    #pragma omp section
-////    {
-        P6 = getP6(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-////    }
-////    #pragma omp section
-////    {
-        P7 = getP7(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-////    }
-////    #pragma omp section
-////    {
-        P8 = getP8(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-////    }
-////    #pragma omp section
-////    {
-        P9 = getP9(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-////    }
-
-////}
   for(int i = 0; i < Nsize ; i++){
     for(int j = 0; j < Nsize ; j++){
-      cout << " P2_" << i  << j  <<" : " << P2[i*Nsize + j];
+      cout << " P5_" << i  << j  <<" : " << P5[i*Nsize + j];
     }
     cout << endl;
   }
@@ -1226,9 +1224,9 @@ cout << "count: "<< Asize << endl;
 //    cout << endl;
 //  }
 
-free(x);
-free(y);
-free(z);
+free(x) ;
+free(y) ;
+free(z) ;
 free(P0);
 free(P1);
 free(P2);
