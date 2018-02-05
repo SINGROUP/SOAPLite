@@ -103,9 +103,9 @@ void getPos(double* x, double* y, double* z, double* Apos, double* Hpos, int* ty
     }
 
     for(int i = 0; i < typeNs[Itype]; i++){
-      x[i] =  Apos[shiftType + 3*i    ] - Hpos[3*Ihpos    ];
-      y[i] =  Apos[shiftType + 3*i + 1] - Hpos[3*Ihpos + 1];
-      z[i] =  Apos[shiftType + 3*i + 2] - Hpos[3*Ihpos + 2];
+      x[i] =  Apos[3*shiftType + 3*i    ] - Hpos[3*Ihpos    ];
+      y[i] =  Apos[3*shiftType + 3*i + 1] - Hpos[3*Ihpos + 1];
+      z[i] =  Apos[3*shiftType + 3*i + 2] - Hpos[3*Ihpos + 2];
     }
 
 }
@@ -123,10 +123,10 @@ int getFilteredPos(double* x, double* y, double* z, double* Apos, double* Hpos,
     }
 
     for(int i = 0; i < typeNs[Itype]; i++){
-      X = Apos[shiftType + 3*i    ] - Hpos[3*Ihpos    ];
-      Y = Apos[shiftType + 3*i + 1] - Hpos[3*Ihpos + 1];
-      Z = Apos[shiftType + 3*i + 2] - Hpos[3*Ihpos + 2];
-      if( X*X + Y*Y + Z*Z < 49.0 ){
+      X = Apos[3*shiftType + 3*i    ] - Hpos[3*Ihpos    ];
+      Y = Apos[3*shiftType + 3*i + 1] - Hpos[3*Ihpos + 1];
+      Z = Apos[3*shiftType + 3*i + 2] - Hpos[3*Ihpos + 2];
+      if( X*X + Y*Y + Z*Z < 1000.0 ){
         x[count] = X;
         y[count] = Y;
         z[count] = Z;
@@ -1079,7 +1079,8 @@ types = (int*) malloc(sizeof(int)*Ntypes[0]);
 
 int Asize = 0;
 double* Apos = getApos(totalAN, Ntypes, typeNs, types);
-double* Hpos = getHpos(99);
+double* Hpos = getHpos(1);
+
 
 //x[0] = 0.1;
 //x[1] = -1.0;
@@ -1094,7 +1095,7 @@ double* P1; double* P2; double* P3;
 double* P4; double* P5; double* P6;
 double* P7; double* P8; double* P9;
 
-for(int i = 0; i < 99; i++){
+for(int i = 0; i < 1; i++){
 for(int j = 0; j < Ntypes[0]; j++){
 
 cout << i << endl;
@@ -1149,9 +1150,10 @@ cout << endl;
     }
 
 }
+
   for(int i = 0; i < Nsize ; i++){
     for(int j = 0; j < Nsize ; j++){
-      cout << " P5_" << i  << j  <<" : " << P5[i*Nsize + j];
+      cout << " P0_" << i  << j  <<" : " << P0[i*Nsize + j];
     }
     cout << endl;
   }
