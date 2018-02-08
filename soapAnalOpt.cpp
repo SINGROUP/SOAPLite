@@ -211,13 +211,6 @@ double* getReals(double* x, double* y, int size) {
                                  + 126*p4[i*size+j]*m4[i*size+j] - 84*p2[i*size+j]*m6[i*size+j]);
     }
   }
-//  for (int i = 0; i < 9; i++) {
-//  for (int j = 0; j < size; j++) {
- // for (int k = 0; k < size; k++) {
-//    cout << "Re: " << Re[i*size*size + j*size + k] << endl;
-//  }
-//  }
-//  }
 
   free(p);  free(m); free(p2); free(m2); free(p4); free(m4); free(p6); free(m6); free(p8); free(m8);
 
@@ -268,7 +261,7 @@ double* getP0(double* x, double* y, double* z,double* r2, double* alphas,
 
 //#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
-    for(int nd = 0; nd < Nsize; nd++){
+    for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
       for(int k = 0; k < Nsize; k++){
         for(int kd = 0; kd < Nsize; kd++){
@@ -282,6 +275,11 @@ double* getP0(double* x, double* y, double* z,double* r2, double* alphas,
         }
       }
           P0[Nsize*n + nd] = PI2*0.25*sumsOuter;
+    }
+  }
+  for(int n = 0; n < Nsize; n++){
+    for(int nd = n + 1; nd < Nsize; nd++){
+          P0[Nsize*nd + n] = P0[Nsize*n + nd];
     }
   }
 
@@ -326,7 +324,7 @@ double* getP1(double* x, double* y, double* z,double* r2, double* alphas, double
 
 //#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
-    for(int nd = 0; nd < Nsize; nd++){
+    for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
       for(int k = 0; k < Nsize; k++){
         for(int kd = 0; kd < Nsize; kd++){
@@ -340,6 +338,11 @@ double* getP1(double* x, double* y, double* z,double* r2, double* alphas, double
         }
       }
           P1[Nsize*n + nd] = 3.0*PI2*0.25*sumsOuter;
+    }
+  }
+  for(int n = 0; n < Nsize; n++){
+    for(int nd = n + 1; nd < Nsize; nd++){
+          P1[Nsize*nd + n] = P1[Nsize*n + nd];
     }
   }
 
@@ -392,7 +395,7 @@ double* getP2(double* x, double* y, double* z,double* r2, double* alphas, double
 
 //#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
-    for(int nd = 0; nd < Nsize; nd++){
+    for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
       for(int k = 0; k < Nsize; k++){
         for(int kd = 0; kd < Nsize; kd++){
@@ -406,6 +409,11 @@ double* getP2(double* x, double* y, double* z,double* r2, double* alphas, double
         }
       }
           P2[Nsize*n + nd] = 5.0*PI2*0.0625*sumsOuter;
+    }
+  }
+  for(int n = 0; n < Nsize; n++){
+    for(int nd = n + 1; nd < Nsize; nd++){
+          P2[Nsize*nd + n] = P2[Nsize*n + nd];
     }
   }
 
@@ -461,7 +469,7 @@ double* getP3(double* x, double* y, double* z,double* r2, double* alphas, double
 
 //#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
-    for(int nd = 0; nd < Nsize; nd++){
+    for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
       for(int k = 0; k < Nsize; k++){
         for(int kd = 0; kd < Nsize; kd++){
@@ -477,12 +485,11 @@ double* getP3(double* x, double* y, double* z,double* r2, double* alphas, double
           P3[Nsize*n + nd] = 7.0*PI2*0.0625*sumsOuter;
     }
   }
-//    for(int i = 0; i < Nsize; i++){
-//           for(int j = 0; j < Nsize; j++){
-//            cout << betas[3*Nsize*Nsize + i*Nsize + j] << " ";
-//           }
-//           cout << endl;
-//    }
+  for(int n = 0; n < Nsize; n++){
+    for(int nd = n + 1; nd < Nsize; nd++){
+          P3[Nsize*nd + n] = P3[Nsize*n + nd];
+    }
+  }
 
   free(oneO1PalphaSqrt9);
   free(alphaO1Palpha);
@@ -541,7 +548,7 @@ double* getP4(double* x, double* y, double* z,double* r2, double* alphas, double
 
 //#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
-    for(int nd = 0; nd < Nsize; nd++){
+    for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
       for(int k = 0; k < Nsize; k++){
         for(int kd = 0; kd < Nsize; kd++){
@@ -557,12 +564,11 @@ double* getP4(double* x, double* y, double* z,double* r2, double* alphas, double
           P4[Nsize*n + nd] = 9.0*PI2*0.00390625*sumsOuter;
     }
   }
-//    for(int i = 0; i < Nsize; i++){
-//           for(int j = 0; j < Nsize; j++){
-//            cout << betas[4*Nsize*Nsize + i*Nsize + j] << " ";
-//           }
-//           cout << endl;
-//    }
+  for(int n = 0; n < Nsize; n++){
+    for(int nd = n + 1; nd < Nsize; nd++){
+          P4[Nsize*nd + n] = P4[Nsize*n + nd];
+    }
+  }
 
   free(oneO1PalphaSqrt11);
   free(alphaO1Palpha);
@@ -613,11 +619,6 @@ double* getP5(double* x, double* y, double* z,double* r2, double* alphas, double
     zr3[i] = 3.0*z2 - r2[i];
     zr21[i] = 21*z2*z2 - 14*z2*r2[i] + r2[i]*r2[i];
     zr63[i] = 63*z2*z2 - 70*z2*r2[i] + 15*r2[i]*r2[i];
-//    cout << "z " << z2 << endl;
-//    cout << "z " << zr9[i] << endl;
-//    cout << "z " << zr3[i] << endl;
- //   cout << "z " <<zr21[i] << endl;
-  //  cout << "z " <<zr63[i] << endl;
   }
 
   for(int i = 0; i < Asize; i++){
@@ -629,7 +630,7 @@ double* getP5(double* x, double* y, double* z,double* r2, double* alphas, double
 
 //#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
-    for(int nd = 0; nd < Nsize; nd++){
+    for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
       for(int k = 0; k < Nsize; k++){
         for(int kd = 0; kd < Nsize; kd++){
@@ -646,12 +647,11 @@ double* getP5(double* x, double* y, double* z,double* r2, double* alphas, double
           P5[Nsize*n + nd] = 11.0*PI2*0.00390625*sumsOuter;
     }
   }
-//    for(int i = 0; i < Nsize; i++){
-//           for(int j = 0; j < Nsize; j++){
-//            cout << betas[5*Nsize*Nsize + i*Nsize + j] << " ";
-//           }
-//           cout << endl;
-//    }
+  for(int n = 0; n < Nsize; n++){
+    for(int nd = n + 1; nd < Nsize; nd++){
+          P5[Nsize*nd + n] = P5[Nsize*n + nd];
+    }
+  }
 
   free(oneO1PalphaSqrt13);
   free(alphaO1Palpha);
@@ -660,9 +660,6 @@ double* getP5(double* x, double* y, double* z,double* r2, double* alphas, double
   free(zr3);
   free(zr21);
   free(zr63);
-//  for(int n = 0; n < Nsize*Nsize; n++){
-//      cout << "P5" <<P5[n] << endl;
- // }
   return P5;
 }
 //-----------------------------------------------------------
@@ -718,7 +715,7 @@ double* getP6(double* x, double* y, double* z,double* r2, double* alphas, double
 
 //#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
-    for(int nd = 0; nd < Nsize; nd++){
+    for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
       for(int k = 0; k < Nsize; k++){
         for(int kd = 0; kd < Nsize; kd++){
@@ -734,12 +731,11 @@ double* getP6(double* x, double* y, double* z,double* r2, double* alphas, double
           P6[Nsize*n + nd] = 13.0*PI2*9.765625e-4*sumsOuter;
     }
   }
-//    for(int i = 0; i < Nsize; i++){
-//           for(int j = 0; j < Nsize; j++){
-//            cout << betas[6*Nsize*Nsize + i*Nsize + j] << " ";
-//           }
-//           cout << endl;
-//    }
+  for(int n = 0; n < Nsize; n++){
+    for(int nd = n + 1; nd < Nsize; nd++){
+          P6[Nsize*nd + n] = P6[Nsize*n + nd];
+    }
+  }
 
   free(oneO1PalphaSqrt15);
   free(alphaO1Palpha);
@@ -817,7 +813,7 @@ double* getP7(double* x, double* y, double* z,double* r2, double* alphas, double
 
 //#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
-    for(int nd = 0; nd < Nsize; nd++){
+    for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
       for(int k = 0; k < Nsize; k++){
         for(int kd = 0; kd < Nsize; kd++){
@@ -833,12 +829,11 @@ double* getP7(double* x, double* y, double* z,double* r2, double* alphas, double
           P7[Nsize*n + nd] = 15.0*PI2*9.765625e-4*sumsOuter;
     }
   }
-//    for(int i = 0; i < Nsize; i++){
-//           for(int j = 0; j < Nsize; j++){
-//            cout << betas[7*Nsize*Nsize + i*Nsize + j] << " ";
-//           }
-//           cout << endl;
-//    }
+  for(int n = 0; n < Nsize; n++){
+    for(int nd = n + 1; nd < Nsize; nd++){
+          P7[Nsize*nd + n] = P7[Nsize*n + nd];
+    }
+  }
 
   free(oneO1PalphaSqrt17);
   free(alphaO1Palpha);
@@ -924,7 +919,7 @@ double* getP8(double* x, double* y, double* z,double* r2, double* alphas, double
 
 //#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
-    for(int nd = 0; nd < Nsize; nd++){
+    for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
       for(int k = 0; k < Nsize; k++){
         for(int kd = 0; kd < Nsize; kd++){
@@ -940,12 +935,11 @@ double* getP8(double* x, double* y, double* z,double* r2, double* alphas, double
           P8[Nsize*n + nd] = 17.0*PI2*1.52587890625e-05*sumsOuter;
     }
   }
-//    for(int i = 0; i < Nsize; i++){
-//           for(int j = 0; j < Nsize; j++){
-//            cout << betas[8*Nsize*Nsize + i*Nsize + j] << " ";
-//           }
-//           cout << endl;
-//    }
+  for(int n = 0; n < Nsize; n++){
+    for(int nd = n + 1; nd < Nsize; nd++){
+          P8[Nsize*nd + n] = P8[Nsize*n + nd];
+    }
+  }
 
   free(oneO1PalphaSqrt19);
   free(alphaO1Palpha);
@@ -1036,7 +1030,7 @@ double* getP9(double* x, double* y, double* z,double* r2, double* alphas, double
 
 //#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
-    for(int nd = 0; nd < Nsize; nd++){
+    for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
       for(int k = 0; k < Nsize; k++){
         for(int kd = 0; kd < Nsize; kd++){
@@ -1052,12 +1046,11 @@ double* getP9(double* x, double* y, double* z,double* r2, double* alphas, double
           P9[Nsize*n + nd] = 19.0*PI2*1.52587890625e-05*sumsOuter;
     }
   }
-//    for(int i = 0; i < Nsize; i++){
-//           for(int j = 0; j < Nsize; j++){
-//            cout << betas[9*Nsize*Nsize + i*Nsize + j] << " ";
-//           }
-//           cout << endl;
-//    }
+  for(int n = 0; n < Nsize; n++){
+    for(int nd = n + 1; nd < Nsize; nd++){
+          P9[Nsize*nd + n] = P9[Nsize*n + nd];
+    }
+  }
 
   free(oneO1PalphaSqrt21);
   free(alphaO1Palpha);
@@ -1101,7 +1094,7 @@ types = (int*) malloc(sizeof(int)*Ntypes[0]);
 
 int Asize = 0;
 double* Apos = getApos(totalAN, Ntypes, typeNs, types);
-double* Hpos = getHpos(99);
+double* Hpos = getHpos(9999);
 
 
 //x[0] = 0.1;
@@ -1118,7 +1111,7 @@ double* P4; double* P5; double* P6;
 double* P7; double* P8; double* P9;
 double* r2;
 double* ReX;
-for(int i = 0; i < 99; i++){
+for(int i = 0; i < 9999; i++){
 
 for(int j = 0; j < Ntypes[0]; j++){
 
@@ -1158,18 +1151,18 @@ ReX = getReals(x, y,Asize);
     {
         P6 = getP6(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
     }
-    #pragma omp section
-    {
-        P7 = getP7(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-    }
-    #pragma omp section
-    {
-        P8 = getP8(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-    }
-    #pragma omp section
-    {
-        P9 = getP9(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-    }
+////    #pragma omp section
+////    {
+////        P7 = getP7(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
+////    }
+////    #pragma omp section
+////    {
+////        P8 = getP8(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
+////    }
+////    #pragma omp section
+////    {
+////        P9 = getP9(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
+////    }
 
 }
 
@@ -1183,31 +1176,31 @@ ReX = getReals(x, y,Asize);
       cout << P1[i*Nsize + j]/((double) i + 1)<< " ";
     }
   }
-////  for(int i = 0; i < Nsize ; i++){
-////    for(int j = 0; j < Nsize ; j++){
-////      cout << P2[i*Nsize + j]/((double) i + 1)/((double) i + 1)<< " ";
-////    }
-////  }
-////  for(int i = 0; i < Nsize ; i++){
-////    for(int j = 0; j < Nsize ; j++){
-////      cout << P3[i*Nsize + j]/((double) i + 1)/((double) i + 1)/((double) i + 1)<< " ";
-////    }
-////  }
-////  for(int i = 0; i < Nsize ; i++){
-////    for(int j = 0; j < Nsize ; j++){
-////      cout << P4[i*Nsize + j]/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1) << " ";
-////    }
-////  }
-////  for(int i = 0; i < Nsize ; i++){
-////    for(int j = 0; j < Nsize ; j++){
-////      cout << P5[i*Nsize + j]/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1) << " ";
-////    }
-////  }
-////  for(int i = 0; i < Nsize ; i++){
-////    for(int j = 0; j < Nsize ; j++){
-////      cout << P6[i*Nsize + j]/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1) << " ";
-////    }
-////  }
+  for(int i = 0; i < Nsize ; i++){
+    for(int j = 0; j < Nsize ; j++){
+      cout << P2[i*Nsize + j]/((double) i + 1)/((double) i + 1)<< " ";
+    }
+  }
+  for(int i = 0; i < Nsize ; i++){
+    for(int j = 0; j < Nsize ; j++){
+      cout << P3[i*Nsize + j]/((double) i + 1)/((double) i + 1)/((double) i + 1)<< " ";
+    }
+  }
+  for(int i = 0; i < Nsize ; i++){
+    for(int j = 0; j < Nsize ; j++){
+      cout << P4[i*Nsize + j]/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1) << " ";
+    }
+  }
+  for(int i = 0; i < Nsize ; i++){
+    for(int j = 0; j < Nsize ; j++){
+      cout << P5[i*Nsize + j]/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1) << " ";
+    }
+  }
+  for(int i = 0; i < Nsize ; i++){
+    for(int j = 0; j < Nsize ; j++){
+      cout << P6[i*Nsize + j]/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1) << " ";
+    }
+  }
 ////  for(int i = 0; i < Nsize ; i++){
 ////    for(int j = 0; j < Nsize ; j++){
 ////      cout << P7[i*Nsize + j]/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1) << " ";
