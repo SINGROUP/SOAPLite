@@ -1,7 +1,11 @@
-r=0.00005:0.00005:20.0;
+r = 0.0005:0.0005:10.0 ;
 l=9
 
-as =[1; 2; 3; 4; 5]% 4; 5; 6; 7; 8; 9; 10];
+%as =[0.2; 0.4; 0.6; 0.8; 1.0]% 4; 5; 6; 7; 8; 9; 10];
+%as =[1.25;2.5;3.75; 5];
+as =[1;2;3;4;5];
+%as =[0.5; 1.0; 1.5; 2.0; 2.5; 3.0; 3.5; 4.0; 4.5; 5.0];
+%as = [0.25; 0.5; 0.75; 1.0; 1.25; 1.5; 1.75; 2.0; 2.25; 2.5; 2.75; 3.0; 3.25; 3.5; 3.75; 4.0;4.25; 4.5;4.75; 5.0];
 
 alphasFinal = [];
 Betas = [];
@@ -18,11 +22,13 @@ size(as)(1)
 for i=1:size(as)(1)
 check=0
 while(check==0)
-  alpha = 20*rand();
+  alpha = (l+1)*20/i**1*rand();
   g = r.^l.*exp(-alpha*r.^2);
   ng = g/sqrt(trapz(r,r.*r.*g.*g));
-  x = r(find(1 - cumtrapz(r,r.*r.*ng.*ng) < 0.001))(1) ;
-  if( as(i)+0.001  > x && x > as(i)-0.001 )
+  x = r(find(1 - cumtrapz(r,r.*r.*ng.*ng) < 0.01))(1);
+%  [val, indx] = max(abs(r.*ng));
+%  x = ng(indx);
+  if( as(i) + 0.005  > x && x > as(i) - 0.005 )
     check=1;
     break;
 end
@@ -35,7 +41,7 @@ end
 
 %plot(r,ngs(1,:));
 
-X = zeros(size(as)(1), size(as)(1))
+X = zeros(size(as)(1), size(as)(1));
 
 for i=1:size(as)(1)
   for j=1:size(as)(1)
@@ -43,7 +49,7 @@ for i=1:size(as)(1)
   end
 end
 
-Beta = sqrtm(inv(X))
+Beta = sqrtm(inv(X));
 
 Y = Beta*ngs;
 
@@ -54,13 +60,13 @@ for i=1:size(as)(1)
 end
 
 for i=1:size(as)(1)
-plot(r(1:end/2),r(1:end/2).*r(1:end/2).*Y(1,:)(1:end/2).*Y(1,:)(1:end/2),'r')
+plot(r,r.*r.*Y(1,:).*Y(1,:),'r')
 axis([0 10 -2.5 4])
 hold on
-plot(r(1:end/2),r(1:end/2).*r(1:end/2).*Y(2,:)(1:end/2).*Y(2,:)(1:end/2),'b')
-plot(r(1:end/2),r(1:end/2).*r(1:end/2).*Y(3,:)(1:end/2).*Y(3,:)(1:end/2),'g')
-plot(r(1:end/2),r(1:end/2).*r(1:end/2).*Y(4,:)(1:end/2).*Y(4,:)(1:end/2),'r')
-plot(r(1:end/2),r(1:end/2).*r(1:end/2).*Y(5,:)(1:end/2).*Y(5,:)(1:end/2),'b')
+plot(r,r.*r.*Y(2,:).*Y(2,:),'b')
+plot(r,r.*r.*Y(3,:).*Y(3,:),'g')
+plot(r,r.*r.*Y(4,:).*Y(4,:),'r')
+plot(r,r.*r.*Y(5,:).*Y(5,:),'b')
 end
 Betas = cat(3,Betas,Beta);
 Ys = cat(3,Ys,Y);
