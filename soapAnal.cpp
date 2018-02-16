@@ -18,7 +18,7 @@ double* getAlphas(int alphaSize){
   double f;
   double* alphas = (double*) malloc(alphaSize*10*sizeof(double));
   FILE * pFile;
-  pFile = fopen ("alphas.dat","r");
+  pFile = fopen ("alphasCorr.dat","r");
   for(int i = 0; i < alphaSize*10; i++){
     fscanf (pFile, "%lf", &alphas[i]);
     //  rewind (pFile);
@@ -32,7 +32,8 @@ double* getBetas(int alphaSize){
   double f;
   double* betas = (double*) malloc(alphaSize*alphaSize*10*sizeof(double));
   FILE * pFile;
-  pFile = fopen ("betas.dat","r");
+//  pFile = fopen ("betasCorr.dat","r");
+  pFile = fopen ("betasCorr.dat","r");
   for(int i = 0; i < alphaSize*alphaSize*10; i++){
     fscanf (pFile, "%lf", &betas[i]);
     //  rewind (pFile);
@@ -83,7 +84,10 @@ double* getApos(int* totalAN, int* Ntypes, int* typeNs, int*types){
 double* getHpos(int Hsize){
 
   FILE* pFile;
+//  pFile = fopen("Hsym.dat","r");
   pFile = fopen("H.dat","r");
+//  pFile = fopen("HRot.dat","r");
+//  pFile = fopen("PM.dat","r");
   double* Pos = (double*) malloc(3*sizeof(double)*Hsize);
   for(int i=0; i < Hsize; i++){
       fscanf(pFile, "%lf", &Pos[3*i    ]);
@@ -119,7 +123,7 @@ int getAllPos(double* x, double* y, double* z, double* Apos, double* Hpos, int* 
       X =  Apos[3*i    ] - Hpos[3*Ihpos    ];
       Y =  Apos[3*i + 1] - Hpos[3*Ihpos + 1];
       Z =  Apos[3*i + 2] - Hpos[3*Ihpos + 2];
-      if( X*X + Y*Y + Z*Z < 60.0 ){
+      if( X*X + Y*Y + Z*Z < 50.0 ){
         x[count] = X;
         y[count] = Y;
         z[count] = Z;
@@ -128,7 +132,6 @@ int getAllPos(double* x, double* y, double* z, double* Apos, double* Hpos, int* 
   }
 
   return count;
-
 }
 //-----------------------------------------------------------
 //-----------------------------------------------------------
@@ -147,7 +150,7 @@ int getFilteredPos(double* x, double* y, double* z, double* Apos, double* Hpos,
       X = Apos[3*shiftType + 3*i    ] - Hpos[3*Ihpos    ];
       Y = Apos[3*shiftType + 3*i + 1] - Hpos[3*Ihpos + 1];
       Z = Apos[3*shiftType + 3*i + 2] - Hpos[3*Ihpos + 2];
-      if( X*X + Y*Y + Z*Z < 60.0 ){
+      if( X*X + Y*Y + Z*Z < 50.0 ){
         x[count] = X;
         y[count] = Y;
         z[count] = Z;
@@ -178,7 +181,6 @@ double* getReals(double* x, double* y, int size) {
     for(int j = 0; j < size; j++){
 
       p[i*size + j] =x[i]*x[j] + y[i]*y[j]; m[i*size+j] =x[i]*y[j] - y[i]*x[j];
-
       p2[i*size+j] =p[i*size+j]*p[i*size+j];     m2[i*size+j] =m[i*size+j]*m[i*size+j];
       p4[i*size+j] =p2[i*size+j]*p2[i*size+j];   m4[i*size+j] =m2[i*size+j]*m2[i*size+j];
       p6[i*size+j] =p4[i*size+j]*p2[i*size+j];   m6[i*size+j] =m4[i*size+j]*m2[i*size+j];
@@ -201,8 +203,8 @@ double* getReals(double* x, double* y, int size) {
                                  - 6*p2[i*size+j]*m2[i*size+j];
   Re[4*size*size + i*size + j] = p[i*size+j]*(p4[i*size+j] - 10*p2[i*size+j]*m2[i*size+j]
                                  + 5*m4[i*size+j]);
-  Re[5*size*size + i*size + j] = p6[i*size+j] - m6[i*size+j]  - 15*(p4[i*size+j]*m2[i*size+j]
-                                 - p2[i*size+j]*m4[i*size+j]);
+  Re[5*size*size + i*size + j] = p6[i*size+j] - m6[i*size+j]
+    - 15*(p4[i*size+j]*m2[i*size+j] - p2[i*size+j]*m4[i*size+j]);
   Re[6*size*size + i*size + j] = p[i*size+j]*(p6[i*size+j] - 7*m6[i*size+j] - 21*p4[i*size+j]*m2[i*size+j]
                                  + 35*p2[i*size+j]*m4[i*size+j]);
   Re[7*size*size + i*size + j] = p8[i*size+j] + m8[i*size+j] - 28*(p6[i*size+j]*m2[i*size+j] + p2[i*size+j]*m6[i*size+j])
@@ -211,13 +213,6 @@ double* getReals(double* x, double* y, int size) {
                                  + 126*p4[i*size+j]*m4[i*size+j] - 84*p2[i*size+j]*m6[i*size+j]);
     }
   }
-//  for (int i = 0; i < 9; i++) {
-//  for (int j = 0; j < size; j++) {
- // for (int k = 0; k < size; k++) {
-//    cout << "Re: " << Re[i*size*size + j*size + k] << endl;
-//  }
-//  }
-//  }
 
   free(p);  free(m); free(p2); free(m2); free(p4); free(m4); free(p6); free(m6); free(p8); free(m8);
 
@@ -258,6 +253,7 @@ double* getP0(double* x, double* y, double* z,double* r2, double* alphas,
 
   double* alphaO1Palpha = (double*) malloc(Nsize*sizeof(double));
   double* oneO1PalphaSqrtCubed = (double*) malloc(Nsize*sizeof(double));
+  double* kkdij = (double*) malloc(Nsize*Nsize*Asize*Asize*sizeof(double));
 
   for(int n = 0; n < Nsize; n++){
     oneO1Palpha = 1.0/(1.00000000+alphas[n]);
@@ -266,16 +262,27 @@ double* getP0(double* x, double* y, double* z,double* r2, double* alphas,
     alphaO1Palpha[n] = alphas[n]*oneO1Palpha;
   }
 
+  for(int k = 0; k < Nsize; k++){
+    for(int kd = 0; kd < Nsize; kd++){
+      for(int i = 0; i < Asize; i++){
+        for(int j = 0; j < Asize; j++){
+          kkdij[ k*Nsize*Asize*Asize  + kd*Asize*Asize   +  i*Asize + j]
+                      = exp(-alphaO1Palpha[k]*r2[i] - alphaO1Palpha[kd]*r2[j]);
+        }
+      }
+    }
+  }
+
 //#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
-    for(int nd = 0; nd < Nsize; nd++){
+    for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
       for(int k = 0; k < Nsize; k++){
         for(int kd = 0; kd < Nsize; kd++){
           sumsInner = 0;
           for(int i = 0; i < Asize; i++){
             for(int j = 0; j < Asize; j++){
-              sumsInner += exp(-alphaO1Palpha[k]*r2[i] - alphaO1Palpha[kd]*r2[j]);
+              sumsInner += kkdij[ k*Nsize*Asize*Asize  + kd*Asize*Asize   +  i*Asize + j];
             }
           }
           sumsOuter +=  betas[n*Nsize + k]*betas[nd*Nsize + kd]*oneO1PalphaSqrtCubed[k]*oneO1PalphaSqrtCubed[kd]*sumsInner;
@@ -284,9 +291,15 @@ double* getP0(double* x, double* y, double* z,double* r2, double* alphas,
           P0[Nsize*n + nd] = PI2*0.25*sumsOuter;
     }
   }
+  for(int n = 0; n < Nsize; n++){
+    for(int nd = n + 1; nd < Nsize; nd++){
+          P0[Nsize*nd + n] = P0[Nsize*n + nd];
+    }
+  }
 
  free(oneO1PalphaSqrtCubed);
  free(alphaO1Palpha);
+ free(kkdij);
 
  return P0;
 }
@@ -311,6 +324,7 @@ double* getP1(double* x, double* y, double* z,double* r2, double* alphas, double
   double* alphaO1Palpha = (double*) malloc(Nsize*sizeof(double));
   double* oneO1PalphaSqrt5 = (double*) malloc(Nsize*sizeof(double));
   double* ReXStripe = (double*) malloc(Asize*Asize*sizeof(double));
+  double* kkdij = (double*) malloc(Nsize*Nsize*Asize*Asize*sizeof(double));
 
   for(int n = 0; n < Nsize; n++){
     oneO1Palpha = 1.0/(1.00000000+alphas[Nsize + n]);
@@ -323,17 +337,27 @@ double* getP1(double* x, double* y, double* z,double* r2, double* alphas, double
       ReXStripe[i*Asize + j] = ReX[i*Asize + j] + z[i]*z[j];
     }
   }
+  for(int k = 0; k < Nsize; k++){
+    for(int kd = 0; kd < Nsize; kd++){
+      for(int i = 0; i < Asize; i++){
+        for(int j = 0; j < Asize; j++){
+          kkdij[ k*Nsize*Asize*Asize  + kd*Asize*Asize   +  i*Asize + j]
+              = ReXStripe[i*Asize + j]*exp(-alphaO1Palpha[k]*r2[i] - alphaO1Palpha[kd]*r2[j]);
+        }
+      }
+    }
+  }
 
 //#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
-    for(int nd = 0; nd < Nsize; nd++){
+    for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
       for(int k = 0; k < Nsize; k++){
         for(int kd = 0; kd < Nsize; kd++){
           sumsInner = 0;
           for(int i = 0; i < Asize; i++){
             for(int j = 0; j < Asize; j++){
-              sumsInner += ReXStripe[i*Asize + j]*exp(-alphaO1Palpha[k]*r2[i] - alphaO1Palpha[kd]*r2[j]);
+              sumsInner += kkdij[ k*Nsize*Asize*Asize  + kd*Asize*Asize   +  i*Asize + j];
             }
           }
           sumsOuter +=  betas[Nsize*Nsize + n*Nsize + k]*betas[Nsize*Nsize+nd*Nsize + kd]*oneO1PalphaSqrt5[k]*oneO1PalphaSqrt5[kd]*sumsInner;
@@ -342,10 +366,16 @@ double* getP1(double* x, double* y, double* z,double* r2, double* alphas, double
           P1[Nsize*n + nd] = 3.0*PI2*0.25*sumsOuter;
     }
   }
+  for(int n = 0; n < Nsize; n++){
+    for(int nd = n + 1; nd < Nsize; nd++){
+          P1[Nsize*nd + n] = P1[Nsize*n + nd];
+    }
+  }
 
  free(oneO1PalphaSqrt5);
  free(alphaO1Palpha);
  free(ReXStripe);
+ free(kkdij);
 
  return P1;
 }
@@ -371,6 +401,7 @@ double* getP2(double* x, double* y, double* z,double* r2, double* alphas, double
   double* oneO1PalphaSqrt7 = (double*) malloc(Nsize*sizeof(double));
   double* ReXStripe = (double*) malloc(Asize*Asize*sizeof(double));
   double* zxy2 = (double*) malloc(Asize*sizeof(double));
+  double* kkdij = (double*) malloc(Nsize*Nsize*Asize*Asize*sizeof(double));
 
   for(int n = 0; n < Nsize; n++){
     oneO1Palpha = 1.0/(1.00000000+alphas[2*Nsize + n]);
@@ -386,26 +417,41 @@ double* getP2(double* x, double* y, double* z,double* r2, double* alphas, double
 
   for(int i = 0; i < Asize; i++){
     for(int j = 0; j < Asize; j++){
-      ReXStripe[i*Asize + j] = 3*ReX[Asize*Asize + i*Asize + j] + 12*z[i]*z[j]*ReX[i*Asize + j] + zxy2[i]*zxy2[j];
+      ReXStripe[i*Asize + j] = (3*ReX[Asize*Asize + i*Asize + j] + 12*z[i]*z[j]*ReX[i*Asize + j] + zxy2[i]*zxy2[j]);
     }
   }
 
+  for(int k = 0; k < Nsize; k++){
+    for(int kd = 0; kd < Nsize; kd++){
+      for(int i = 0; i < Asize; i++){
+        for(int j = 0; j < Asize; j++){
+          kkdij[ k*Nsize*Asize*Asize  + kd*Asize*Asize   +  i*Asize + j]
+              = ReXStripe[i*Asize + j]*exp(-alphaO1Palpha[k]*r2[i]-alphaO1Palpha[kd]*r2[j]);
+        }
+      }
+    }
+  }
 //#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
-    for(int nd = 0; nd < Nsize; nd++){
+    for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
       for(int k = 0; k < Nsize; k++){
         for(int kd = 0; kd < Nsize; kd++){
           sumsInner = 0;
           for(int i = 0; i < Asize; i++){
             for(int j = 0; j < Asize; j++){
-              sumsInner += ReXStripe[i*Asize + j]*exp(-alphaO1Palpha[k]*r2[i]-alphaO1Palpha[kd]*r2[j]);
+              sumsInner += kkdij[ k*Nsize*Asize*Asize  + kd*Asize*Asize   +  i*Asize + j];
             }
           }
           sumsOuter +=  betas[2*Nsize*Nsize + n*Nsize + k]*betas[2*Nsize*Nsize+nd*Nsize + kd]*oneO1PalphaSqrt7[k]*oneO1PalphaSqrt7[kd]*sumsInner;
         }
       }
-          P2[Nsize*n + nd] = 5.0*PI2*0.0625*sumsOuter;
+          P2[Nsize*n + nd] = 5.0*PI2*0.0625*sumsOuter;///pow(((double) n + 1)*((double) nd + 1),2);
+    }
+  }
+  for(int n = 0; n < Nsize; n++){
+    for(int nd = n + 1; nd < Nsize; nd++){
+          P2[Nsize*nd + n] = P2[Nsize*n + nd];
     }
   }
 
@@ -413,6 +459,7 @@ double* getP2(double* x, double* y, double* z,double* r2, double* alphas, double
   free(alphaO1Palpha);
   free(ReXStripe);
   free(zxy2);
+ free(kkdij);
 
   return P2;
 }
@@ -439,6 +486,7 @@ double* getP3(double* x, double* y, double* z,double* r2, double* alphas, double
   double* ReXStripe = (double*) malloc(Asize*Asize*sizeof(double));
   double* zxy4 = (double*) malloc(Asize*sizeof(double));
   double* zxy233 = (double*) malloc(Asize*sizeof(double));
+  double* kkdij = (double*) malloc(Nsize*Nsize*Asize*Asize*sizeof(double));
 
   for(int n = 0; n < Nsize; n++){
     oneO1Palpha = 1.0/(1.00000000+alphas[3*Nsize + n]);
@@ -459,36 +507,46 @@ double* getP3(double* x, double* y, double* z,double* r2, double* alphas, double
     }
   }
 
+  for(int k = 0; k < Nsize; k++){
+    for(int kd = 0; kd < Nsize; kd++){
+      for(int i = 0; i < Asize; i++){
+        for(int j = 0; j < Asize; j++){
+          kkdij[ k*Nsize*Asize*Asize  + kd*Asize*Asize   +  i*Asize + j]
+              = ReXStripe[i*Asize + j]*exp(-alphaO1Palpha[k]*r2[i]-alphaO1Palpha[kd]*r2[j]);
+        }
+      }
+    }
+  }
 //#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
-    for(int nd = 0; nd < Nsize; nd++){
+    for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
       for(int k = 0; k < Nsize; k++){
         for(int kd = 0; kd < Nsize; kd++){
           sumsInner = 0;
           for(int i = 0; i < Asize; i++){
             for(int j = 0; j < Asize; j++){
-              sumsInner += ReXStripe[i*Asize + j]*exp(-alphaO1Palpha[k]*r2[i]-alphaO1Palpha[kd]*r2[j]);
+              sumsInner += kkdij[ k*Nsize*Asize*Asize  + kd*Asize*Asize   +  i*Asize + j];
             }
           }
           sumsOuter +=  betas[3*Nsize*Nsize + n*Nsize + k]*betas[3*Nsize*Nsize+nd*Nsize + kd]*oneO1PalphaSqrt9[k]*oneO1PalphaSqrt9[kd]*sumsInner;
         }
       }
-          P3[Nsize*n + nd] = 7.0*PI2*0.0625*sumsOuter;
+          P3[Nsize*n + nd] = 7.0*PI2*0.0625*sumsOuter;///pow(((double) n + 1)*((double) nd + 1),3);
     }
   }
-//    for(int i = 0; i < Nsize; i++){
-//           for(int j = 0; j < Nsize; j++){
-//            cout << betas[3*Nsize*Nsize + i*Nsize + j] << " ";
-//           }
-//           cout << endl;
-//    }
+  for(int n = 0; n < Nsize; n++){
+    for(int nd = n + 1; nd < Nsize; nd++){
+          P3[Nsize*nd + n] = P3[Nsize*n + nd];
+    }
+  }
 
   free(oneO1PalphaSqrt9);
   free(alphaO1Palpha);
   free(ReXStripe);
   free(zxy4);
   free(zxy233);
+ free(kkdij);
 
   return P3;
 }
@@ -517,6 +575,7 @@ double* getP4(double* x, double* y, double* z,double* r2, double* alphas, double
   double* zr7 = (double*) malloc(Asize*sizeof(double));
   double* zr73 = (double*) malloc(Asize*sizeof(double));
   double* zr35 = (double*) malloc(Asize*sizeof(double));
+  double* kkdij = (double*) malloc(Nsize*Nsize*Asize*Asize*sizeof(double));
 
   for(int n = 0; n < Nsize; n++){
     oneO1Palpha = 1.0/(1.00000000+alphas[4*Nsize + n]);
@@ -539,30 +598,39 @@ double* getP4(double* x, double* y, double* z,double* r2, double* alphas, double
     }
   }
 
+  for(int k = 0; k < Nsize; k++){
+    for(int kd = 0; kd < Nsize; kd++){
+      for(int i = 0; i < Asize; i++){
+        for(int j = 0; j < Asize; j++){
+          kkdij[ k*Nsize*Asize*Asize  + kd*Asize*Asize   +  i*Asize + j]
+              = ReXStripe[i*Asize + j]*exp(-alphaO1Palpha[k]*r2[i]-alphaO1Palpha[kd]*r2[j]);
+        }
+      }
+    }
+  }
 //#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
-    for(int nd = 0; nd < Nsize; nd++){
+    for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
       for(int k = 0; k < Nsize; k++){
         for(int kd = 0; kd < Nsize; kd++){
           sumsInner = 0;
           for(int i = 0; i < Asize; i++){
             for(int j = 0; j < Asize; j++){
-              sumsInner += ReXStripe[i*Asize + j]*exp(-alphaO1Palpha[k]*r2[i]-alphaO1Palpha[kd]*r2[j]);
+              sumsInner += kkdij[ k*Nsize*Asize*Asize  + kd*Asize*Asize   +  i*Asize + j];
             }
           }
           sumsOuter +=  betas[4*Nsize*Nsize + n*Nsize + k]*betas[4*Nsize*Nsize+nd*Nsize + kd]*oneO1PalphaSqrt11[k]*oneO1PalphaSqrt11[kd]*sumsInner;
         }
       }
-          P4[Nsize*n + nd] = 9.0*PI2*0.00390625*sumsOuter;
+          P4[Nsize*n + nd] = 9.0*PI2*0.00390625*sumsOuter;///pow(((double) n + 1)*((double) nd + 1),4);
     }
   }
-//    for(int i = 0; i < Nsize; i++){
-//           for(int j = 0; j < Nsize; j++){
-//            cout << betas[4*Nsize*Nsize + i*Nsize + j] << " ";
-//           }
-//           cout << endl;
-//    }
+  for(int n = 0; n < Nsize; n++){
+    for(int nd = n + 1; nd < Nsize; nd++){
+          P4[Nsize*nd + n] = P4[Nsize*n + nd];
+    }
+  }
 
   free(oneO1PalphaSqrt11);
   free(alphaO1Palpha);
@@ -570,6 +638,7 @@ double* getP4(double* x, double* y, double* z,double* r2, double* alphas, double
   free(zr7);
   free(zr73);
   free(zr35);
+ free(kkdij);
 
   return P4;
 }
@@ -599,6 +668,7 @@ double* getP5(double* x, double* y, double* z,double* r2, double* alphas, double
   double* zr3 = (double*) malloc(Asize*sizeof(double));
   double* zr21 = (double*) malloc(Asize*sizeof(double));
   double* zr63 = (double*) malloc(Asize*sizeof(double));
+  double* kkdij = (double*) malloc(Nsize*Nsize*Asize*Asize*sizeof(double));
 
   for(int n = 0; n < Nsize; n++){
     oneO1Palpha = 1.0/(1.00000000+alphas[5*Nsize + n]);
@@ -613,45 +683,47 @@ double* getP5(double* x, double* y, double* z,double* r2, double* alphas, double
     zr3[i] = 3.0*z2 - r2[i];
     zr21[i] = 21*z2*z2 - 14*z2*r2[i] + r2[i]*r2[i];
     zr63[i] = 63*z2*z2 - 70*z2*r2[i] + 15*r2[i]*r2[i];
-//    cout << "z " << z2 << endl;
-//    cout << "z " << zr9[i] << endl;
-//    cout << "z " << zr3[i] << endl;
- //   cout << "z " <<zr21[i] << endl;
-  //  cout << "z " <<zr63[i] << endl;
   }
 
   for(int i = 0; i < Asize; i++){
     for(int j = 0; j < Asize; j++){
       ReXStripe[i*Asize + j] = 31.5*ReX[4*Asize*Asize + i*Asize + j] + z[i]*z[j]*(315*ReX[3*Asize*Asize + i*Asize + j] + 420*zr3[i]*zr3[j]*ReX[Asize*Asize + i*Asize + j] + zr63[i]*zr63[j]) + 17.5*zr9[i]*zr9[j]*ReX[2*Asize*Asize + i*Asize + j] + 15*zr21[i]*zr21[j]*ReX[i*Asize + j];
-//      cout <<"AAA " << ReXStripe[i*Asize + j]<< endl;
     }
   }
 
+  for(int k = 0; k < Nsize; k++){
+    for(int kd = 0; kd < Nsize; kd++){
+      for(int i = 0; i < Asize; i++){
+        for(int j = 0; j < Asize; j++){
+          kkdij[ k*Nsize*Asize*Asize  + kd*Asize*Asize   +  i*Asize + j]
+              = ReXStripe[i*Asize + j]*exp(-alphaO1Palpha[k]*r2[i]-alphaO1Palpha[kd]*r2[j]);
+        }
+      }
+    }
+  }
 //#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
-    for(int nd = 0; nd < Nsize; nd++){
+    for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
       for(int k = 0; k < Nsize; k++){
         for(int kd = 0; kd < Nsize; kd++){
           sumsInner = 0;
           for(int i = 0; i < Asize; i++){
             for(int j = 0; j < Asize; j++){
-              sumsInner += ReXStripe[i*Asize + j]*exp(-alphaO1Palpha[k]*r2[i]-alphaO1Palpha[kd]*r2[j]);
+              sumsInner += kkdij[ k*Nsize*Asize*Asize  + kd*Asize*Asize   +  i*Asize + j];
             }
           }
           sumsOuter +=  betas[5*Nsize*Nsize + n*Nsize + k]*betas[5*Nsize*Nsize+nd*Nsize + kd]*oneO1PalphaSqrt13[k]*oneO1PalphaSqrt13[kd]*sumsInner;
-//              cout << "outer " << oneO1PalphaSqrt13[k] << endl;
         }
       }
-          P5[Nsize*n + nd] = 11.0*PI2*0.00390625*sumsOuter;
+          P5[Nsize*n + nd] = 11.0*PI2*0.00390625*sumsOuter;///pow(((double) n + 1)*((double) nd + 1),5);
     }
   }
-//    for(int i = 0; i < Nsize; i++){
-//           for(int j = 0; j < Nsize; j++){
-//            cout << betas[5*Nsize*Nsize + i*Nsize + j] << " ";
-//           }
-//           cout << endl;
-//    }
+  for(int n = 0; n < Nsize; n++){
+    for(int nd = n + 1; nd < Nsize; nd++){
+          P5[Nsize*nd + n] = P5[Nsize*n + nd];
+    }
+  }
 
   free(oneO1PalphaSqrt13);
   free(alphaO1Palpha);
@@ -660,9 +732,7 @@ double* getP5(double* x, double* y, double* z,double* r2, double* alphas, double
   free(zr3);
   free(zr21);
   free(zr63);
-//  for(int n = 0; n < Nsize*Nsize; n++){
-//      cout << "P5" <<P5[n] << endl;
- // }
+ free(kkdij);
   return P5;
 }
 //-----------------------------------------------------------
@@ -683,6 +753,7 @@ double* getP6(double* x, double* y, double* z,double* r2, double* alphas, double
   double oneO1Palpha;
   double oneO1PalphaSqrt;
   double z2=0;
+  double r4=0;
 
   double* alphaO1Palpha = (double*) malloc(Nsize*sizeof(double));
   double* oneO1PalphaSqrt15 = (double*) malloc(Nsize*sizeof(double));
@@ -692,6 +763,7 @@ double* getP6(double* x, double* y, double* z,double* r2, double* alphas, double
   double* zr3311 = (double*) malloc(Asize*sizeof(double));
   double* zr3330 = (double*) malloc(Asize*sizeof(double));
   double* zr231 = (double*) malloc(Asize*sizeof(double));
+  double* kkdij = (double*) malloc(Nsize*Nsize*Asize*Asize*sizeof(double));
 
   for(int n = 0; n < Nsize; n++){
     oneO1Palpha = 1.0/(1.00000000+alphas[6*Nsize + n]);
@@ -703,29 +775,48 @@ double* getP6(double* x, double* y, double* z,double* r2, double* alphas, double
 
   for(int i = 0; i < Asize; i++){
     z2 = z[i]*z[i];
-    zr11[i] = 11.0*z2 - r2[i];
-    zr113[i] = 11.0*z2 - 3.0*r2[i];
-    zr3311[i] = 33*z2*z2 - 11*z2*r2[i] + r2[i]*r2[i];
-    zr3330[i] = 33*z2*z2 - 30*z2*r2[i] + 5*r2[i]*r2[i];
-    zr231[i] = 231*z2*z2*z2 - 315*z2*z2*r2[i] + 105*z2*r2[i]*r2[i] - 5*r2[i]*r2[i]*r2[i];
+    r4 = r2[i]*r2[i];
+    zr11[i] = 11*z2 - r2[i];
+    zr113[i] = 11*z2 - 3*r2[i];
+    zr3311[i] = 33*z2*z2 - 18*z2*r2[i] + r4;
+    zr3330[i] = 33*z2*z2 - 30*z2*r2[i] + 5*r4;
+    zr231[i] = 231*z2*z2*z2 - 315*z2*z2*r2[i] + 105*z2*r4 - 5*r2[i]*r4;
   }
 
   for(int i = 0; i < Asize; i++){
     for(int j = 0; j < Asize; j++){
-      ReXStripe[i*Asize + j] = 115.5*ReX[5*Asize*Asize + i*Asize + j] + z[i]*z[j]*(1386*ReX[4*Asize*Asize + i*Asize + j] + 210*zr113[i]*zr113[j]*ReX[2*Asize*Asize + i*Asize + j] + 82*zr3330[i]*zr3330[j]*ReX[i*Asize + j]) + 63*zr11[i]*zr11[j]*ReX[3*Asize*Asize + i*Asize + j] + 52.5*zr3311[i]*zr3311[j]*ReX[Asize*Asize + i*Asize + j] + zr231[i]*zr231[j];
+      ReXStripe[i*Asize + j] = 115.5*ReX[5*Asize*Asize + i*Asize + j]
+        + z[i]*z[j]*(
+            1386*ReX[4*Asize*Asize + i*Asize + j]
+            + 210*zr113[i]*zr113[j]*ReX[2*Asize*Asize + i*Asize + j]
+            + 84*zr3330[i]*zr3330[j]*ReX[i*Asize + j]
+            )
+        + 63*zr11[i]*zr11[j]*ReX[3*Asize*Asize + i*Asize + j]
+        + 52.5*zr3311[i]*zr3311[j]*ReX[Asize*Asize + i*Asize + j]
+        + zr231[i]*zr231[j];
     }
   }
 
+  for(int k = 0; k < Nsize; k++){
+    for(int kd = 0; kd < Nsize; kd++){
+      for(int i = 0; i < Asize; i++){
+        for(int j = 0; j < Asize; j++){
+          kkdij[ k*Nsize*Asize*Asize  + kd*Asize*Asize   +  i*Asize + j]
+              = ReXStripe[i*Asize + j]*exp(-alphaO1Palpha[k]*r2[i]-alphaO1Palpha[kd]*r2[j]);
+        }
+      }
+    }
+  }
 //#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
-    for(int nd = 0; nd < Nsize; nd++){
+    for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
       for(int k = 0; k < Nsize; k++){
         for(int kd = 0; kd < Nsize; kd++){
           sumsInner = 0;
           for(int i = 0; i < Asize; i++){
             for(int j = 0; j < Asize; j++){
-              sumsInner += ReXStripe[i*Asize + j]*exp(-alphaO1Palpha[k]*r2[i]-alphaO1Palpha[kd]*r2[j]);
+              sumsInner += kkdij[ k*Nsize*Asize*Asize  + kd*Asize*Asize   +  i*Asize + j];
             }
           }
           sumsOuter +=  betas[6*Nsize*Nsize + n*Nsize + k]*betas[6*Nsize*Nsize+nd*Nsize + kd]*oneO1PalphaSqrt15[k]*oneO1PalphaSqrt15[kd]*sumsInner;
@@ -734,12 +825,11 @@ double* getP6(double* x, double* y, double* z,double* r2, double* alphas, double
           P6[Nsize*n + nd] = 13.0*PI2*9.765625e-4*sumsOuter;
     }
   }
-//    for(int i = 0; i < Nsize; i++){
-//           for(int j = 0; j < Nsize; j++){
-//            cout << betas[6*Nsize*Nsize + i*Nsize + j] << " ";
-//           }
-//           cout << endl;
-//    }
+  for(int n = 0; n < Nsize; n++){
+    for(int nd = n + 1; nd < Nsize; nd++){
+          P6[Nsize*nd + n] = P6[Nsize*n + nd];
+    }
+  }
 
   free(oneO1PalphaSqrt15);
   free(alphaO1Palpha);
@@ -749,6 +839,7 @@ double* getP6(double* x, double* y, double* z,double* r2, double* alphas, double
   free(zr3311);
   free(zr3330);
   free(zr231);
+ free(kkdij);
 
   return P6;
 }
@@ -780,6 +871,7 @@ double* getP7(double* x, double* y, double* z,double* r2, double* alphas, double
   double* zr1431 = (double*) malloc(Asize*sizeof(double));
   double* zr4294 = (double*) malloc(Asize*sizeof(double));
   double* zr4296 = (double*) malloc(Asize*sizeof(double));
+  double* kkdij = (double*) malloc(Nsize*Nsize*Asize*Asize*sizeof(double));
 
   for(int n = 0; n < Nsize; n++){
     oneO1Palpha = 1.0/(1.00000000+alphas[7*Nsize + n]);
@@ -815,16 +907,26 @@ double* getP7(double* x, double* y, double* z,double* r2, double* alphas, double
     }
   }
 
+  for(int k = 0; k < Nsize; k++){
+    for(int kd = 0; kd < Nsize; kd++){
+      for(int i = 0; i < Asize; i++){
+        for(int j = 0; j < Asize; j++){
+          kkdij[ k*Nsize*Asize*Asize  + kd*Asize*Asize   +  i*Asize + j]
+              = ReXStripe[i*Asize + j]*exp(-alphaO1Palpha[k]*r2[i]-alphaO1Palpha[kd]*r2[j]);
+        }
+      }
+    }
+  }
 //#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
-    for(int nd = 0; nd < Nsize; nd++){
+    for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
       for(int k = 0; k < Nsize; k++){
         for(int kd = 0; kd < Nsize; kd++){
           sumsInner = 0;
           for(int i = 0; i < Asize; i++){
             for(int j = 0; j < Asize; j++){
-              sumsInner += ReXStripe[i*Asize + j]*exp(-alphaO1Palpha[k]*r2[i]-alphaO1Palpha[kd]*r2[j]);
+              sumsInner += kkdij[ k*Nsize*Asize*Asize  + kd*Asize*Asize   +  i*Asize + j];
             }
           }
           sumsOuter +=  betas[7*Nsize*Nsize + n*Nsize + k]*betas[7*Nsize*Nsize+nd*Nsize + kd]*oneO1PalphaSqrt17[k]*oneO1PalphaSqrt17[kd]*sumsInner;
@@ -833,12 +935,11 @@ double* getP7(double* x, double* y, double* z,double* r2, double* alphas, double
           P7[Nsize*n + nd] = 15.0*PI2*9.765625e-4*sumsOuter;
     }
   }
-//    for(int i = 0; i < Nsize; i++){
-//           for(int j = 0; j < Nsize; j++){
-//            cout << betas[7*Nsize*Nsize + i*Nsize + j] << " ";
-//           }
-//           cout << endl;
-//    }
+  for(int n = 0; n < Nsize; n++){
+    for(int nd = n + 1; nd < Nsize; nd++){
+          P7[Nsize*nd + n] = P7[Nsize*n + nd];
+    }
+  }
 
   free(oneO1PalphaSqrt17);
   free(alphaO1Palpha);
@@ -849,6 +950,7 @@ double* getP7(double* x, double* y, double* z,double* r2, double* alphas, double
   free(zr1431);
   free(zr4294);
   free(zr4296);
+ free(kkdij);
 
   return P7;
 }
@@ -882,6 +984,7 @@ double* getP8(double* x, double* y, double* z,double* r2, double* alphas, double
   double* zr143 = (double*) malloc(Asize*sizeof(double));
   double* zr715 = (double*) malloc(Asize*sizeof(double));
   double* zr6435 = (double*) malloc(Asize*sizeof(double));
+  double* kkdij = (double*) malloc(Nsize*Nsize*Asize*Asize*sizeof(double));
 
   for(int n = 0; n < Nsize; n++){
     oneO1Palpha = 1.0/(1.0 + alphas[8*Nsize + n]);
@@ -922,16 +1025,26 @@ double* getP8(double* x, double* y, double* z,double* r2, double* alphas, double
     }
   }
 
+  for(int k = 0; k < Nsize; k++){
+    for(int kd = 0; kd < Nsize; kd++){
+      for(int i = 0; i < Asize; i++){
+        for(int j = 0; j < Asize; j++){
+          kkdij[ k*Nsize*Asize*Asize  + kd*Asize*Asize   +  i*Asize + j]
+              = ReXStripe[i*Asize + j]*exp(-alphaO1Palpha[k]*r2[i]-alphaO1Palpha[kd]*r2[j]);
+        }
+      }
+    }
+  }
 //#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
-    for(int nd = 0; nd < Nsize; nd++){
+    for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
       for(int k = 0; k < Nsize; k++){
         for(int kd = 0; kd < Nsize; kd++){
           sumsInner = 0;
           for(int i = 0; i < Asize; i++){
             for(int j = 0; j < Asize; j++){
-              sumsInner += ReXStripe[i*Asize + j]*exp(-alphaO1Palpha[k]*r2[i]-alphaO1Palpha[kd]*r2[j]);
+              sumsInner += kkdij[ k*Nsize*Asize*Asize  + kd*Asize*Asize   +  i*Asize + j];
             }
           }
           sumsOuter +=  betas[8*Nsize*Nsize + n*Nsize + k]*betas[8*Nsize*Nsize+nd*Nsize + kd]*oneO1PalphaSqrt19[k]*oneO1PalphaSqrt19[kd]*sumsInner;
@@ -940,12 +1053,11 @@ double* getP8(double* x, double* y, double* z,double* r2, double* alphas, double
           P8[Nsize*n + nd] = 17.0*PI2*1.52587890625e-05*sumsOuter;
     }
   }
-//    for(int i = 0; i < Nsize; i++){
-//           for(int j = 0; j < Nsize; j++){
-//            cout << betas[8*Nsize*Nsize + i*Nsize + j] << " ";
-//           }
-//           cout << endl;
-//    }
+  for(int n = 0; n < Nsize; n++){
+    for(int nd = n + 1; nd < Nsize; nd++){
+          P8[Nsize*nd + n] = P8[Nsize*n + nd];
+    }
+  }
 
   free(oneO1PalphaSqrt19);
   free(alphaO1Palpha);
@@ -957,6 +1069,7 @@ double* getP8(double* x, double* y, double* z,double* r2, double* alphas, double
   free(zr143);
   free(zr715);
   free(zr6435);
+ free(kkdij);
 
   return P8;
 }
@@ -991,6 +1104,7 @@ double* getP9(double* x, double* y, double* z,double* r2, double* alphas, double
   double* zr2212 = (double*) malloc(Asize*sizeof(double));
   double* zr2431 = (double*) malloc(Asize*sizeof(double));
   double* zr12155 = (double*) malloc(Asize*sizeof(double));
+  double* kkdij = (double*) malloc(Nsize*Nsize*Asize*Asize*sizeof(double));
 
   for(int n = 0; n < Nsize; n++){
     oneO1Palpha = 1.0/(1.0 + alphas[9*Nsize + n]);
@@ -1034,16 +1148,26 @@ double* getP9(double* x, double* y, double* z,double* r2, double* alphas, double
     }
   }
 
+  for(int k = 0; k < Nsize; k++){
+    for(int kd = 0; kd < Nsize; kd++){
+      for(int i = 0; i < Asize; i++){
+        for(int j = 0; j < Asize; j++){
+          kkdij[ k*Nsize*Asize*Asize  + kd*Asize*Asize   +  i*Asize + j]
+              = ReXStripe[i*Asize + j]*exp(-alphaO1Palpha[k]*r2[i]-alphaO1Palpha[kd]*r2[j]);
+        }
+      }
+    }
+  }
 //#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
-    for(int nd = 0; nd < Nsize; nd++){
+    for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
       for(int k = 0; k < Nsize; k++){
         for(int kd = 0; kd < Nsize; kd++){
           sumsInner = 0;
           for(int i = 0; i < Asize; i++){
             for(int j = 0; j < Asize; j++){
-              sumsInner += ReXStripe[i*Asize + j]*exp(-alphaO1Palpha[k]*r2[i]-alphaO1Palpha[kd]*r2[j]);
+              sumsInner += kkdij[ k*Nsize*Asize*Asize  + kd*Asize*Asize   +  i*Asize + j];
             }
           }
           sumsOuter +=  betas[9*Nsize*Nsize + n*Nsize + k]*betas[9*Nsize*Nsize+nd*Nsize + kd]*oneO1PalphaSqrt21[k]*oneO1PalphaSqrt21[kd]*sumsInner;
@@ -1052,12 +1176,11 @@ double* getP9(double* x, double* y, double* z,double* r2, double* alphas, double
           P9[Nsize*n + nd] = 19.0*PI2*1.52587890625e-05*sumsOuter;
     }
   }
-//    for(int i = 0; i < Nsize; i++){
-//           for(int j = 0; j < Nsize; j++){
-//            cout << betas[9*Nsize*Nsize + i*Nsize + j] << " ";
-//           }
-//           cout << endl;
-//    }
+  for(int n = 0; n < Nsize; n++){
+    for(int nd = n + 1; nd < Nsize; nd++){
+          P9[Nsize*nd + n] = P9[Nsize*n + nd];
+    }
+  }
 
   free(oneO1PalphaSqrt21);
   free(alphaO1Palpha);
@@ -1070,6 +1193,7 @@ double* getP9(double* x, double* y, double* z,double* r2, double* alphas, double
   free(zr2212);
   free(zr2431);
   free(zr12155);
+ free(kkdij);
 
   return P9;
 
@@ -1077,7 +1201,7 @@ double* getP9(double* x, double* y, double* z,double* r2, double* alphas, double
 //-----------------------------------------------------------
 //-----------------------------------------------------------
 int main(int argc, char* argv[]) {
-    std::cout.precision(6);
+    std::cout.precision(10);
 
 int*  totalAN = (int*) malloc(sizeof(int));
 int*  Ntypes = (int*) malloc(sizeof(int));
@@ -1101,15 +1225,8 @@ types = (int*) malloc(sizeof(int)*Ntypes[0]);
 
 int Asize = 0;
 double* Apos = getApos(totalAN, Ntypes, typeNs, types);
-double* Hpos = getHpos(99);
-
-
-//x[0] = 0.1;
-//x[1] = -1.0;
-//y[0] = 1.0;
-//y[1] = -1.0;
-//z[0] = 1.0;
-//z[1] = -1.0;
+double* Hpos = getHpos(9999);
+//double* Hpos = getHpos(51);
 
 
 double* P0;
@@ -1118,15 +1235,20 @@ double* P4; double* P5; double* P6;
 double* P7; double* P8; double* P9;
 double* r2;
 double* ReX;
-for(int i = 0; i < 99; i++){
-
+//double divVal = 1/atof(argv[1]);
+double divVal = 1;
+for(int i = 0; i < 9999; i++){
+//for(int i = 0; i < 51; i++){
 for(int j = 0; j < Ntypes[0]; j++){
 
 Asize = getFilteredPos(x, y, z, Apos, Hpos, typeNs, i, j);
-r2 = getR2(x, y, z, Asize);
-ReX = getReals(x, y,Asize);
 
-//cout << endl;
+r2 = getR2(x, y, z, Asize);
+ReX = getReals(x, y, Asize);
+
+divVal = 1; 
+
+//cout << i << " " << j << " div " << divVal << endl;
 
 #pragma omp parallel sections
 {
@@ -1140,9 +1262,9 @@ ReX = getReals(x, y,Asize);
     }
     #pragma omp section
     {
-        P2 = getP2(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-    }
-    #pragma omp section
+        P2 = getP2(x,y,z,r2,alphas, betas ,Asize, Nsize, ReX);
+   }
+   #pragma omp section
     {
         P3 = getP3(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
     }
@@ -1158,20 +1280,22 @@ ReX = getReals(x, y,Asize);
     {
         P6 = getP6(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
     }
-    #pragma omp section
-    {
-        P7 = getP7(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-    }
-    #pragma omp section
-    {
-        P8 = getP8(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-    }
-    #pragma omp section
-    {
-        P9 = getP9(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-    }
+//    #pragma omp section
+//    {
+//        P7 = getP7(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
+//    }
+//    #pragma omp section
+//    {
+//        P8 = getP8(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
+//    }
+//    #pragma omp section
+//    {
+//        P9 = getP9(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
+//    }
 
 }
+//
+//------PRINT------------------------------
 
   for(int i = 0; i < Nsize ; i++){
     for(int j = 0; j < Nsize ; j++){
@@ -1180,57 +1304,54 @@ ReX = getReals(x, y,Asize);
   }
   for(int i = 0; i < Nsize ; i++){
     for(int j = 0; j < Nsize ; j++){
-      cout << P1[i*Nsize + j]/((double) i + 1)<< " ";
+      cout << P1[i*Nsize + j]*divVal<< " ";
     }
   }
-////  for(int i = 0; i < Nsize ; i++){
-////    for(int j = 0; j < Nsize ; j++){
-////      cout << P2[i*Nsize + j]/((double) i + 1)/((double) i + 1)<< " ";
-////    }
-////  }
-////  for(int i = 0; i < Nsize ; i++){
-////    for(int j = 0; j < Nsize ; j++){
-////      cout << P3[i*Nsize + j]/((double) i + 1)/((double) i + 1)/((double) i + 1)<< " ";
-////    }
-////  }
-////  for(int i = 0; i < Nsize ; i++){
-////    for(int j = 0; j < Nsize ; j++){
-////      cout << P4[i*Nsize + j]/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1) << " ";
-////    }
-////  }
-////  for(int i = 0; i < Nsize ; i++){
-////    for(int j = 0; j < Nsize ; j++){
-////      cout << P5[i*Nsize + j]/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1) << " ";
-////    }
-////  }
-////  for(int i = 0; i < Nsize ; i++){
-////    for(int j = 0; j < Nsize ; j++){
-////      cout << P6[i*Nsize + j]/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1) << " ";
-////    }
-////  }
-////  for(int i = 0; i < Nsize ; i++){
-////    for(int j = 0; j < Nsize ; j++){
-////      cout << P7[i*Nsize + j]/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1) << " ";
-////    }
-////  }
-////  for(int i = 0; i < Nsize ; i++){
-////    for(int j = 0; j < Nsize ; j++){
-////      cout << P8[i*Nsize + j]/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1) << " ";
-////    }
-////  }
-////  for(int i = 0; i < Nsize ; i++){
-////    for(int j = 0; j < Nsize ; j++){
-////      cout << P9[i*Nsize + j]/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)<< " ";
-////    }
-////  }
+  for(int i = 0; i < Nsize ; i++){
+    for(int j = 0; j < Nsize ; j++){
+      cout << P2[i*Nsize + j]*divVal*divVal<< " ";
+   }
+  }
+  for(int i = 0; i < Nsize ; i++){
+    for(int j = 0; j < Nsize ; j++){
+      cout << P3[i*Nsize + j]*divVal*divVal*divVal<< " ";
+    }
+  }
+  for(int i = 0; i < Nsize ; i++){
+    for(int j = 0; j < Nsize ; j++){
+      cout << P4[i*Nsize + j]*divVal*divVal*divVal*divVal << " ";
+    }
+  }
+  for(int i = 0; i < Nsize ; i++){
+    for(int j = 0; j < Nsize ; j++){
+      cout << P5[i*Nsize + j]*divVal*divVal*divVal*divVal*divVal << " ";
+    }
+  }
+  for(int i = 0; i < Nsize ; i++){
+    for(int j = 0; j < Nsize ; j++){
+      cout << P6[i*Nsize + j]*divVal*divVal*divVal*divVal*divVal*divVal << " ";
+    }
+  }
+//  for(int i = 0; i < Nsize ; i++){
+//    for(int j = 0; j < Nsize ; j++){
+//      cout << P7[i*Nsize + j]*divVal*divVal*divVal*divVal*divVal*divVal*divVal << " ";
+//    }
+//  }
+//  for(int i = 0; i < Nsize ; i++){
+//    for(int j = 0; j < Nsize ; j++){
+//      cout << P8[i*Nsize + j]*divVal*divVal*divVal*divVal*divVal*divVal*divVal*divVal << " ";
+//    }
+//  }
+//  for(int i = 0; i < Nsize ; i++){
+//    for(int j = 0; j < Nsize ; j++){
+//      cout << P9[i*Nsize + j]*divVal*divVal*divVal*divVal*divVal*divVal*divVal*divVal*divVal<< " ";
+//    }
+//  }
 }
 //-------------- a + b -----------------
 //Asize = getAllPos(x, y, z, Apos, Hpos, typeNs, i,totalAN[0]);
 //r2 = getR2(x, y, z, Asize);
 //ReX = getReals(x, y, Asize);
-//
-////cout << endl;
-//
 //#pragma omp parallel sections
 //{
 //    #pragma omp section
@@ -1275,7 +1396,6 @@ ReX = getReals(x, y,Asize);
 //    }
 //
 //}
-//
 //  for(int i = 0; i < Nsize ; i++){
 //    for(int j = 0; j < Nsize ; j++){
 //      cout << P0[i*Nsize + j] << " ";
@@ -1283,27 +1403,27 @@ ReX = getReals(x, y,Asize);
 //  }
 //  for(int i = 0; i < Nsize ; i++){
 //    for(int j = 0; j < Nsize ; j++){
-//      cout << P1[i*Nsize + j]/((double) i + 1)<< " ";
+//      cout << P1[i*Nsize + j]*divVal<< " ";
 //    }
 //  }
 //  for(int i = 0; i < Nsize ; i++){
 //    for(int j = 0; j < Nsize ; j++){
-//      cout << P2[i*Nsize + j]/((double) i + 1)/((double) i + 1)<< " ";
+//      cout << P2[i*Nsize + j]*divVal*divVal<< " ";
 //    }
 //  }
 //  for(int i = 0; i < Nsize ; i++){
 //    for(int j = 0; j < Nsize ; j++){
-//      cout << P3[i*Nsize + j]/((double) i + 1)/((double) i + 1)/((double) i + 1)<< " ";
+//      cout << P3[i*Nsize + j]*divVal*divVal*divVal<< " ";
 //    }
 //  }
 //  for(int i = 0; i < Nsize ; i++){
 //    for(int j = 0; j < Nsize ; j++){
-//      cout << P4[i*Nsize + j]/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)<< " ";
+//      cout << P4[i*Nsize + j]*divVal*divVal*divVal*divVal<< " ";
 //    }
 //  }
 //  for(int i = 0; i < Nsize ; i++){
 //    for(int j = 0; j < Nsize ; j++){
-//      cout << P5[i*Nsize + j]/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)<< " ";
+//      cout << P5[i*Nsize + j]*divVal*divVal*divVal*divVal*divVal<< " ";
 //    }
 //  }
 //  for(int i = 0; i < Nsize ; i++){
@@ -1326,18 +1446,19 @@ ReX = getReals(x, y,Asize);
 //      cout << P9[i*Nsize + j]/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)/((double) i + 1)<< " ";
 //    }
 //  }
+
 cout << endl;
 }
 
-free(x) ;
-free(y) ;
-free(z) ;
-free(P0);
-free(P1);
-free(P2);
-free(P3);
-free(P4);
-free(P5);
-free(P6);
+//free(x) ;
+//free(y) ;
+//free(z) ;
+//free(P0);
+//free(P1);
+//free(P2);
+//free(P3);
+//free(P4);
+//free(P5);
+//free(P6);
 
 }

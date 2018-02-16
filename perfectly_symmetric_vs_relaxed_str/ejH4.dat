@@ -1,0 +1,2 @@
+
+error: Mat::init(): requested size is too large; suggest to compile in C++11 mode or enable ARMA_64BIT_WORD
