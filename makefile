@@ -1,4 +1,4 @@
 all:
-	g++ -O3  soapAnalOptOpt.cpp 
+	g++ -O3  soapAnal.cpp 
 omp:
-	g++ -O3  soapAnalOptOpt.cpp -fopenmp
+	g++ -O3  soapAnal.cpp -fopenmp
