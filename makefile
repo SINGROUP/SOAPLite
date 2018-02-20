@@ -1,4 +1,2 @@
 all:
-	g++ -O3  soapAnal.cpp 
-omp:
-	g++ -O3  soapAnal.cpp -fopenmp
+	g++ -fPIC -O3 -shared -o libsoapPy.so soapAnalPy.cpp
