@@ -1271,7 +1271,7 @@ double* soap(double* c, double* Apos,double* Hpos,int* typeNs, int totalAN,int N
 
      if(l > 0){
        P1 = getP1(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-       getPM(soapMat,P1,Nsize,:lS,Hsize,j,1,i);
+       getPM(soapMat,P1,Nsize,lS,Hsize,j,1,i);
      }
      if(l > 1){
        P2 = getP2(x,y,z,r2,alphas, betas ,Asize, Nsize, ReX);
