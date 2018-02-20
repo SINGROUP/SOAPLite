@@ -6,38 +6,32 @@ import ase, ase.io
 
 def format_ase2clusgeo(obj):
     """ Takes an ase Atoms object and returns numpy arrays and integers
-    which are read by the internal clusgeo
+    which are read by the internal clusgeo. Apos is currently a flattened
+    out numpy array
     """
     #atoms metadata
-    typeNs
-    totalAN =
-    Ntypes
-    Nsize
-    l
-    Hsize
-    totnum = len(structure)
-    atomtype_set = set(structure.get_atomic_numbers())
+    totalAN = len(obj)
+
+    atomtype_set = set(obj.get_atomic_numbers())
     num_atomtypes = len(atomtype_set)
 
     atomtype_lst = np.sort(list(atomtype_set))
     n_atoms_per_type_lst = []
     pos_lst = []
     for atomtype in atomtype_lst:
-        condition = structure.get_atomic_numbers() == atomtype
-        pos_onetype = structure.get_positions()[condition]
+        condition = obj.get_atomic_numbers() == atomtype
+        pos_onetype = obj.get_positions()[condition]
         n_onetype = pos_onetype.shape[0]
 
         # store data in lists
         pos_lst.append(pos_onetype)
         n_atoms_per_type_lst.append(n_onetype)
 
-        print(len(pos_lst))
-
-    print(n_atoms_per_type_lst)
-    print(pos_lst)
-
-
-
+    typeNs = atomtype_lst
+    Ntypes = len(n_atoms_per_type_lst)
+    Nsize = n_atoms_per_type_lst
+    Apos = np.concatenate(pos_lst).ravel()
+    return Apos, typeNs, Ntypes, Nsize
 
 ### INPUT ###
 
@@ -58,8 +52,15 @@ rootname = inpfile.replace(".xyz", "")
 ### PROCESS ###
 structure = ase.io.read(inpfile, index = -1)
 
-results = format_ase2clusgeo(structure)
-
+Apos, typeNs, Ntypes, Nsize = format_ase2clusgeo(structure)
+print("Apos")
+print(Apos)
+print("typeNs")
+print(typeNs)
+print("Ntypes")
+print(Ntypes)
+print("Nsize")
+print(Nsize)
 
 ### START SOAP###
 #libsoap = CDLL('./libsoapPy.so')
