@@ -31,7 +31,48 @@ def format_ase2clusgeo(obj):
     Ntypes = len(n_atoms_per_type_lst)
     Nsize = n_atoms_per_type_lst
     Apos = np.concatenate(pos_lst).ravel()
-    return Apos, typeNs, Ntypes, Nsize
+    return Apos, typeNs, Ntypes, Nsize, totalAN
+
+
+def soap(obj, Hpos, NradBas=4, Lmax=5):
+
+    # get clusgeo internal format for c-code
+    Apos, typeNs, Ntypes, Nsize, totalAN = format_ase2clusgeo(obj)
+    # flatten Hpos array
+    Hpos = np.array(Hpos)
+    Hsize = Hpos.shape[0]
+    Hpos = Hpos.flatten()
+
+    # convert int to c_int
+    l = c_int(Lmax)
+    Hsize = c_int(Hsize)
+    Ntypes = c_int(Ntypes)
+    totalAN = c_int(totalAN)
+
+    #convert int array to c_int array
+    typeNs = (c_int * len(typeNs))(*typeNs)
+    Nsize = (c_int * len(Nsize))(*Nsize)
+
+    print(l, Hsize, Ntypes, totalAN, typeNs, Nsize)
+    # convert to c_double arrays
+    #Apos
+    axyz = (c_double * len(Apos))(*Apos)
+    #Hpos
+    hxyz = (c_double * len(Hpos))(*Hpos)
+    #   c = libsoap.soap(c, axyz,hxyz,totalAN, Ntypes, Nsize, l, Hsize)
+    #   soap(axyz,typeNs.data_as(c_double_p),totalAN, Ntypes, Nsize, l, Hsize))
+
+    ### START SOAP###
+    libsoap = CDLL('./libsoapPy.so')
+    libsoap.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double), POINTER (c_int),c_int,c_int,c_int,c_int,c_int]
+
+    libsoap.soap.restype = POINTER (c_double)
+
+    c = libsoap.soap(axyz,hxyz,typeNs,totalAN, Ntypes, Nsize, l, Hsize)
+    #numArrya = array(c)
+    #   return c;
+    return np.ctypeslib.as_array(c, shape=(Hsize,NradBas*NradBas*(lmax+1)*Ntypes))
+
 
 ### INPUT ###
 
@@ -52,7 +93,7 @@ rootname = inpfile.replace(".xyz", "")
 ### PROCESS ###
 structure = ase.io.read(inpfile, index = -1)
 
-Apos, typeNs, Ntypes, Nsize = format_ase2clusgeo(structure)
+Apos, typeNs, Ntypes, Nsize, totalAN = format_ase2clusgeo(structure)
 print("Apos")
 print(Apos)
 print("typeNs")
@@ -62,45 +103,5 @@ print(Ntypes)
 print("Nsize")
 print(Nsize)
 
-### START SOAP###
-#libsoap = CDLL('./libsoapPy.so')
-#libsoap.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double), POINTER (c_int),c_int,c_int,c_int,c_int,c_int]
-
-#libsoap.soap.restype = POINTER (c_double)
-
-def soap(Apos, Hpos, NradBas=4, Lmax=5):
-
-    types = set()
-    for i in Apos: types.add(i[0])
-    Ntypes = len(types)
-
-    c = (c_double*(NradBas*NradBas*(Lmax+1)*Ntypes*len(Hpos)))
-    axyz = (c_double*(len(Apos)*3))()
-    hxyz = (c_double*(len(Hpos)*3))()
-
-    for i in range(len(Apos)):
-        axyz[3*i + 0] = c_double(Apos[i][1])
-        axyz[3*i + 1] = c_double(Apos[i][2])
-        axyz[3*i + 2] = c_double(Apos[i][3])
-    for i in range(len(Hpos)):
-        hxyz[3*i + 0] = c_double(Hpos[i][1])
-        hxyz[3*i + 1] = c_double(Hpos[i][2])
-        hxyz[3*i + 2] = c_double(Hpos[i][3])
-    #   c = libsoap.soap(c, axyz,hxyz,totalAN, Ntypes, Nsize, l, Hsize)
-    #   soap(axyz,typeNs.data_as(c_double_p),totalAN, Ntypes, Nsize, l, Hsize))
-    # transform into c_type types
-    # axyz
-    # hxyz
-    """
-    typeNs
-    totalAN =
-    Ntypes
-    Nsize
-    l
-    Hsize
-    """
-
-    soap(axyz,hxyz,typeNs,totalAN, Ntypes, Nsize, l, Hsize)
-    numArrya = array(c)
-#   return c;
-    return numpy.ctypeslib.as_array(c, shape=(Hsize,NradBas*NradBas*(lmax+1)*Ntypes))
+Hpos = [[2.3, 4.1 ,3.5],[2.2,3.3,4.4]]
+soap(structure, Hpos)
