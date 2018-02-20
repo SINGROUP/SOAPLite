@@ -54,7 +54,7 @@ def soap(Apos, Hpos, NradBas=4, Lmax=5):
 
 	types = set()
 	for i in Apos: types.add(i[0])
-	Ntypes = len(types)
+	Ntypes = c_int len(types)
 
 	c = (c_double*(NradBas*NradBas*(Lmax+1)*Ntypes*len(Hpos)))
 	axyz = (c_double*(len(Apos)*3))()
@@ -69,10 +69,10 @@ def soap(Apos, Hpos, NradBas=4, Lmax=5):
 		hxyz[3*i + 1] = c_double(Hpos[i][2])
 		hxyz[3*i + 2] = c_double(Hpos[i][3])
 
-#	c = libsoap.soap(c, axyz,hxyz,totalAN, Ntypes, Nsize, l, Hsize)
+	c = libsoap.soap(c, axyz,hxyz, typesNs,totalAN, Ntypes, Nsize, l, Hsize)
 
 #	soap(axyz,typeNs.data_as(c_double_p),totalAN, Ntypes, Nsize, l, Hsize))
-	soap(axyz,hxyz,typeNs,totalAN, Ntypes, Nsize, l, Hsize))
+#	soap(axyz,hxyz,typeNs,totalAN, Ntypes, Nsize, l, Hsize))
 	numArrya = array(c)
 #	return c;
 	return numpy.ctypeslib.as_array(c, shape=(Hsize,NradBas*NradBas*(lmax+1)*Ntypes))
