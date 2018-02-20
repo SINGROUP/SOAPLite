@@ -1,12 +1,12 @@
 #include<iostream>
+//#include<Python.h>
 #include<stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <stdlib.h>
 #include <omp.h>
+//#include<numpy/arrayobject.h>
 
-using namespace std;
-//using namespace arma;
 
 #define PI     3.14159265358979
 #define PI2    9.86960440108936
@@ -1202,101 +1202,112 @@ double* getP9(double* x, double* y, double* z,double* r2, double* alphas, double
 void printP(double* P, int Nsize){
   for(int i = 0; i < Nsize ; i++){
     for(int j = 0; j < Nsize ; j++){
-      cout << P[i*Nsize + j] << " ";
+      std::cout << P[i*Nsize + j] << " ";
     }
   }
 }
 //-----------------------------------------------------------
 //-----------------------------------------------------------
-int main(int argc, char* argv[]) {
+void getPM(double* PMat, double* P, int N, int lS, int tS, int t, int l, int a){
+  for(int i = 0; i < N; i++){
+    for(int j = 0; j < N; j++){
+      PMat[a*tS*lS*N*N + t*lS*N*N + l*N*N + i*N + j] = P[i*N + j];
+    }
+  }
+}
+//-----------------------------------------------------------
+//-----------------------------------------------------------
+void printPM(double* PMat, int N, int lS, int tS, int aS){
+  for(int a = 0; a < aS; a++){
+    for(int t = 0; t < tS; t++){
+    for(int l = 0; l < lS; l++){
+      for(int i = 0; i < N; i++){
+        for(int j = 0; j < N; j++){
+          std::cout << PMat[a*tS*lS*N*N + t*lS*N*N + l*N*N + i*N + j] << " ";
+        }
+      }
+    }
+    }
+    std::cout << std::endl;
+  }
+}
+//-----------------------------------------------------------
+//-----------------------------------------------------------
+extern "C"{
 
-  std::cout.precision(6);
+double* soap(double* c, double* Apos,double* Hpos,int* typeNs, int totalAN,int Ntypes,int Nsize, int l, int Hsize);
+double* soap(double* c, double* Apos,double* Hpos,int* typeNs, int totalAN,int Ntypes,int Nsize, int l, int Hsize){
 
-  int*  totalAN = (int*) malloc(sizeof(int));
-  int*  Ntypes = (int*) malloc(sizeof(int));
-  int Nsize = 5;
   double* x;
   double* y;
   double* z;
 
-  int l = atoi(argv[1]);
-
-  int* types;
+  int lS = l + 1;
 
   double* alphas = getAlphas(Nsize); double* betas = getBetas(Nsize);
 
-  int* typeNs = getInfo(totalAN, Ntypes);
-  x = (double*) malloc(sizeof(double)*totalAN[0]);
-  y = (double*) malloc(sizeof(double)*totalAN[0]);
-  z = (double*) malloc(sizeof(double)*totalAN[0]);
-  types = (int*) malloc(sizeof(int)*Ntypes[0]);
+  x = (double*) malloc(sizeof(double)*totalAN);
+  y = (double*) malloc(sizeof(double)*totalAN);
+  z = (double*) malloc(sizeof(double)*totalAN);
 
   int Asize = 0;
-  double* Apos = getApos(totalAN, Ntypes, typeNs, types);
-  double* Hpos = getHpos(9999);
-
-  double* P0;
+  
+  double* P0; double* ReX;double* r2;
   double* P1; double* P2; double* P3;
   double* P4; double* P5; double* P6;
   double* P7; double* P8; double* P9;
-  double* r2;
-  double* ReX;
 
-  for(int i = 0; i < 9999; i++){
-    for(int j = 0; j < Ntypes[0]; j++){
+  double* soapMat = (double*) malloc(sizeof(double)*Hsize*lS*Nsize*Nsize*Ntypes);
 
-      Asize = getFilteredPos(x, y, z, Apos, Hpos, typeNs, i, j);
-      r2 = getR2(x, y, z, Asize);
-      ReX = getReals(x, y, Asize);
+  for(int i = 0; i < Hsize; i++){
+    for(int j = 0; j < Ntypes; j++){
 
-      P0 = getP0(x,y,z,r2,alphas, betas ,Asize, Nsize);
-      printP(P0, Nsize);
+     Asize = getFilteredPos(x, y, z, Apos, Hpos, typeNs, i, j);
+     r2 = getR2(x, y, z, Asize);
+     ReX = getReals(x, y, Asize);
+
+     P0 = getP0(x,y,z,r2,alphas, betas ,Asize, Nsize);
+     getPM(soapMat,P0,Nsize,lS,Hsize,j,0,i);
 
      if(l > 0){
        P1 = getP1(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-       printP(P1, Nsize);
+       getPM(soapMat,P1,Nsize,:lS,Hsize,j,1,i);
      }
-
      if(l > 1){
        P2 = getP2(x,y,z,r2,alphas, betas ,Asize, Nsize, ReX);
-       printP(P2, Nsize);
+       getPM(soapMat,P2,Nsize,lS,Hsize,j,2,i);
      }
-
      if(l > 2){
        P3 = getP3(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-       printP(P3, Nsize);
+       getPM(soapMat,P3,Nsize,lS,Hsize,j,3,i);
      }
-
      if(l > 3){
        P4 = getP4(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-       printP(P4, Nsize);
+       getPM(soapMat,P4,Nsize,lS,Hsize,j,4,i);
      }
-
      if(l > 4){
        P5 = getP5(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-       printP(P5, Nsize);
+       getPM(soapMat,P5,Nsize,lS,Hsize,j,5,i);
      }
-
      if(l > 5){
        P6 = getP6(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-       printP(P6, Nsize);
+       getPM(soapMat,P6,Nsize,lS,Hsize,j,6,i);
      }
-
      if(l > 6){
        P7 = getP7(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-       printP(P7, Nsize);
+       getPM(soapMat,P7,Nsize,lS,Hsize,j,7,i);
      }
-
      if(l > 7){
        P8 = getP8(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-       printP(P8, Nsize);
+       getPM(soapMat,P8,Nsize,lS,Hsize,j,8,i);
      }
-
      if(l > 8){
        P9 = getP9(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-       printP(P9, Nsize);
+       getPM(soapMat,P9,Nsize,lS,Hsize,j,9,i);
      }
     }
-    cout << endl;
   }
+return soapMat;
 }
+}
+
