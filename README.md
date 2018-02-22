@@ -5,7 +5,7 @@ Smooth Overlap of Atomic Positions (SOAP) is an algorithm used for accurately cl
 
 ## Getting Started
 
-This is a very light weight and fast SOAP implementation for machine learning in quantum chenistry and materials physics. Once you give SOAP the .xyz in ASE format,  list of positions, radius cutoff, number of basis functions and l (number of spherical harmonics), soap will return a numpy matrix of the power spectra for each point. Each row corresponds to each specified point, and each column corresponds the the spectrum value.
+This is a very light weight and fast SOAP implementation for machine learning in quantum chenistry and materials physics. Once you give SOAP the .xyz in ASE format,  list of positions, radius cutoff, number of basis functions and l (number of spherical harmonics), soap will return a numpy matrix of the power spectrum for each point. Each row corresponds to each specified point, and each column corresponds the the spectrum value.
 
 
 ### Prerequisites
@@ -44,7 +44,7 @@ Run
 ```
 python testSoapPy.py
 ```
-This should generate a test.txt file which contains the SOAP spectra for every H.dat point of a au40cu40 molecule (in au40cu40.xyz).
+This should generate a test.txt file which contains the SOAP spectrum for every H.dat point of a au40cu40 molecule (in au40cu40.xyz).
 
 ## Possible Applications 
 
