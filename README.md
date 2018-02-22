@@ -57,6 +57,8 @@ See also the list of contributors who participated in this project.
 * **Filippo Federici** - [fullmetalfelix](https://github.com/fullmetalfelix)
 * **Yashasvi S. Ranawat** - [yashasvi-ranawat](https://github.com/yashasvi-ranawat)
 * **Lauri Himanen** - [lauri-codes](https://github.com/lauri-codes)
+* **Adam Foster** - [suurimonster](https://github.com/suurimonster)
+
 
 ## License
 
