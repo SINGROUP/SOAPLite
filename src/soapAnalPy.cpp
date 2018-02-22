@@ -1232,12 +1232,12 @@ void printPM(double* PMat, int N, int lS, int tS, int aS){
 //-----------------------------------------------------------
 extern "C"{
 
-double* soap(double* c, double* Apos,double* Hpos,int* typeNs, double rCut, int totalAN,int Ntypes,int Nsize, int l, int Hsize);
-double* soap(double* c, double* Apos,double* Hpos,int* typeNs, double rCut, int totalAN,int Ntypes,int Nsize, int l, int Hsize){
+double* soap(double* c, double* Apos,double* Hpos,double* alphas,double* betas, int* typeNs, double rCut, int totalAN,int Ntypes,int Nsize, int l, int Hsize);
+double* soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas, int* typeNs, double rCut, int totalAN,int Ntypes,int Nsize, int l, int Hsize){
 
 
   int lS = l+1;
-  double* alphas = getAlphas(Nsize); double* betas = getBetas(Nsize);
+//  double* alphas = getAlphas(Nsize); double* betas = getBetas(Nsize);
   double* soapMat = (double*) malloc(sizeof(double)*Hsize*lS*Nsize*Nsize*Ntypes);
 #pragma omp parallel
  { 

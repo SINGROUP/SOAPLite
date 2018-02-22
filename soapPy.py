@@ -49,9 +49,11 @@ def soap(obj, Hpos, rCutHard=8.0, NradBas=5, Lmax=5):
     Hpos = np.array(Hpos)
     py_Hsize = Hpos.shape[0]
     Hpos = Hpos.flatten()
-    genBasis.getBasisFunc(rCutHard, NradBas)
+    alp, bet = genBasis.getBasisFunc(rCutHard, NradBas)
 
     # convert int to c_int
+    alphas = (c_double*len(alp))(*alp)
+    betas = (c_double*len(bet))(*bet)
     l = c_int(Lmax)
     Hsize = c_int(py_Hsize)
     Ntypes = c_int(py_Ntypes)
@@ -70,11 +72,11 @@ def soap(obj, Hpos, rCutHard=8.0, NradBas=5, Lmax=5):
 
     ### START SOAP###
     libsoap = CDLL('src/libsoapPy.so')
-    libsoap.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double), POINTER (c_int),c_double,c_int,c_int,c_int,c_int,c_int]
+    libsoap.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),POINTER (c_double),POINTER (c_double), POINTER (c_int),c_double,c_int,c_int,c_int,c_int,c_int]
     libsoap.soap.restype = POINTER (c_double)
     # double* c, double* Apos,double* Hpos,int* typeNs,
     # int totalAN,int Ntypes,int Nsize, int l, int Hsize);
     c = (c_double*(NradBas*NradBas*(Lmax+1)*py_Ntypes*py_Hsize))()
-    c = libsoap.soap( c, axyz, hxyz, typeNs, rCutHard, totalAN, Ntypes, Nsize, l, Hsize)
+    c = libsoap.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, l, Hsize)
     #   return c;
     return np.ctypeslib.as_array( c, shape=(py_Hsize,NradBas*NradBas*(Lmax+1)*py_Ntypes))
