@@ -51,7 +51,7 @@ This should generate a test.txt file which contains the SOAP spectra for every H
 
 * **Eiaki V. Morooka** - [Aki78]( https://github.com/Aki78)
 * **Marc Jäger** - [marchunter](https://github.com/marchunter)
-* **Yuu Ninomiya** - [lab](http://www.sp.u-tokai.ac.jp/~bentz/Members.html)
+* **Yu Ninomiya** - [lab](http://www.sp.u-tokai.ac.jp/~bentz/Members.html)
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
@@ -59,9 +59,4 @@ See also the list of [contributors](https://github.com/your/project/contributors
 
 This project is licensed under the GNU LESSER GENERAL PUBLIC LICENSE - see the [LICENSE.md](LICENSE.md) file for details
 
-## References
-
-* Hat tip to anyone who's code was used
-* Inspiration
-* etc
 
