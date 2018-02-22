@@ -46,6 +46,13 @@ python testSoapPy.py
 ```
 This should generate a test.txt file which contains the SOAP spectra for every H.dat point of a au40cu40 molecule (in au40cu40.xyz).
 
+## Possible Applications 
+
+By taking the differences of the soap spectrum, we can compare the differences of the chemical environment. For example, if a point P1 gave a power
+spectrum S1 and at point P2 gave  a spectrum S2, the difference of the chemical environment will be |S2 - S1| where || denotes the Euclidean distance.
+We can use this differences to classify similar/different chemical environments.
+
+The power spectrum can also be used as an input for a neural network, kernel ridge regression or other machine learning algorithms.
 
 ## Authors
 
