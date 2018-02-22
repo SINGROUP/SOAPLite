@@ -53,9 +53,10 @@ This should generate a test.txt file which contains the SOAP spectra for every H
 * **Marc Jäger** - [marchunter](https://github.com/marchunter)
 
 See also the list of contributors who participated in this project.
-* **Yu Ninomiya** - [lab](http://www.sp.u-tokai.ac.jp/~bentz/Members.html)
+* **Yu Ninomiya** - [Yu](http://www.sp.u-tokai.ac.jp/~bentz/Members.html)
 * **Filippo Federici** - [fullmetalfelix](https://github.com/fullmetalfelix)
 * **Yashasvi S. Ranawat** - [yashasvi-ranawat](https://github.com/yashasvi-ranawat)
+* **Lauri Himanen** - [lauri-codes](https://github.com/lauri-codes)
 
 ## License
 
