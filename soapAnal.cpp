@@ -1210,7 +1210,7 @@ void printP(double* P, int Nsize){
 //-----------------------------------------------------------
 int main(int argc, char* argv[]) {
 
-  std::cout.precision(6);
+  std::cout.precision(12);
 
   int*  totalAN = (int*) malloc(sizeof(int));
   int*  Ntypes = (int*) malloc(sizeof(int));

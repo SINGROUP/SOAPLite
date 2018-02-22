@@ -25,45 +25,41 @@ def minimizeMe(alpha,l,x):
 #--------------------------------------------------
 def findAlpha(l,a):
     alphas = np.zeros(a.shape[0])
+    alphaSpace = np.linspace(0.001, 100, 100000)
     for i,j in enumerate(a):
-      #      for p in np.linspace(0.001,100,10000000):
-      for p in range(1000000):
-        initG = minimizeMe(100.0*p/1000000 + 0.00001,l,j)
-        if initG < 0.7 and initG > 0.3:
-#            print(p)
-            break
-  
+      initG = alphaSpace[np.argmin(minimizeMe(alphaSpace,l,j))]
+      print(initG)
       alphas[i] = fmin(minimizeMe, x0=initG, args=(l,j), disp=False)
      #initG = alphas[i]
     return alphas 
 #--------------------------------------------------
 def getOrthNorm(X):
     x = sqrtm(inv(X))
-    print("inv",x)
+#    print("inv",x)
     return x
 #--------------------------------------------------
-def getBasisFunc(n,rcut):
-    a = np.linspace(1,int(round(rcut)) - 3, n)
+def getBasisFunc(rcut, n):
+    a = np.linspace(1, rcut - 3, n)
     alphasFull = np.array([])
     betas = np.array([])
     betasFull = np.array([])
+
     for l in range(0,10):
        alphas = findAlpha(l,a)
+       print(alphas)
        betas = getOrthNorm(intAllMat(l,alphas))
        alphasFull = np.append(alphasFull, alphas)
        betasFull  = np.append(betasFull , betas)
+
+    np.savetxt('alphasPy.dat', alphasFull)
+    np.savetxt('betasPy.dat',  betasFull)
     return  alphasFull, betasFull
 #--------------------------------------------------
-if __name__ == '__main__':
-#    a = np.array([1,2,3,4,5])
-    alphas, betas = getBasisFunc(5, 8.0)
-    print(alphas, betas)
-    np.savetxt('alphasPy.dat', alphas)
-    np.savetxt('betasPy.dat',  betas)
-#    X = intAllMat(3,np.array(a))
-#    print(intAllSqr(3,3))
-#    print(findAlpha(5,a))
-#    print(intPartSqr(5,alpha,1)/intAllSqr(5,alpha) - 0.99)
+#if __name__ == '__main__':
+#    alphas, betas = getBasisFunc(10.0, 10)
+#    print(alphas, betas)
+#    np.savetxt('alphasPy.dat', alphas)
+#    np.savetxt('betasPy.dat',  betas)
 
 
 

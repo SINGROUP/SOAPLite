@@ -18,7 +18,7 @@ double* getAlphas(int alphaSize){
   double f;
   double* alphas = (double*) malloc(alphaSize*10*sizeof(double));
   FILE * pFile;
-  pFile = fopen ("alphas5.dat","r");
+  pFile = fopen ("alphasPy.dat","r");
   for(int i = 0; i < alphaSize*10; i++){
     fscanf (pFile, "%lf", &alphas[i]);
     //  rewind (pFile);
@@ -33,7 +33,7 @@ double* getBetas(int alphaSize){
   double* betas = (double*) malloc(alphaSize*alphaSize*10*sizeof(double));
   FILE * pFile;
 //  pFile = fopen ("betasCorr.dat","r");
-  pFile = fopen ("betas5.dat","r");
+  pFile = fopen ("betasPy.dat","r");
   for(int i = 0; i < alphaSize*alphaSize*10; i++){
     fscanf (pFile, "%lf", &betas[i]);
     //  rewind (pFile);
@@ -84,10 +84,7 @@ double* getApos(int* totalAN, int* Ntypes, int* typeNs, int*types){
 double* getHpos(int Hsize){
 
   FILE* pFile;
-//  pFile = fopen("Hsym.dat","r");
   pFile = fopen("H.dat","r");
-//  pFile = fopen("HRot.dat","r");
-//  pFile = fopen("PM.dat","r");
   double* Pos = (double*) malloc(3*sizeof(double)*Hsize);
   for(int i=0; i < Hsize; i++){
       fscanf(pFile, "%lf", &Pos[3*i    ]);
@@ -115,7 +112,7 @@ void getPos(double* x, double* y, double* z, double* Apos, double* Hpos, int* ty
 }
 //-----------------------------------------------------------
 //-----------------------------------------------------------
-int getAllPos(double* x, double* y, double* z, double* Apos, double* Hpos, int* typeNs, int Ihpos,int sizeAll){
+int getAllPos(double* x, double* y, double* z, double* Apos, double* Hpos, int* typeNs, double rCutSqr, int Ihpos,int sizeAll){
 
   int count = 0;
   int X, Y, Z;
@@ -123,7 +120,7 @@ int getAllPos(double* x, double* y, double* z, double* Apos, double* Hpos, int* 
       X =  Apos[3*i    ] - Hpos[3*Ihpos    ];
       Y =  Apos[3*i + 1] - Hpos[3*Ihpos + 1];
       Z =  Apos[3*i + 2] - Hpos[3*Ihpos + 2];
-      if( X*X + Y*Y + Z*Z < 50.0 ){
+      if( X*X + Y*Y + Z*Z < rCutSqr ){
         x[count] = X;
         y[count] = Y;
         z[count] = Z;
@@ -136,7 +133,7 @@ int getAllPos(double* x, double* y, double* z, double* Apos, double* Hpos, int* 
 //-----------------------------------------------------------
 //-----------------------------------------------------------
 int getFilteredPos(double* x, double* y, double* z, double* Apos, double* Hpos,
-   int* typeNs, int Ihpos, int Itype){
+   int* typeNs, double rCutSqr, int Ihpos, int Itype){
 
   int shiftType = 0;
   int count = 0;
@@ -150,7 +147,7 @@ int getFilteredPos(double* x, double* y, double* z, double* Apos, double* Hpos,
       X = Apos[3*shiftType + 3*i    ] - Hpos[3*Ihpos    ];
       Y = Apos[3*shiftType + 3*i + 1] - Hpos[3*Ihpos + 1];
       Z = Apos[3*shiftType + 3*i + 2] - Hpos[3*Ihpos + 2];
-      if( X*X + Y*Y + Z*Z < 50.0 ){
+      if( X*X + Y*Y + Z*Z < rCutSqr ){
         x[count] = X;
         y[count] = Y;
         z[count] = Z;
@@ -1220,13 +1217,13 @@ void getPM(double* PMat, double* P, int N, int lS, int tS, int t, int l, int a){
 void printPM(double* PMat, int N, int lS, int tS, int aS){
   for(int a = 0; a < aS; a++){
     for(int t = 0; t < tS; t++){
-    for(int l = 0; l < lS; l++){
-      for(int i = 0; i < N; i++){
-        for(int j = 0; j < N; j++){
-          std::cout << PMat[a*tS*lS*N*N + t*lS*N*N + l*N*N + i*N + j] << " ";
+      for(int l = 0; l < lS; l++){
+        for(int i = 0; i < N; i++){
+          for(int j = 0; j < N; j++){
+            std::cout << PMat[a*tS*lS*N*N + t*lS*N*N + l*N*N + i*N + j] << " ";
+          }
         }
       }
-    }
     }
     std::cout << std::endl;
   }
@@ -1235,14 +1232,14 @@ void printPM(double* PMat, int N, int lS, int tS, int aS){
 //-----------------------------------------------------------
 extern "C"{
 
-double* soap(double* c, double* Apos,double* Hpos,int* typeNs, int totalAN,int Ntypes,int Nsize, int l, int Hsize);
-double* soap(double* c, double* Apos,double* Hpos,int* typeNs, int totalAN,int Ntypes,int Nsize, int l, int Hsize){
+double* soap(double* c, double* Apos,double* Hpos,int* typeNs, double rCut, int totalAN,int Ntypes,int Nsize, int l, int Hsize);
+double* soap(double* c, double* Apos,double* Hpos,int* typeNs, double rCut, int totalAN,int Ntypes,int Nsize, int l, int Hsize){
 
   double* x;
   double* y;
   double* z;
 
-  int lS = l + 1;
+  int lS = l+1;
 
   double* alphas = getAlphas(Nsize); double* betas = getBetas(Nsize);
 
@@ -1262,52 +1259,52 @@ double* soap(double* c, double* Apos,double* Hpos,int* typeNs, int totalAN,int N
   for(int i = 0; i < Hsize; i++){
     for(int j = 0; j < Ntypes; j++){
 
-     Asize = getFilteredPos(x, y, z, Apos, Hpos, typeNs, i, j);
+     Asize = getFilteredPos(x, y, z, Apos, Hpos, typeNs, rCut*rCut, i, j);
      r2 = getR2(x, y, z, Asize);
      ReX = getReals(x, y, Asize);
 
      P0 = getP0(x,y,z,r2,alphas, betas ,Asize, Nsize);
-     getPM(soapMat,P0,Nsize,lS,Hsize,j,0,i);
+     getPM(soapMat,P0,Nsize,lS,Ntypes,j,0,i);
 
      if(l > 0){
        P1 = getP1(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-       getPM(soapMat,P1,Nsize,lS,Hsize,j,1,i);
+       getPM(soapMat,P1,Nsize,lS,Ntypes,j,1,i);
      }
      if(l > 1){
        P2 = getP2(x,y,z,r2,alphas, betas ,Asize, Nsize, ReX);
-       getPM(soapMat,P2,Nsize,lS,Hsize,j,2,i);
+       getPM(soapMat,P2,Nsize,lS,Ntypes,j,2,i);
      }
      if(l > 2){
        P3 = getP3(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-       getPM(soapMat,P3,Nsize,lS,Hsize,j,3,i);
+       getPM(soapMat,P3,Nsize,lS,Ntypes,j,3,i);
      }
      if(l > 3){
        P4 = getP4(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-       getPM(soapMat,P4,Nsize,lS,Hsize,j,4,i);
+       getPM(soapMat,P4,Nsize,lS,Ntypes,j,4,i);
      }
      if(l > 4){
        P5 = getP5(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-       getPM(soapMat,P5,Nsize,lS,Hsize,j,5,i);
+       getPM(soapMat,P5,Nsize,lS,Ntypes,j,5,i);
      }
      if(l > 5){
        P6 = getP6(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-       getPM(soapMat,P6,Nsize,lS,Hsize,j,6,i);
+       getPM(soapMat,P6,Nsize,lS,Ntypes,j,6,i);
      }
      if(l > 6){
        P7 = getP7(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-       getPM(soapMat,P7,Nsize,lS,Hsize,j,7,i);
+       getPM(soapMat,P7,Nsize,lS,Ntypes,j,7,i);
      }
      if(l > 7){
        P8 = getP8(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-       getPM(soapMat,P8,Nsize,lS,Hsize,j,8,i);
+       getPM(soapMat,P8,Nsize,lS,Ntypes,j,8,i);
      }
      if(l > 8){
        P9 = getP9(x,y,z,r2,alphas, betas ,Asize, Nsize,ReX);
-       getPM(soapMat,P9,Nsize,lS,Hsize,j,9,i);
+       getPM(soapMat,P9,Nsize,lS,Ntypes,j,9,i);
      }
     }
   }
 return soapMat;
-}
+} // end extern "C"
 }
 
