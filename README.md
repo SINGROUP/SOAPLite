@@ -72,5 +72,5 @@ See also the list of contributors who participated in this project.
 This project is licensed under the GNU LESSER GENERAL PUBLIC LICENSE - see the [LICENSE.md](LICENSE.md) file for details
 
 ## References
-[1] Comparing molecules and solids across structural and alchemical space -  Sandip De, Albert P. Bart ́ok, G ́abor Cs ́anyi, and Michele Ceriotti
+[1] Comparing molecules and solids across structural and alchemical space -  Sandip De, Albert P. Bart ́ok, G ́abor Cs ́anyi, and Michele Ceriotti [paper](https://arxiv.org/pdf/1601.04077.pdf)
 
