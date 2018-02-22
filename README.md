@@ -1,10 +1,10 @@
 # SOAP LIGHT 
 
-One Paragraph of project description goes here
+SOAP is an algorithm used for accurately classifying and machine learning chemical environments[1].
+
 
 ## Getting Started
 
-SOAP is an algorithm used for accurately classifying and machine learning chemical environments[].
 This is a very light weight and fast SOAP implementation for machine learning in quantum chenistry and materials physics. Once you give SOAP the .xyz in ASE format,  list of positions, radius cutoff, number of basis functions and l (number of spherical harmonics), soap will return a numpy matrix of the power spectra for each point. Each row corresponds to each specified point, and each column corresponds the the spectrum value.
 
 
@@ -71,4 +71,6 @@ See also the list of contributors who participated in this project.
 
 This project is licensed under the GNU LESSER GENERAL PUBLIC LICENSE - see the [LICENSE.md](LICENSE.md) file for details
 
+## References
+[1] Comparing molecules and solids across structural and alchemical space -  Sandip De, Albert P. Bart ́ok, G ́abor Cs ́anyi, and Michele Ceriotti
 
