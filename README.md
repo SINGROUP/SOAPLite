@@ -1,6 +1,6 @@
 # SOAP LIGHT 
 
-SOAP is an algorithm used for accurately classifying and machine learning chemical environments[1,2].
+Smooth Overlap of Atomic Positions (SOAP) is an algorithm used for accurately classifying and machine learning chemical environments[1,2].
 
 
 ## Getting Started
