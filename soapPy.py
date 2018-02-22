@@ -36,6 +36,13 @@ def format_ase2clusgeo(obj):
 
 
 def soap(obj, Hpos, rCutHard=8.0, NradBas=5, Lmax=5):
+    assert Lmax <= 9, "l cannot exceed 9. Lmax={}".format(Lmax) 
+    assert Lmax >= 0, "l cannot be negative.Lmax={}".format(Lmax) 
+    assert rCutHard < 10.0001 , "hard redius cuttof cannot be larger than 10 Angs. rCut={}".format(rCutHard) 
+    assert rCutHard > 4.999 , "hard redius cuttof cannot be lower than 5 Ang. rCut={}".format(rCutHard)
+    assert NradBas >= 2 , "number of basis functions cannot be lower than 2. NradBas={}".format(NradBas)
+    assert NradBas <= 10 , "number of basis functions cannot exceed 10. NradBas={}".format(NradBas)
+
     # get clusgeo internal format for c-code
     Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = format_ase2clusgeo(obj)
     # flatten Hpos array
@@ -62,7 +69,7 @@ def soap(obj, Hpos, rCutHard=8.0, NradBas=5, Lmax=5):
     hxyz = (c_double * len(Hpos))(*Hpos.tolist())
 
     ### START SOAP###
-    libsoap = CDLL('./libsoapPy.so')
+    libsoap = CDLL('src/libsoapPy.so')
     libsoap.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double), POINTER (c_int),c_double,c_int,c_int,c_int,c_int,c_int]
     libsoap.soap.restype = POINTER (c_double)
     # double* c, double* Apos,double* Hpos,int* typeNs,
