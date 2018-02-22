@@ -11,7 +11,7 @@ def intAllMat(l,a):
     m = np.zeros((a.shape[0],a.shape[0]))
     m[:,:] = a
     m = m + m.transpose()
-    print(m)
+#    print(m)
     return 0.5*gamma(l + 3.0/2.0)*m**( -l - 3.0/2.0)
 #--------------------------------------------------
 def intAllSqr(l,a):
@@ -28,7 +28,7 @@ def findAlpha(l,a):
     alphaSpace = np.linspace(0.001, 100, 100000)
     for i,j in enumerate(a):
       initG = alphaSpace[np.argmin(minimizeMe(alphaSpace,l,j))]
-      print(initG)
+#      print(initG)
       alphas[i] = fmin(minimizeMe, x0=initG, args=(l,j), disp=False)
      #initG = alphas[i]
     return alphas 
@@ -46,7 +46,7 @@ def getBasisFunc(rcut, n):
 
     for l in range(0,10):
        alphas = findAlpha(l,a)
-       print(alphas)
+#       print(alphas)
        betas = getOrthNorm(intAllMat(l,alphas))
        alphasFull = np.append(alphasFull, alphas)
        betasFull  = np.append(betasFull , betas)
