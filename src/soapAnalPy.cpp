@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stdlib.h>
-//#include <omp.h>
+#include <omp.h>
 //#include<numpy/arrayobject.h>
 
 
@@ -1235,27 +1235,24 @@ extern "C"{
 double* soap(double* c, double* Apos,double* Hpos,int* typeNs, double rCut, int totalAN,int Ntypes,int Nsize, int l, int Hsize);
 double* soap(double* c, double* Apos,double* Hpos,int* typeNs, double rCut, int totalAN,int Ntypes,int Nsize, int l, int Hsize){
 
-  double* x;
-  double* y;
-  double* z;
 
   int lS = l+1;
-
   double* alphas = getAlphas(Nsize); double* betas = getBetas(Nsize);
-
-  x = (double*) malloc(sizeof(double)*totalAN);
-  y = (double*) malloc(sizeof(double)*totalAN);
-  z = (double*) malloc(sizeof(double)*totalAN);
-
-  int Asize = 0;
-  
+  double* soapMat = (double*) malloc(sizeof(double)*Hsize*lS*Nsize*Nsize*Ntypes);
+#pragma omp parallel
+ { 
   double* P0; double* ReX;double* r2;
   double* P1; double* P2; double* P3;
   double* P4; double* P5; double* P6;
   double* P7; double* P8; double* P9;
-
-  double* soapMat = (double*) malloc(sizeof(double)*Hsize*lS*Nsize*Nsize*Ntypes);
-
+  double* x;
+  double* y;
+  double* z;
+  x = (double*) malloc(sizeof(double)*totalAN);
+  y = (double*) malloc(sizeof(double)*totalAN);
+  z = (double*) malloc(sizeof(double)*totalAN);
+  int Asize = 0;
+#pragma omp for schedule(static)
   for(int i = 0; i < Hsize; i++){
     for(int j = 0; j < Ntypes; j++){
 
@@ -1303,6 +1300,7 @@ double* soap(double* c, double* Apos,double* Hpos,int* typeNs, double rCut, int 
        getPM(soapMat,P9,Nsize,lS,Ntypes,j,9,i);
      }
     }
+  }
   }
 return soapMat;
 } // end extern "C"
