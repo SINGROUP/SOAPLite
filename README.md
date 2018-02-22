@@ -32,7 +32,7 @@ You also need a gcc and g++ compiler.
 
 ### Installing
 
-Simply type in the terminal:
+Simply type into the terminal:
 ```
 make
 ```
