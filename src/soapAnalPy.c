@@ -1,11 +1,10 @@
-#include<iostream>
 #include<stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <stdlib.h>
 #include <omp.h>
 
-#define PI2    9.86960440108936
+#define PI2 9.86960440108936
 
 //================================================================
 int getFilteredPos(double* x, double* y, double* z, double* Apos, double* Hpos,
@@ -1046,14 +1045,6 @@ double* getP9(double* x, double* y, double* z,double* r2, double* alphas, double
 
 }
 //================================================================
-void printP(double* P, int Nsize){
-  for(int i = 0; i < Nsize ; i++){
-    for(int j = 0; j < Nsize ; j++){
-      std::cout << P[i*Nsize + j] << " ";
-    }
-  }
-}
-//================================================================
 void getPM(double* PMat, double* P, int N, int lS, int tS, int t, int l, int a){
   for(int i = 0; i < N; i++){
     for(int j = 0; j < N; j++){
@@ -1062,23 +1053,6 @@ void getPM(double* PMat, double* P, int N, int lS, int tS, int t, int l, int a){
   }
 }
 //================================================================
-void printPM(double* PMat, int N, int lS, int tS, int aS){
-  for(int a = 0; a < aS; a++){
-    for(int t = 0; t < tS; t++){
-      for(int l = 0; l < lS; l++){
-        for(int i = 0; i < N; i++){
-          for(int j = 0; j < N; j++){
-            std::cout << PMat[a*tS*lS*N*N + t*lS*N*N + l*N*N + i*N + j] << " ";
-          }
-        }
-      }
-    }
-    std::cout << std::endl;
-  }
-}
-//================================================================
-extern "C"{
-
 double* soap(double* c, double* Apos,double* Hpos,double* alphas,double* betas, int* typeNs, double rCut, int totalAN,int Ntypes,int Nsize, int l, int Hsize);
 double* soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas, int* typeNs, double rCut, int totalAN,int Ntypes,int Nsize, int l, int Hsize){
 
@@ -1146,13 +1120,12 @@ double* soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas,
      }
     }
   }
-  free(P0); free(ReX);free(r2);
-  free(P1); free(P2); free(P3);
-  free(P4); free(P5); free(P6);
-  free(P7); free(P8); free(P9);
-  free(x);free(y);free(z);
+//  free(P0); free(ReX);free(r2);
+//free(P1); free(P2); free(P3);
+//free(P4); free(P5); free(P6);
+//free(P7); free(P8); free(P9);
+//free(x);free(y);free(z);
   }
 return soapMat;
-} // end extern "C"
 }
 
