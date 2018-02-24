@@ -1,48 +1,12 @@
 #include<iostream>
-//#include<Python.h>
 #include<stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <stdlib.h>
 #include <omp.h>
-//#include<numpy/arrayobject.h>
-
 
 #define PI2    9.86960440108936
 
-//================================================================
-double* getApos(int* totalAN, int* Ntypes, int* typeNs, int*types){
-
-  FILE* pFile;
-  //Getting atom types and positions
-  pFile = fopen("type_pos.dat","r");
-  int marcher=0;
-  double* Apos = (double*) malloc(3*sizeof(double)*totalAN[0]);
-  for(int i=0; i < Ntypes[0]; i++){
-    fscanf(pFile, "%d", &types[i]);
-    for(int j=0; j < typeNs[i] ; j++){
-      fscanf(pFile, "%lf", &Apos[3*marcher    ]);
-      fscanf(pFile, "%lf", &Apos[3*marcher + 1]);
-      fscanf(pFile, "%lf", &Apos[3*marcher + 2]);
-      marcher++;
-    }
-  }
-  fclose (pFile);
-  return Apos;
-}
-//================================================================
-double* getHpos(int Hsize){
-  FILE* pFile;
-  pFile = fopen("H.dat","r");
-  double* Pos = (double*) malloc(3*sizeof(double)*Hsize);
-  for(int i=0; i < Hsize; i++){
-      fscanf(pFile, "%lf", &Pos[3*i    ]);
-      fscanf(pFile, "%lf", &Pos[3*i + 1]);
-      fscanf(pFile, "%lf", &Pos[3*i + 2]);
-  }
-  fclose(pFile);
-  return Pos;
-}
 //================================================================
 int getFilteredPos(double* x, double* y, double* z, double* Apos, double* Hpos,
       int* typeNs, double rCutSqr, int Ihpos, int Itype){
@@ -1120,8 +1084,8 @@ double* soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas,
 
 
   int lS = l+1;
-//  double* alphas = getAlphas(Nsize); double* betas = getBetas(Nsize);
   double* soapMat = (double*) malloc(sizeof(double)*Hsize*lS*Nsize*Nsize*Ntypes);
+
 #pragma omp parallel
  { 
   double* P0; double* ReX;double* r2;
@@ -1182,6 +1146,11 @@ double* soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas,
      }
     }
   }
+  free(P0); free(ReX);free(r2);
+  free(P1); free(P2); free(P3);
+  free(P4); free(P5); free(P6);
+  free(P7); free(P8); free(P9);
+  free(x);free(y);free(z);
   }
 return soapMat;
 } // end extern "C"
