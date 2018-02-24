@@ -8,60 +8,11 @@
 //#include<numpy/arrayobject.h>
 
 
-#define PI     3.14159265358979
 #define PI2    9.86960440108936
-#define PIHALF 1.57079632679490
 
-//-----------------------------------------------------------
-//-----------------------------------------------------------
-double* getAlphas(int alphaSize){
-  double f;
-  double* alphas = (double*) malloc(alphaSize*10*sizeof(double));
-  FILE * pFile;
-  pFile = fopen ("alphasPy.dat","r");
-  for(int i = 0; i < alphaSize*10; i++){
-    fscanf (pFile, "%lf", &alphas[i]);
-    //  rewind (pFile);
-  }
-  fclose (pFile);
-  return alphas;
-}
-//-----------------------------------------------------------
-//-----------------------------------------------------------
-double* getBetas(int alphaSize){
-  double f;
-  double* betas = (double*) malloc(alphaSize*alphaSize*10*sizeof(double));
-  FILE * pFile;
-//  pFile = fopen ("betasCorr.dat","r");
-  pFile = fopen ("betasPy.dat","r");
-  for(int i = 0; i < alphaSize*alphaSize*10; i++){
-    fscanf (pFile, "%lf", &betas[i]);
-    //  rewind (pFile);
-  }
-  fclose (pFile);
-  return betas;
-}
-//-----------------------------------------------------------
-//-----------------------------------------------------------
-int* getInfo(int* totalAN, int* Ntypes){
-  FILE* pFile;
-  //Getting meta data
-  pFile = fopen("metadata.dat","r");
-    fscanf(pFile, "%i", totalAN);
-    fscanf(pFile, "%i", Ntypes);
-  fclose (pFile);
-  //Getting atom type counts
-  int* typeNs = (int*) malloc(sizeof(int)*Ntypes[0]);
-  pFile = fopen("atomtypecount.dat","r");
-  for(int i=0; i < Ntypes[0]; i++){
-    fscanf(pFile, "%d", &typeNs[i]);
-  }
-  fclose (pFile);
-  return typeNs;
-}
-//-----------------------------------------------------------
-//-----------------------------------------------------------
+//================================================================
 double* getApos(int* totalAN, int* Ntypes, int* typeNs, int*types){
+
   FILE* pFile;
   //Getting atom types and positions
   pFile = fopen("type_pos.dat","r");
@@ -79,10 +30,8 @@ double* getApos(int* totalAN, int* Ntypes, int* typeNs, int*types){
   fclose (pFile);
   return Apos;
 }
-//-----------------------------------------------------------
-//-----------------------------------------------------------
+//================================================================
 double* getHpos(int Hsize){
-
   FILE* pFile;
   pFile = fopen("H.dat","r");
   double* Pos = (double*) malloc(3*sizeof(double)*Hsize);
@@ -94,46 +43,9 @@ double* getHpos(int Hsize){
   fclose(pFile);
   return Pos;
 }
-//-----------------------------------------------------------
-//-----------------------------------------------------------
-void getPos(double* x, double* y, double* z, double* Apos, double* Hpos, int* typeNs, int Ihpos, int Itype){
-
-  int shiftType = 0;
-    for(int i = 0; i < Itype ; i++){
-      shiftType += typeNs[i];
-    }
-
-    for(int i = 0; i < typeNs[Itype]; i++){
-      x[i] =  Apos[3*shiftType + 3*i    ] - Hpos[3*Ihpos    ];
-      y[i] =  Apos[3*shiftType + 3*i + 1] - Hpos[3*Ihpos + 1];
-      z[i] =  Apos[3*shiftType + 3*i + 2] - Hpos[3*Ihpos + 2];
-    }
-
-}
-//-----------------------------------------------------------
-//-----------------------------------------------------------
-int getAllPos(double* x, double* y, double* z, double* Apos, double* Hpos, int* typeNs, double rCutSqr, int Ihpos,int sizeAll){
-
-  int count = 0;
-  int X, Y, Z;
-  for(int i = 0; i < sizeAll; i++){
-      X =  Apos[3*i    ] - Hpos[3*Ihpos    ];
-      Y =  Apos[3*i + 1] - Hpos[3*Ihpos + 1];
-      Z =  Apos[3*i + 2] - Hpos[3*Ihpos + 2];
-      if( X*X + Y*Y + Z*Z < rCutSqr ){
-        x[count] = X;
-        y[count] = Y;
-        z[count] = Z;
-        count++;
-      }
-  }
-
-  return count;
-}
-//-----------------------------------------------------------
-//-----------------------------------------------------------
+//================================================================
 int getFilteredPos(double* x, double* y, double* z, double* Apos, double* Hpos,
-   int* typeNs, double rCutSqr, int Ihpos, int Itype){
+      int* typeNs, double rCutSqr, int Ihpos, int Itype){
 
   int shiftType = 0;
   int count = 0;
@@ -156,8 +68,7 @@ int getFilteredPos(double* x, double* y, double* z, double* Apos, double* Hpos,
     }
   return count;
 }
-//-----------------------------------------------------------
-//-----------------------------------------------------------
+//================================================================
 double* getReals(double* x, double* y, int size) {
 
   double* p  = (double*) malloc(size*size*sizeof(double));
@@ -173,7 +84,6 @@ double* getReals(double* x, double* y, int size) {
 
   double* Re = (double*) malloc(9*size*size*sizeof(double));
 
-//#pragma omp parallel for schedule(static,chunk)
   for(int i = 0; i < size; i++){
     for(int j = 0; j < size; j++){
 
@@ -186,7 +96,6 @@ double* getReals(double* x, double* y, int size) {
     }
   }
 
-//#pragma omp parallel for schedule(static,chunk)
   for(int i = 0; i < size; i++){
     for(int j = 0; j < size; j++){
 
@@ -213,10 +122,8 @@ double* getReals(double* x, double* y, int size) {
 
   free(p);  free(m); free(p2); free(m2); free(p4); free(m4); free(p6); free(m6); free(p8); free(m8);
   return Re;
-
 }
-//-----------------------------------------------------------
-//-----------------------------------------------------------
+//================================================================
 double* getR2(double* x, double* y, double* z, int size){
 
   double* r2s = (double*) malloc(size*sizeof(double));
@@ -228,8 +135,7 @@ double* getR2(double* x, double* y, double* z, int size){
  return r2s;
 
 }
-//-----------------------------------------------------------
-//-----------------------------------------------------------
+//================================================================
 double* getP0(double* x, double* y, double* z,double* r2, double* alphas,
    double* betas, int Asize, int Nsize){
 
@@ -269,7 +175,6 @@ double* getP0(double* x, double* y, double* z,double* r2, double* alphas,
     }
   }
 
-//#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
     for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
@@ -299,8 +204,7 @@ double* getP0(double* x, double* y, double* z,double* r2, double* alphas,
 
  return P0;
 }
-//-----------------------------------------------------------
-//-----------------------------------------------------------
+//================================================================
 double* getP1(double* x, double* y, double* z,double* r2, double* alphas, double* betas , int Asize, int Nsize, double* ReX){
 
   double* P1 = (double*) malloc(Nsize*Nsize*sizeof(double));
@@ -344,7 +248,6 @@ double* getP1(double* x, double* y, double* z,double* r2, double* alphas, double
     }
   }
 
-//#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
     for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
@@ -375,8 +278,7 @@ double* getP1(double* x, double* y, double* z,double* r2, double* alphas, double
 
  return P1;
 }
-//-----------------------------------------------------------
-//-----------------------------------------------------------
+//================================================================
 double* getP2(double* x, double* y, double* z,double* r2, double* alphas, double* betas , int Asize, int Nsize, double* ReX){
 
   double* P2 = (double*) malloc(Nsize*Nsize*sizeof(double));
@@ -427,7 +329,6 @@ double* getP2(double* x, double* y, double* z,double* r2, double* alphas, double
       }
     }
   }
-//#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
     for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
@@ -442,7 +343,7 @@ double* getP2(double* x, double* y, double* z,double* r2, double* alphas, double
           sumsOuter +=  betas[2*Nsize*Nsize + n*Nsize + k]*betas[2*Nsize*Nsize+nd*Nsize + kd]*oneO1PalphaSqrt7[k]*oneO1PalphaSqrt7[kd]*sumsInner;
         }
       }
-          P2[Nsize*n + nd] = 5.0*PI2*0.0625*sumsOuter;///pow(((double) n + 1)*((double) nd + 1),2);
+          P2[Nsize*n + nd] = 5.0*PI2*0.0625*sumsOuter;
     }
   }
   for(int n = 0; n < Nsize; n++){
@@ -459,8 +360,7 @@ double* getP2(double* x, double* y, double* z,double* r2, double* alphas, double
 
   return P2;
 }
-//-----------------------------------------------------------
-//-----------------------------------------------------------
+//================================================================
 double* getP3(double* x, double* y, double* z,double* r2, double* alphas, double* betas , int Asize, int Nsize, double* ReX){
 
   double* P3 = (double*) malloc(Nsize*Nsize*sizeof(double));
@@ -513,7 +413,6 @@ double* getP3(double* x, double* y, double* z,double* r2, double* alphas, double
       }
     }
   }
-//#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
     for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
@@ -528,7 +427,7 @@ double* getP3(double* x, double* y, double* z,double* r2, double* alphas, double
           sumsOuter +=  betas[3*Nsize*Nsize + n*Nsize + k]*betas[3*Nsize*Nsize+nd*Nsize + kd]*oneO1PalphaSqrt9[k]*oneO1PalphaSqrt9[kd]*sumsInner;
         }
       }
-          P3[Nsize*n + nd] = 7.0*PI2*0.0625*sumsOuter;///pow(((double) n + 1)*((double) nd + 1),3);
+          P3[Nsize*n + nd] = 7.0*PI2*0.0625*sumsOuter;
     }
   }
   for(int n = 0; n < Nsize; n++){
@@ -546,8 +445,7 @@ double* getP3(double* x, double* y, double* z,double* r2, double* alphas, double
 
   return P3;
 }
-//-----------------------------------------------------------
-//-----------------------------------------------------------
+//================================================================
 double* getP4(double* x, double* y, double* z,double* r2, double* alphas, double* betas , int Asize, int Nsize, double* ReX){
 
   double* P4 = (double*) malloc(Nsize*Nsize*sizeof(double));
@@ -604,7 +502,6 @@ double* getP4(double* x, double* y, double* z,double* r2, double* alphas, double
       }
     }
   }
-//#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
     for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
@@ -619,7 +516,7 @@ double* getP4(double* x, double* y, double* z,double* r2, double* alphas, double
           sumsOuter +=  betas[4*Nsize*Nsize + n*Nsize + k]*betas[4*Nsize*Nsize+nd*Nsize + kd]*oneO1PalphaSqrt11[k]*oneO1PalphaSqrt11[kd]*sumsInner;
         }
       }
-          P4[Nsize*n + nd] = 9.0*PI2*0.00390625*sumsOuter;///pow(((double) n + 1)*((double) nd + 1),4);
+          P4[Nsize*n + nd] = 9.0*PI2*0.00390625*sumsOuter;
     }
   }
   for(int n = 0; n < Nsize; n++){
@@ -638,8 +535,7 @@ double* getP4(double* x, double* y, double* z,double* r2, double* alphas, double
 
   return P4;
 }
-//-----------------------------------------------------------
-//-----------------------------------------------------------
+//================================================================
 double* getP5(double* x, double* y, double* z,double* r2, double* alphas, double* betas , int Asize, int Nsize, double* ReX){
 
   double* P5 = (double*) malloc(Nsize*Nsize*sizeof(double));
@@ -697,7 +593,6 @@ double* getP5(double* x, double* y, double* z,double* r2, double* alphas, double
       }
     }
   }
-//#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
     for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
@@ -712,7 +607,7 @@ double* getP5(double* x, double* y, double* z,double* r2, double* alphas, double
           sumsOuter +=  betas[5*Nsize*Nsize + n*Nsize + k]*betas[5*Nsize*Nsize+nd*Nsize + kd]*oneO1PalphaSqrt13[k]*oneO1PalphaSqrt13[kd]*sumsInner;
         }
       }
-          P5[Nsize*n + nd] = 11.0*PI2*0.00390625*sumsOuter;///pow(((double) n + 1)*((double) nd + 1),5);
+          P5[Nsize*n + nd] = 11.0*PI2*0.00390625*sumsOuter;
     }
   }
   for(int n = 0; n < Nsize; n++){
@@ -731,8 +626,7 @@ double* getP5(double* x, double* y, double* z,double* r2, double* alphas, double
   free(kkdij);
   return P5;
 }
-//-----------------------------------------------------------
-//-----------------------------------------------------------
+//================================================================
 double* getP6(double* x, double* y, double* z,double* r2, double* alphas, double* betas , int Asize, int Nsize, double* ReX){
 
   double* P6 = (double*) malloc(Nsize*Nsize*sizeof(double));
@@ -803,7 +697,6 @@ double* getP6(double* x, double* y, double* z,double* r2, double* alphas, double
       }
     }
   }
-//#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
     for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
@@ -839,8 +732,7 @@ double* getP6(double* x, double* y, double* z,double* r2, double* alphas, double
 
   return P6;
 }
-//-----------------------------------------------------------
-//-----------------------------------------------------------
+//================================================================
 double* getP7(double* x, double* y, double* z,double* r2, double* alphas, double* betas , int Asize, int Nsize, double* ReX){
 
   double* P7 = (double*) malloc(Nsize*Nsize*sizeof(double));
@@ -913,7 +805,6 @@ double* getP7(double* x, double* y, double* z,double* r2, double* alphas, double
       }
     }
   }
-//#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
     for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
@@ -950,8 +841,7 @@ double* getP7(double* x, double* y, double* z,double* r2, double* alphas, double
 
   return P7;
 }
-//-----------------------------------------------------------
-//-----------------------------------------------------------
+//================================================================
 double* getP8(double* x, double* y, double* z,double* r2, double* alphas, double* betas , int Asize, int Nsize, double* ReX){
 
   double* P8 = (double*) malloc(Nsize*Nsize*sizeof(double));
@@ -1031,7 +921,6 @@ double* getP8(double* x, double* y, double* z,double* r2, double* alphas, double
       }
     }
   }
-//#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
     for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
@@ -1069,8 +958,7 @@ double* getP8(double* x, double* y, double* z,double* r2, double* alphas, double
 
   return P8;
 }
-//-----------------------------------------------------------
-//-----------------------------------------------------------
+//================================================================
 double* getP9(double* x, double* y, double* z,double* r2, double* alphas, double* betas , int Asize, int Nsize, double* ReX){
 
   double* P9 = (double*) malloc(Nsize*Nsize*sizeof(double));
@@ -1154,7 +1042,6 @@ double* getP9(double* x, double* y, double* z,double* r2, double* alphas, double
       }
     }
   }
-//#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
     for(int nd = n; nd < Nsize; nd++){
       sumsOuter = 0;
@@ -1194,8 +1081,7 @@ double* getP9(double* x, double* y, double* z,double* r2, double* alphas, double
   return P9;
 
 }
-//-----------------------------------------------------------
-//-----------------------------------------------------------
+//================================================================
 void printP(double* P, int Nsize){
   for(int i = 0; i < Nsize ; i++){
     for(int j = 0; j < Nsize ; j++){
@@ -1203,8 +1089,7 @@ void printP(double* P, int Nsize){
     }
   }
 }
-//-----------------------------------------------------------
-//-----------------------------------------------------------
+//================================================================
 void getPM(double* PMat, double* P, int N, int lS, int tS, int t, int l, int a){
   for(int i = 0; i < N; i++){
     for(int j = 0; j < N; j++){
@@ -1212,8 +1097,7 @@ void getPM(double* PMat, double* P, int N, int lS, int tS, int t, int l, int a){
     }
   }
 }
-//-----------------------------------------------------------
-//-----------------------------------------------------------
+//================================================================
 void printPM(double* PMat, int N, int lS, int tS, int aS){
   for(int a = 0; a < aS; a++){
     for(int t = 0; t < tS; t++){
@@ -1228,8 +1112,7 @@ void printPM(double* PMat, int N, int lS, int tS, int aS){
     std::cout << std::endl;
   }
 }
-//-----------------------------------------------------------
-//-----------------------------------------------------------
+//================================================================
 extern "C"{
 
 double* soap(double* c, double* Apos,double* Hpos,double* alphas,double* betas, int* typeNs, double rCut, int totalAN,int Ntypes,int Nsize, int l, int Hsize);
@@ -1245,12 +1128,10 @@ double* soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas,
   double* P1; double* P2; double* P3;
   double* P4; double* P5; double* P6;
   double* P7; double* P8; double* P9;
-  double* x;
-  double* y;
-  double* z;
-  x = (double*) malloc(sizeof(double)*totalAN);
-  y = (double*) malloc(sizeof(double)*totalAN);
-  z = (double*) malloc(sizeof(double)*totalAN);
+  double* x = (double*) malloc(sizeof(double)*totalAN);
+  double* y = (double*) malloc(sizeof(double)*totalAN);
+  double* z = (double*) malloc(sizeof(double)*totalAN);
+
   int Asize = 0;
 #pragma omp for schedule(static)
   for(int i = 0; i < Hsize; i++){
