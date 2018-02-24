@@ -10,22 +10,28 @@ This is a very light weight and fast SOAP implementation for machine learning in
 
 ### Prerequisites
 
-Numpy and Scipy are required. To install them by typing in the terminal: 
+Numpy and Scipy and ASE are required. To install them by typing in the terminal: 
 
 ```
 sudo pip install numpy
 ```
-and
 ```
 sudo pip install scipy
+```
+and
+```
+sudo pip install ase
 ```
 If you don't have super user access, install them by
 ```
 pip install numpy --user
 ```
-and
 ```
 pip install scipy --user
+```
+and
+```
+pip install ase --user
 ```
 You also need a gcc and g++ compiler.
 
