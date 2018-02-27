@@ -33,7 +33,7 @@ and
 ```
 pip install ase --user
 ```
-You also need a gcc and g++ compiler.
+You also need a gcc compiler.
 
 
 ### Installing
@@ -42,7 +42,7 @@ Simply type into the terminal:
 ```
 make
 ```
-if you have gcc and g++ compilers.
+if you have gcc compilers.
 
 ## Running the tests
 
