@@ -36,7 +36,7 @@ def _format_ase2clusgeo(obj):
     return Apos, typeNs, Ntypes, atomtype_lst, totalAN
 
 
-def get_soap_locals(obj, Hpos, rCutHard=8.0, NradBas=5, Lmax=5):
+def get_soap_locals(obj, Hpos, rCutHard=8.0, NradBas=5, Lmax=5, atoms_list=None):
     assert Lmax <= 9, "l cannot exceed 9. Lmax={}".format(Lmax) 
     assert Lmax >= 0, "l cannot be negative.Lmax={}".format(Lmax) 
     assert rCutHard < 10.0001 , "hard redius cuttof cannot be larger than 10 Angs. rCut={}".format(rCutHard) 
@@ -51,6 +51,12 @@ def get_soap_locals(obj, Hpos, rCutHard=8.0, NradBas=5, Lmax=5):
     py_Hsize = Hpos.shape[0]
     Hpos = Hpos.flatten()
     alp, bet = genBasis.getBasisFunc(rCutHard, NradBas)
+    
+    #Declaring main soap array, for atoms in atoms_list
+    if atoms_list == None:
+        atoms_list = atomtype_lst
+    soap_nfeature = NradBas**2*(Lmax+1)
+    soap = np.zeros((py_Hsize, soap_nfeature*len(atoms_list)))
 
     # convert int to c_int
     alphas = (c_double*len(alp))(*alp)
@@ -78,12 +84,20 @@ def get_soap_locals(obj, Hpos, rCutHard=8.0, NradBas=5, Lmax=5):
     libsoap.soap.restype = POINTER (c_double)
     # double* c, double* Apos,double* Hpos,int* typeNs,
     # int totalAN,int Ntypes,int Nsize, int l, int Hsize);
-    c = (c_double*(NradBas*NradBas*(Lmax+1)*py_Ntypes*py_Hsize))()
+    c = (c_double*(soap_nfeature*py_Ntypes*py_Hsize))()
     c = libsoap.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, l, Hsize)
     #   return c;
-    return np.ctypeslib.as_array( c, shape=(py_Hsize,NradBas*NradBas*(Lmax+1)*py_Ntypes))
+    soap_part = np.ctypeslib.as_array( c, shape=(py_Hsize,soap_nfeature*py_Ntypes))
+    
+    for i in range(py_Hsize):
+        for j_ind, j in enumerate(atoms_list):
+            if j in atomtype_lst:
+                j_ind_part = atomtype_lst.tolist().index(j)
+                soap[i, soap_nfeature*j_ind:soap_nfeature*(j_ind+1)] = soap_part[i, soap_nfeature*j_ind_part:soap_nfeature*(j_ind_part+1)]
+                
+    return soap
 
-def get_soap_structure(obj, rCutHard=8.0, NradBas=5, Lmax=5):
+def get_soap_structure(obj, rCutHard=8.0, NradBas=5, Lmax=5, atoms_list=None):
     Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj)
     Hpos = Apos.copy()
     arrsoap = get_soap_locals(obj, Hpos, rCutHard, NradBas, Lmax)
