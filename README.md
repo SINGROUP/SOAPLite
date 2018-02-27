@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-# ClusGeo3.0
-Fast and super light weight ClusGeo.
-=======
 # SOAP LIGHT 
 
 Smooth Overlap of Atomic Positions (SOAP) is an algorithm used for accurately classifying and machine learning chemical environments[1,2].
@@ -85,4 +81,3 @@ This project is licensed under the GNU LESSER GENERAL PUBLIC LICENSE - see the [
 * [1] On representing chemical environments  - Albert P. Bartók, Risi Kondor, Gábor Csányi [paper](https://arxiv.org/abs/1209.3140)
 * [2] Comparing molecules and solids across structural and alchemical space -  Sandip De, Albert P. Bartók, Gábor Cásnyi, and Michele Ceriotti [paper](https://arxiv.org/pdf/1601.04077.pdf)
 
->>>>>>> 3373d6401a26ce8fe434596faebca92606fac359
