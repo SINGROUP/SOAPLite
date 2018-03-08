@@ -35,6 +35,27 @@ def _format_ase2clusgeo(obj):
     Apos = np.concatenate(pos_lst).ravel()
     return Apos, typeNs, Ntypes, atomtype_lst, totalAN
 
+def _get_supercell(obj, rCutHard=8.0):
+    """ Takes atoms object (with a defined cell) and a radial cutoff.
+    Returns a supercell centered around the original cell
+    generously extended to contain all spheres with the given radial
+    cutoff centered around the original atoms. 
+    """
+
+    xyz_arr = np.abs(np.diag(obj.get_cell()))
+    cell_images = np.ceil(rCutHard/xyz_arr)
+    nx = int(cell_images[0])
+    ny = int(cell_images[1])
+    nz = int(cell_images[2])
+
+    suce = obj * (1 + 2*nx, 1+ 2*ny,1+2*nz)
+    shift = obj.get_cell()
+
+    shifted_suce = suce.copy()
+    shifted_suce.translate(-shift[0]*nx -shift[1]*ny - shift[1]*nz)
+
+    return suce
+
 
 def get_soap_locals(obj, Hpos, rCutHard=8.0, NradBas=5, Lmax=5):
     assert Lmax <= 9, "l cannot exceed 9. Lmax={}".format(Lmax) 
@@ -45,7 +66,7 @@ def get_soap_locals(obj, Hpos, rCutHard=8.0, NradBas=5, Lmax=5):
     assert NradBas <= 10 , "number of basis functions cannot exceed 10. NradBas={}".format(NradBas)
 
     # get clusgeo internal format for c-code
-    Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = format_ase2clusgeo(obj)
+    Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj)
     # flatten Hpos array
     Hpos = np.array(Hpos)
     py_Hsize = Hpos.shape[0]
@@ -64,7 +85,7 @@ def get_soap_locals(obj, Hpos, rCutHard=8.0, NradBas=5, Lmax=5):
     #convert int array to c_int array
     typeNs = (c_int * len(typeNs))(*typeNs)
 
-    print(l, Hsize, Ntypes, totalAN, typeNs, Nsize)
+    #print(l, Hsize, Ntypes, totalAN, typeNs, Nsize)
     # convert to c_double arrays
     #Apos
     axyz = (c_double * len(Apos))(*Apos.tolist())
@@ -85,7 +106,23 @@ def get_soap_locals(obj, Hpos, rCutHard=8.0, NradBas=5, Lmax=5):
 
 def get_soap_structure(obj, rCutHard=8.0, NradBas=5, Lmax=5):
     Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj)
-    Hpos = Apos.copy()
+    Hpos = Apos.copy().reshape((-1,3))
     arrsoap = get_soap_locals(obj, Hpos, rCutHard, NradBas, Lmax)
-    return arr_soap
+    return arrsoap
 
+def get_periodic_soap_locals(obj, Hpos, rCutHard=8.0, NradBas=5, Lmax=5):
+    # get supercells
+    suce = _get_supercell(obj, rCutHard=rCutHard)
+
+    arrsoap = get_soap_locals(suce, Hpos, rCutHard=rCutHard, 
+        NradBas=NradBas, Lmax=Lmax)
+
+    return arrsoap
+
+def get_periodic_soap_structure(obj, rCutHard=8.0, NradBas=5, Lmax=5):
+    Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj)
+    Hpos = Apos.copy().reshape((-1,3)) 
+    suce = _get_supercell(obj, rCutHard=rCutHard)
+
+    arrsoap = get_soap_locals(suce, Hpos, rCutHard, NradBas, Lmax)
+    return arrsoap
