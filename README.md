@@ -48,7 +48,7 @@ if you have gcc compilers.
 
 Run 
 ```
-python testSoapPy.py
+python test/testSoapPy.py
 ```
 This should generate a test.txt file which contains the SOAP spectrum for every H.dat point of a au40cu40 molecule (in au40cu40.xyz).
 
