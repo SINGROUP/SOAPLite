@@ -54,8 +54,7 @@ double sumMe(double* C, int Nsize,int Ntypes){
   }
   return mySum;
 }
-//-----------------------------------------------------------
-//-----------------------------------------------------------
+//========================================
 double* getAlphas(int alphaSize){
   double f;
   double* alphas = (double*) malloc(alphaSize*10*sizeof(double));
@@ -69,7 +68,7 @@ double* getAlphas(int alphaSize){
   return alphas;
 }
 //-----------------------------------------------------------
-//-----------------------------------------------------------
+//========================================
 double* getBetas(int alphaSize){
   double f;
   double* betas = (double*) malloc(alphaSize*alphaSize*10*sizeof(double));
@@ -83,7 +82,7 @@ double* getBetas(int alphaSize){
   return betas;
 }
 //-----------------------------------------------------------
-//-----------------------------------------------------------
+//========================================
 int* getInfo(int* totalAN, int* Ntypes){
   FILE* pFile;
   //Getting meta data
@@ -101,7 +100,7 @@ int* getInfo(int* totalAN, int* Ntypes){
   return typeNs;
 }
 //-----------------------------------------------------------
-//-----------------------------------------------------------
+//========================================
 double* getApos(int* totalAN, int* Ntypes, int* typeNs, int*types){
   FILE* pFile;
   //Getting atom types and positions
@@ -121,7 +120,7 @@ double* getApos(int* totalAN, int* Ntypes, int* typeNs, int*types){
   return Apos;
 }
 //-----------------------------------------------------------
-//-----------------------------------------------------------
+//========================================
 double* getHpos(int Hsize){
 
   FILE* pFile;
@@ -152,7 +151,7 @@ void getPos(double* x, double* y, double* z, double* Apos, double* Hpos, int* ty
 
 }
 //-----------------------------------------------------------
-//-----------------------------------------------------------
+//========================================
 int getAllPos(double* x, double* y, double* z, double* Apos, double* Hpos, int* typeNs, int Ihpos,int sizeAll){
 
   int count = 0;
@@ -244,9 +243,8 @@ double* get_AlphaBeta(double* alphas, double* betas, int Nsize){
         bOa[NsNs + n*Nsize + k] = betas[NsNs + n*Nsize + k]*oneO1alphaSqrtX;
       } // got beta_1nk
     }
-  }
-  if(l>1){
-    int shift1 = l*Nsize; int shift2 = l*NsNs;
+  } if(l>1){
+    int shift1 = 2*Nsize; int shift2 = 2*NsNs;
     for(int k = 0; k < Nsize; k++){
       oneO1alpha = 1.0/(1.0 + alphas[shift1 + k]); oneO1alphaSqrt = sqrt(oneO1alpha);
       alphaO1alpha[shift1 + k] = -alphas[shift1 + k]*oneO1alpha; //got alpha_2k
@@ -257,9 +255,8 @@ double* get_AlphaBeta(double* alphas, double* betas, int Nsize){
         bOa[shift2 + n*Nsize + k] = betas[shift2 + n*Nsize + k]*oneO1alphaSqrtX;
       } // got beta_2nk
     }
-  }
-  if(l>2){
-    int shift1 = l*Nsize; int shift2 = l*NsNs;
+  } if(l>2){
+    int shift1 = 3*Nsize; int shift2 = 3*NsNs;
     for(int k = 0; k < Nsize; k++){
       oneO1alpha = 1.0/(1.0 + alphas[shift1 + k]); oneO1alphaSqrt = sqrt(oneO1alpha);
       alphaO1alpha[shift1 + k] = -alphas[shift1 + k]*oneO1alpha; //got alpha_3k
@@ -270,9 +267,8 @@ double* get_AlphaBeta(double* alphas, double* betas, int Nsize){
         bOa[shift2 + n*Nsize + k] = betas[shift2 + n*Nsize + k]*oneO1alphaSqrtX;
       } // got beta_3nk
     }
-  }
-  if(l>3){
-    int shift1 = l*Nsize; int shift2 = l*NsNs;
+  } if(l>3){
+    int shift1 = 4*Nsize; int shift2 = 4*NsNs;
     for(int k = 0; k < Nsize; k++){
       oneO1alpha = 1.0/(1.0 + alphas[shift1 + k]); oneO1alphaSqrt = sqrt(oneO1alpha);
       alphaO1alpha[shift1 + k] = -alphas[shift1 + k]*oneO1alpha; //got alpha_4k
@@ -283,9 +279,8 @@ double* get_AlphaBeta(double* alphas, double* betas, int Nsize){
         bOa[shift2 + n*Nsize + k] = betas[shift2 + n*Nsize + k]*oneO1alphaSqrtX;
       } // got beta_4nk
     }
-  }
-  if(l>4){
-    int shift1 = l*Nsize; int shift2 = l*NsNs;
+  } if(l>4){
+    int shift1 = 5*Nsize; int shift2 = 5*NsNs;
     for(int k = 0; k < Nsize; k++){
       oneO1alpha = 1.0/(1.0 + alphas[shift1 + k]); oneO1alphaSqrt = sqrt(oneO1alpha);
       alphaO1alpha[shift1 + k] = -alphas[shift1 + k]*oneO1alpha; //got alpha_5k
@@ -296,9 +291,8 @@ double* get_AlphaBeta(double* alphas, double* betas, int Nsize){
         bOa[shift2 + n*Nsize + k] = betas[shift2 + n*Nsize + k]*oneO1alphaSqrtX;
       } // got beta_5nk
     }
-  }
-  if(l>5){
-    int shift1 = l*Nsize; int shift2 = l*NsNs;
+  } if(l>5){
+    int shift1 = 6*Nsize; int shift2 = 6*NsNs;
     for(int k = 0; k < Nsize; k++){
       oneO1alpha = 1.0/(1.0 + alphas[shift1 + k]); oneO1alphaSqrt = sqrt(oneO1alpha);
       alphaO1alpha[shift1 + k] = -alphas[shift1 + k]*oneO1alpha; //got alpha_6k
@@ -309,9 +303,8 @@ double* get_AlphaBeta(double* alphas, double* betas, int Nsize){
         bOa[shift2 + n*Nsize + k] = betas[shift2 + n*Nsize + k]*oneO1alphaSqrtX;
       } // got beta_6nk
     }
-  }
-  if(l>6){
-    int shift1 = l*Nsize; int shift2 = l*NsNs;
+  } if(l>6){
+    int shift1 = 7*Nsize; int shift2 = 7*NsNs;
     for(int k = 0; k < Nsize; k++){
       oneO1alpha = 1.0/(1.0 + alphas[shift1 + k]); oneO1alphaSqrt = sqrt(oneO1alpha);
       alphaO1alpha[shift1 + k] = -alphas[shift1 + k]*oneO1alpha; //got alpha_7k
@@ -322,9 +315,8 @@ double* get_AlphaBeta(double* alphas, double* betas, int Nsize){
         bOa[shift2 + n*Nsize + k] = betas[shift2 + n*Nsize + k]*oneO1alphaSqrtX;
       } // got beta_7nk
     }
-  }
-  if(l>7){
-    int shift1 = l*Nsize; int shift2 = l*NsNs;
+  } if(l>7){
+    int shift1 = 8*Nsize; int shift2 = 8*NsNs;
     for(int k = 0; k < Nsize; k++){
       oneO1alpha = 1.0/(1.0 + alphas[shift1 + k]); oneO1alphaSqrt = sqrt(oneO1alpha);
       alphaO1alpha[shift1 + k] = -alphas[shift1 + k]*oneO1alpha; //got alpha_8k
@@ -335,9 +327,8 @@ double* get_AlphaBeta(double* alphas, double* betas, int Nsize){
         bOa[shift2 + n*Nsize + k] = betas[shift2 + n*Nsize + k]*oneO1alphaSqrtX;
       } // got beta_8nk
     }
-  }
-  if(l>8){
-    int shift1 = l*Nsize; int shift2 = l*NsNs;
+  }if(l>8){
+    int shift1 = 9*Nsize; int shift2 = 9*NsNs;
     for(int k = 0; k < Nsize; k++){
       oneO1alpha = 1.0/(1.0 + alphas[shift1 + k]); oneO1alphaSqrt = sqrt(oneO1alpha);
       alphaO1alpha[shift1 + k] = -alphas[shift1 + k]*oneO1alpha; //got alpha_9k
@@ -349,7 +340,6 @@ double* get_AlphaBeta(double* alphas, double* betas, int Nsize){
       } // got beta_9nk
     }
   }
-
 }
 //================================================================
 int getC(double* C, double* x, double* y, double* z,double* r2, double* ReIm2, double* ReIm3, double* ReIm4, double* ReIm5, double* ReIm6,double* ReIm7, double* ReIm8, double* ReIm9, double* bOa, double* aOa, double* exes, int Hsize, int Asize, int Nsize, int Ntypes,int posI, int typeJ){
@@ -362,10 +352,10 @@ int getC(double* C, double* x, double* y, double* z,double* r2, double* ReIm2, d
   int NsNs = Nsize*Nsize;
   int NsJ = 55*Nsize*typeJ;
   int NsNtI = Nsize*Ntypes*posI;
+  int LNsNs ;
   int Nx2 = 2*Nsize;
   int Nx3 = 3*Nsize;
-  int LNsNs = L*NsNs;
-  int LNs = L*Ns;
+  int LNs ;
   int LNsx2 = 2*LNs;
   int NsTsI = 2*55*Nsize*Ntypes*posI;
 
@@ -376,21 +366,30 @@ int getC(double* C, double* x, double* y, double* z,double* r2, double* ReIm2, d
   }
 
   if(l > 0){
+     LNsNs=NsNs;
+     LNs=Nsize;
     for(int k = 0; k < Nsize; k++){
       //exponents
-      for(int i = 0; i < Asize; i++){ exes[i] = exp(aOa[LNs + k]*r2[i]);}
+      for(int i = 0; i < Asize; i++){exes[i] = exp(aOa[LNs + k]*r2[i]);}
+
       sumMe = 0;//c10
-      for(int i = 0; i < Asize; i++){ sumMe += exes[i];}
-      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nsize + n] += bOa[LNsNs + n*Nsize + k]*sumMe; } // bOa not shifted correctly.
+      for(int i = 0; i < Asize; i++){sumMe += exes[i];}
+      for(int n = 0; n < Nsize; n++){C[NsTsI + NsJ + Nsize + n] += bOa[LNsNs + n*Nsize + k]*sumMe;} // 
+
       sumMe = 0;//c11Re
-      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*x[i];}
-      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx2 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      for(int i = 0; i < Asize; i++){sumMe += exes[i]*x[i];}
+      for(int n = 0; n < Nsize; n++){C[NsTsI + NsJ + Nx2 + n] += bOa[LNsNs + n*Nsize + k]*sumMe;}
+
       sumMe = 0;//c11Im
-      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*y[i];}
-      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx3 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      for(int i = 0; i < Asize; i++){sumMe += exes[i]*y[i];}
+      for(int n = 0; n < Nsize; n++){C[NsTsI + NsJ + Nx3 + n] += bOa[LNsNs + n*Nsize + k]*sumMe;}
+
+    }
   }
 
   if(l > 1){
+     LNsNs=2*NsNs;
+     LNs=2*Nsize;
     for(int k = 0; k < Nsize; k++){
       //exponents
       for(int i = 0; i < Asize; i++){ exes[i] = exp(aOa[LNs + k]*r2[i]);}
@@ -409,6 +408,7 @@ int getC(double* C, double* x, double* y, double* z,double* r2, double* ReIm2, d
       sumMe = 0;//c22Im
       for(int i = 0; i < Asize; i++){ sumMe += exes[i]*y[i];}
       for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx6 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+    }
   }
 
 
