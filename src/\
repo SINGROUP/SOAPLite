@@ -329,7 +329,6 @@ double* get_AlphaBeta(double* alphas, double* betas, int Nsize){
       oneO1alpha = 1.0/(1.0 + alphas[shift1 + k]); oneO1alphaSqrt = sqrt(oneO1alpha);
       alphaO1alpha[shift1 + k] = -alphas[shift1 + k]*oneO1alpha; //got alpha_8k
 
-      oneO1alpha9 = oneO1alpha4*oneO1alpha5;
       oneO1alphaSqrtX = oneO1alphaSqrt*oneO1alpha;
       for(int n = 0; n < Nsize; n++){
         bOa[shift2 + n*Nsize + k] = betas[shift2 + n*Nsize + k]*oneO1alphaSqrtX;
@@ -342,7 +341,6 @@ double* get_AlphaBeta(double* alphas, double* betas, int Nsize){
       oneO1alpha = 1.0/(1.0 + alphas[shift1 + k]); oneO1alphaSqrt = sqrt(oneO1alpha);
       alphaO1alpha[shift1 + k] = -alphas[shift1 + k]*oneO1alpha; //got alpha_9k
 
-      oneO1alpha10 = oneO1alpha5*oneO1alpha5;
       oneO1alphaSqrtX = oneO1alphaSqrt*oneO1alpha;
       for(int n = 0; n < Nsize; n++){
         bOa[shift2 + n*Nsize + k] = betas[shift2 + n*Nsize + k]*oneO1alphaSqrtX;
@@ -352,67 +350,25 @@ double* get_AlphaBeta(double* alphas, double* betas, int Nsize){
 
 }
 //================================================================
-int getC(double* C, double* x, double* y, double* z,double* r2, double* ReIm2, double* ReIm3, double* ReIm4, double* ReIm5, double* ReIm6,double* ReIm7, double* ReIm8, double* ReIm9, double* bOa, double* aOa, double* exes, int Hsize, int Asize, int Nsize, int Ntypes,int posI, int typeJ){
-
+int getC(double* C, double* x, double* y, double* z,double* r2, double* ReIm2, double* ReIm3, double* ReIm4, double* ReIm5, double* ReIm6,double* ReIm7, double* ReIm8, double* ReIm9, double* bOa, double* aOa, int Asize, int Nsize, int Ntypes,int posI, int typeJ){
   if(Asize == 0){
     return 0;
   }
 
   double sumMe = 0;
   int NsNs = Nsize*Nsize;
-  int NsJ = 55*Nsize*typeJ;
-  int NsNtI = Nsize*Ntypes*posI;
-  int Nx2 = 2*Nsize;
-  int Nx3 = 3*Nsize;
-  int LNsNs = L*NsNs;
-  int LNs = L*Ns;
-  int LNsx2 = 2*LNs;
-  int NsTsI = 2*55*Nsize*Ntypes*posI;
+  int NsNsJ = NsNs*Ntypes*typeJ;
+  int NsNsNtI = NsNs*Ntypes*posI;
 
   for(int k = 0; k < Nsize; k++){
     sumMe = 0;
-    for(int i = 0; i < Asize; i++){ sumMe += exp(aOa[k]*r2[i]);}
-    for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + n] += bOa[n*Nsize + k]*sumMe; }
+    for(int i = 0; i < Asize; i++){
+      sumMe += exp(aOa[k]*r2[i]); 
+    }
+    for(int n = 0; n < Nsize; n++){
+      C[NsNsNtI + NsNsJ + n*Nsize + k] = bOa[n*Nsize + k]*sumMe;
+    }
   }
-
-  if(l > 0){
-    for(int k = 0; k < Nsize; k++){
-      //exponents
-      for(int i = 0; i < Asize; i++){ exes[i] = exp(aOa[LNs + k]*r2[i]);}
-      sumMe = 0;//c10
-      for(int i = 0; i < Asize; i++){ sumMe += exes[i];}
-      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nsize + n] += bOa[LNsNs + n*Nsize + k]*sumMe; } // bOa not shifted correctly.
-      sumMe = 0;//c11Re
-      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*x[i];}
-      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx2 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
-      sumMe = 0;//c11Im
-      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*y[i];}
-      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx3 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
-  }
-
-  if(l > 1){
-    for(int k = 0; k < Nsize; k++){
-      //exponents
-      for(int i = 0; i < Asize; i++){ exes[i] = exp(aOa[LNs + k]*r2[i]);}
-      sumMe = 0;//c20
-      for(int i = 0; i < Asize; i++){ sumMe += exes[i];}
-      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx4 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
-      sumMe = 0;//c21Re
-      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*x[i];}
-      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx5 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
-      sumMe = 0;//c21Im
-      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*y[i];}
-      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx6 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
-      sumMe = 0;//c22Re
-      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*y[i];}
-      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx6 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
-      sumMe = 0;//c22Im
-      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*y[i];}
-      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx6 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
-  }
-
-
-
 
   ReIm2(x, y, ReIm2,Asize);
   ReIm3(x, y, ReIm2, ReIm3,Asize);
@@ -449,7 +405,6 @@ int main(){
   double* ReIm7 = (double*) malloc(2*sizeof(double)*totalAN[0])// 2 -> Re + ixIm
   double* ReIm8 = (double*) malloc(2*sizeof(double)*totalAN[0])// 2 -> Re + ixIm
   double* ReIm9 = (double*) malloc(2*sizeof(double)*totalAN[0])// 2 -> Re + ixIm
-  double* exes = (double*) malloc (sizeof(double)*totalAN[0]);
   int Asize = 0;
 
 //  if(l==0){double* cn = (double*) malloc(2*sizeof(double));}
@@ -492,7 +447,7 @@ int main(){
     for(int j = 0; j < Ntypes[0]; j++){
       Asize = getFilteredPos(x, y, z, Apos, Hpos,typeNs, 50.0, i, j);
       r2 = getR2(x, y, z, Asize);
-      getC(cn, x, y, z,r2, alphas, betas, Hsize, Asize, Nsize,Ntypes[0],i,j);
+      getC(cn, x, y, z,r2, alphas, betas, Asize, Nsize,Ntypes[0],i,j);
     }
   }
 
