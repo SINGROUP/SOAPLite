@@ -196,15 +196,17 @@ int getFilteredPos(double* x, double* y, double* z, double* Apos, double* Hpos,
   return count;
 }
 //================================================================
-double* getR2(double* x, double* y, double* z, int size){
-
-  double* r2s = (double*) malloc(size*sizeof(double));
-
+double* getRsZs(double* x, double* y, double* z,double* r2,double* r4,double* r6,double* r8,double* z2,double* z4,double* z6,double* z8,, int size){
   for(int i = 0; i < size; i++){
-       r2s[i] = x[i]*x[i] + y[i]*y[i] + z[i]*z[i];
+       r2[i] = x[i]*x[i] + y[i]*y[i] + z[i]*z[i];
+       r4[i] = r2[i]*r2[i];
+       r6[i] = r2[i]*r4[i];
+       r8[i] = r4[i]*r4[i];
+       z2[i] = z[i]*z[i];
+       z4[i] = z2[i]*z2[i];
+       z6[i] = z2[i]*z4[i];
+       z8[i] = z4[i]*z4[i];
   }
-
- return r2s;
 
 }
 //================================================================
@@ -355,6 +357,9 @@ int getC(double* C, double* x, double* y, double* z,double* r2, double* ReIm2, d
   int LNsNs ;
   int Nx2 = 2*Nsize;
   int Nx3 = 3*Nsize;
+  int x2;
+  int y2;
+  int z2;
   int LNs ;
   int LNsx2 = 2*LNs;
   int NsTsI = 2*55*Nsize*Ntypes*posI;
@@ -374,7 +379,7 @@ int getC(double* C, double* x, double* y, double* z,double* r2, double* ReIm2, d
 
       sumMe = 0;//c10
       for(int i = 0; i < Asize; i++){sumMe += exes[i];}
-      for(int n = 0; n < Nsize; n++){C[NsTsI + NsJ + Nsize + n] += bOa[LNsNs + n*Nsize + k]*sumMe;} // 
+      for(int n = 0; n < Nsize; n++){C[NsTsI + NsJ + Nsize + n] += bOa[LNsNs + n*Nsize + k]*sumMe;} 
 
       sumMe = 0;//c11Re
       for(int i = 0; i < Asize; i++){sumMe += exes[i]*x[i];}
@@ -390,6 +395,7 @@ int getC(double* C, double* x, double* y, double* z,double* r2, double* ReIm2, d
   if(l > 1){
      LNsNs=2*NsNs;
      LNs=2*Nsize;
+     x2 = x[i]*x[i];
     for(int k = 0; k < Nsize; k++){
       //exponents
       for(int i = 0; i < Asize; i++){ exes[i] = exp(aOa[LNs + k]*r2[i]);}
@@ -404,10 +410,10 @@ int getC(double* C, double* x, double* y, double* z,double* r2, double* ReIm2, d
       for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx6 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
       sumMe = 0;//c22Re
       for(int i = 0; i < Asize; i++){ sumMe += exes[i]*y[i];}
-      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx6 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx7 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
       sumMe = 0;//c22Im
       for(int i = 0; i < Asize; i++){ sumMe += exes[i]*y[i];}
-      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx6 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx8 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
     }
   }
 
@@ -440,7 +446,14 @@ int main(){
   double* x = (double*) malloc(sizeof(double)*totalAN[0]);
   double* y = (double*) malloc(sizeof(double)*totalAN[0]);
   double* z = (double*) malloc(sizeof(double)*totalAN[0]);
-  double* r2;
+  double* z2 = (double*) malloc(sizeof(double)*totalAN[0]);
+  double* z4 = (double*) malloc(sizeof(double)*totalAN[0]);
+  double* z6 = (double*) malloc(sizeof(double)*totalAN[0]);
+  double* z8 = (double*) malloc(sizeof(double)*totalAN[0]);
+  double* r2 = (double*) malloc(sizeof(double)*totalAN[0]);
+  double* r4 = (double*) malloc(sizeof(double)*totalAN[0]);
+  double* r6 = (double*) malloc(sizeof(double)*totalAN[0]);
+  double* r8 = (double*) malloc(sizeof(double)*totalAN[0]);
   double* ReIm2 = (double*) malloc(2*sizeof(double)*totalAN[0])// 2 -> Re + ixIm
   double* ReIm3 = (double*) malloc(2*sizeof(double)*totalAN[0])// 2 -> Re + ixIm
   double* ReIm4 = (double*) malloc(2*sizeof(double)*totalAN[0])// 2 -> Re + ixIm
@@ -452,16 +465,6 @@ int main(){
   double* exes = (double*) malloc (sizeof(double)*totalAN[0]);
   int Asize = 0;
 
-//  if(l==0){double* cn = (double*) malloc(2*sizeof(double));}
-//  else if(l==1){double* cn = (double*) malloc(2*3 *sizeof(double)*Hsize);}
-//  else if(l==2){double* cn = (double*) malloc(2*6 *sizeof(double)*Hsize);}
-//  else if(l==3){double* cn = (double*) malloc(2*10*sizeof(double)*Hsize);}
-//  else if(l==4){double* cn = (double*) malloc(2*15*sizeof(double)*Hsize);}
-//  else if(l==5){double* cn = (double*) malloc(2*21*sizeof(double)*Hsize);}
-//  else if(l==6){double* cn = (double*) malloc(2*28*sizeof(double)*Hsize);}
-//  else if(l==7){double* cn = (double*) malloc(2*36*sizeof(double)*Hsize);}
-//  else if(l==8){double* cn = (double*) malloc(2*45*sizeof(double)*Hsize);}
-//  else if(l==9){double* cn = (double*) malloc(2*55*sizeof(double)*Hsize);}
   double* cn = (double*) malloc(2*55*sizeof(double)*Hsize);
 
   double cs0  = PIHalf;
@@ -486,12 +489,12 @@ int main(){
   double cs53 = 12.510378411; double cs54 = 2.9487244699;
 
   //MAKESURE TO NULLIFY THE CNs!!!!!!!
-  //Triple Check the implementation, Triple times. The Triple that again.
+  //Triple Check the implementation, Triple times. Then Triple that again.
   
   for(int i = 0; i < Hsize; i++){
     for(int j = 0; j < Ntypes[0]; j++){
       Asize = getFilteredPos(x, y, z, Apos, Hpos,typeNs, 50.0, i, j);
-      r2 = getR2(x, y, z, Asize);
+      getR2(x, y, z, r2,r4,r6,r8,z2,z4,z6,z8, Asize);
       getC(cn, x, y, z,r2, alphas, betas, Hsize, Asize, Nsize,Ntypes[0],i,j);
     }
   }
