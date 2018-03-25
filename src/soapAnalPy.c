@@ -10,8 +10,7 @@
 int getFilteredPos(double* x, double* y, double* z, double* Apos, double* Hpos,
       int* typeNs, double rCutSqr, int Ihpos, int Itype){
 
-  int shiftType = 0;
-  int count = 0;
+  int shiftType = 0; int count = 0;
   double X = 0; double Y = 0; double Z = 0;
 
     for(int i = 0; i < Itype ; i++){
@@ -1120,12 +1119,6 @@ double* soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas,
      }
     }
   }
-//  free(P0); free(ReX);free(r2);
-//free(P1); free(P2); free(P3);
-//free(P4); free(P5); free(P6);
-//free(P7); free(P8); free(P9);
-//free(x);free(y);free(z);
   }
 return soapMat;
 }
-
