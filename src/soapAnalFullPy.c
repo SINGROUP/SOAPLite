@@ -199,13 +199,8 @@ int getFilteredPos(double* x, double* y, double* z, double* Apos, double* Hpos,
 double* getRsZs(double* x, double* y, double* z,double* r2,double* r4,double* r6,double* r8,double* z2,double* z4,double* z6,double* z8,, int size){
   for(int i = 0; i < size; i++){
        r2[i] = x[i]*x[i] + y[i]*y[i] + z[i]*z[i];
-       r4[i] = r2[i]*r2[i];
-       r6[i] = r2[i]*r4[i];
-       r8[i] = r4[i]*r4[i];
-       z2[i] = z[i]*z[i];
-       z4[i] = z2[i]*z2[i];
-       z6[i] = z2[i]*z4[i];
-       z8[i] = z4[i]*z4[i];
+       r4[i] = r2[i]*r2[i]; r6[i] = r2[i]*r4[i]; r8[i] = r4[i]*r4[i];
+       z2[i] = z[i]*z[i]; z4[i] = z2[i]*z2[i]; z6[i] = z2[i]*z4[i]; z8[i] = z4[i]*z4[i];
   }
 
 }
@@ -343,6 +338,123 @@ double* get_AlphaBeta(double* alphas, double* betas, int Nsize){
     }
   }
 }
+//---------------------------------------------------------------
+//---------------------------------------------------------------
+//---------------------------------------------------------------
+//---------------------------------------------------------------
+       for(int i = 0; i < Asize; i++){
+      /*c20  */  preCoef[           + i] = (3*z2[i] - r2[i]);
+
+      /*c21Re*/  preCoef[totalAN    + i] = x[i]*z[i];
+      /*c21Im*/  preCoef[totalAN*2  + i] = y[i]*z[i];
+      /*c22Re*/  preCoef[totalAN*3  + i] = ReIm2[2*i];
+      /*c22Im*/  preCoef[totalAN*4  + i] = ReIm2[2*i + 1];
+
+      /*c30  */  preCoef[totalAN*5  + i] = (5*z2[i] - 3*r2[i]);
+
+      /*c31Re*/  preCoef[totalAN*6  + i] = x[i]*(5*z2[i] - r2[i]);
+      /*c31Im*/  preCoef[totalAN*7  + i] = y[i]*(5*z2[i] - r2[i]);
+      /*c32Re*/  preCoef[totalAN*8  + i] = ReIm2[2*i]*z[i];
+      /*c32Im*/  preCoef[totalAN*9  + i] = ReIm2[2*i + 1]*z[i];
+      /*c33Re*/  preCoef[totalAN*10 + i] = ReIm3[2*i    ];
+      /*c33Im*/  preCoef[totalAN*11 + i] = ReIm3[2*i + 1];
+
+      /*c40  */  preCoef[totalAN*12 + i] = (35*z4[i] - 30*z2[i]*r2[i]* + 3*r4[i]);
+
+      /*c41Re*/  preCoef[totalAN*13 + i] = z[i]*x[i]*(7*z2[i] - 3*r2[i]);
+      /*c41Im*/  preCoef[totalAN*14 + i] = z[i]*y[i]*(7*z2[i] - 3*r2[i]);
+      /*c42Re*/  preCoef[totalAN*15 + i] =      ReIm2[2*i]*(7*z2[i] - r2[i]);
+      /*c42Im*/  preCoef[totalAN*16 + i] =      ReIm2[2*i + 1]*(7*z2[i] - r2[i]);
+      /*c43Re*/  preCoef[totalAN*17 + i] = z[i]*ReIm3[2*i    ];
+      /*c43Im*/  preCoef[totalAN*18 + i] = z[i]*ReIm3[2*i + 1];
+      /*c44Re*/  preCoef[totalAN*19 + i] =      ReIm4[2*i    ];
+      /*c44Im*/  preCoef[totalAN*20 + i] =      ReIm4[2*i + 1];
+
+      /*c50  */  preCoef[totalAN*21 + i] = z[i]*(63*z4[i] - 70*z2[i]*r2[i]* + 15*r4[i]);
+
+      /*c51Re*/  preCoef[totalAN*22 + i] =      x[i]*(21*z4[i] - 14*z2[i]*r2[i]* + r4[i]);
+      /*c51Im*/  preCoef[totalAN*23 + i] =      y[i]*(21*z4[i] - 14*z2[i]*r2[i]* + r4[i]);
+      /*c52Re*/  preCoef[totalAN*24 + i] = z[i]*ReIm2[2*i    ]*(3*z2[i] - r2[i]);
+      /*c52Im*/  preCoef[totalAN*25 + i] = z[i]*ReIm2[2*i + 1]*(3*z2[i] - r2[i]);
+      /*c53Re*/  preCoef[totalAN*26 + i] =      ReIm3[2*i    ]*(9*z2[i] - r2[i]);
+      /*c53Im*/  preCoef[totalAN*27 + i] =      ReIm3[2*i + 1]*(9*z2[i] - r2[i]);
+      /*c54Re*/  preCoef[totalAN*28 + i] = z[i]*ReIm4[2*i    ];
+      /*c54Im*/  preCoef[totalAN*29 + i] = z[i]*ReIm4[2*i + 1];
+      /*c55Re*/  preCoef[totalAN*30 + i] =      ReIm5[2*i    ];
+      /*c55Im*/  preCoef[totalAN*31 + i] =      ReIm5[2*i + 1];
+
+      /*c60  */  preCoef[totalAN*32 + i] = (231*z4[i] - 315*z2[i]*r2[i]* + 105*r4[i] - 5*r6[i]);
+
+      /*c61Re*/  preCoef[totalAN*33 + i] = z[i]*x[i]*();
+      /*c61Im*/  preCoef[totalAN*34 + i] = z[i]*y[i]*();
+      /*c62Re*/  preCoef[totalAN*35 + i] =      ReIm2[2*i    ]*();
+      /*c62Im*/  preCoef[totalAN*36 + i] =      ReIm2[2*i + 1]*();
+      /*c63Re*/  preCoef[totalAN*37 + i] = z[i]*ReIm3[2*i    ]*();
+      /*c63Im*/  preCoef[totalAN*38 + i] = z[i]*ReIm3[2*i + 1]*();
+      /*c64Re*/  preCoef[totalAN*39 + i] =      ReIm4[2*i    ]*();
+      /*c64Im*/  preCoef[totalAN*40 + i] =      ReIm4[2*i + 1]*();
+      /*c65Re*/  preCoef[totalAN*41 + i] = z[i]*ReIm5[2*i    ]*();
+      /*c65Im*/  preCoef[totalAN*42 + i] = z[i]*ReIm5[2*i + 1]*();
+      /*c66Re*/  preCoef[totalAN*43 + i] =      ReIm6[2*i    ]*();
+      /*c66Im*/  preCoef[totalAN*44 + i] =      ReIm6[2*i + 1]*();
+
+      /*c70  */  preCoef[totalAN*32 + i] = (231*z4[i] - 315*z2[i]*r2[i]* + 105*r4[i] - 5*r6[i]);
+
+      /*c71Re*/  preCoef[totalAN*33 + i] = z[i]*x[i]*();
+      /*c71Im*/  preCoef[totalAN*34 + i] = z[i]*y[i]*();
+      /*c72Re*/  preCoef[totalAN*35 + i] =      ReIm2[2*i    ]*();
+      /*c72Im*/  preCoef[totalAN*36 + i] =      ReIm2[2*i + 1]*();
+      /*c73Re*/  preCoef[totalAN*37 + i] = z[i]*ReIm3[2*i    ]*();
+      /*c73Im*/  preCoef[totalAN*38 + i] = z[i]*ReIm3[2*i + 1]*();
+      /*c74Re*/  preCoef[totalAN*39 + i] =      ReIm4[2*i    ]*();
+      /*c74Im*/  preCoef[totalAN*40 + i] =      ReIm4[2*i + 1]*();
+      /*c75Re*/  preCoef[totalAN*41 + i] = z[i]*ReIm5[2*i    ]*();
+      /*c75Im*/  preCoef[totalAN*42 + i] = z[i]*ReIm5[2*i + 1]*();
+      /*c76Re*/  preCoef[totalAN*43 + i] =      ReIm6[2*i    ]*();
+      /*c76Im*/  preCoef[totalAN*44 + i] =      ReIm6[2*i + 1]*();
+      /*c77Re*/  preCoef[totalAN*43 + i] =      ReIm6[2*i    ]*();
+      /*c77Im*/  preCoef[totalAN*44 + i] =      ReIm6[2*i + 1]*();
+
+      /*c80  */  preCoef[totalAN*32 + i] = (231*z4[i] - 315*z2[i]*r2[i]* + 105*r4[i] - 5*r6[i]);
+
+      /*c81Re*/  preCoef[totalAN*33 + i] = z[i]*x[i]*();
+      /*c81Im*/  preCoef[totalAN*34 + i] = z[i]*y[i]*();
+      /*c82Re*/  preCoef[totalAN*35 + i] =      ReIm2[2*i    ]*();
+      /*c82Im*/  preCoef[totalAN*36 + i] =      ReIm2[2*i + 1]*();
+      /*c83Re*/  preCoef[totalAN*37 + i] = z[i]*ReIm3[2*i    ]*();
+      /*c83Im*/  preCoef[totalAN*38 + i] = z[i]*ReIm3[2*i + 1]*();
+      /*c84Re*/  preCoef[totalAN*39 + i] =      ReIm4[2*i    ]*();
+      /*c84Im*/  preCoef[totalAN*40 + i] =      ReIm4[2*i + 1]*();
+      /*c85Re*/  preCoef[totalAN*41 + i] = z[i]*ReIm5[2*i    ]*();
+      /*c85Im*/  preCoef[totalAN*42 + i] = z[i]*ReIm5[2*i + 1]*();
+      /*c86Re*/  preCoef[totalAN*43 + i] =      ReIm6[2*i    ]*();
+      /*c86Im*/  preCoef[totalAN*44 + i] =      ReIm6[2*i + 1]*();
+      /*c87Re*/  preCoef[totalAN*43 + i] =      ReIm6[2*i    ]*();
+      /*c87Im*/  preCoef[totalAN*44 + i] =      ReIm6[2*i + 1]*();
+      /*c88Re*/  preCoef[totalAN*43 + i] =      ReIm6[2*i    ]*();
+      /*c88Im*/  preCoef[totalAN*44 + i] =      ReIm6[2*i + 1]*();
+
+      /*c90  */  preCoef[totalAN*32 + i] = (231*z4[i] - 315*z2[i]*r2[i]* + 105*r4[i] - 5*r6[i]);
+
+      /*c91Re*/  preCoef[totalAN*33 + i] = z[i]*x[i]*();
+      /*c91Im*/  preCoef[totalAN*34 + i] = z[i]*y[i]*();
+      /*c92Re*/  preCoef[totalAN*35 + i] =      ReIm2[2*i    ]*();
+      /*c92Im*/  preCoef[totalAN*36 + i] =      ReIm2[2*i + 1]*();
+      /*c93Re*/  preCoef[totalAN*37 + i] = z[i]*ReIm3[2*i    ]*();
+      /*c93Im*/  preCoef[totalAN*38 + i] = z[i]*ReIm3[2*i + 1]*();
+      /*c94Re*/  preCoef[totalAN*39 + i] =      ReIm4[2*i    ]*();
+      /*c94Im*/  preCoef[totalAN*40 + i] =      ReIm4[2*i + 1]*();
+      /*c95Re*/  preCoef[totalAN*41 + i] = z[i]*ReIm5[2*i    ]*();
+      /*c95Im*/  preCoef[totalAN*42 + i] = z[i]*ReIm5[2*i + 1]*();
+      /*c96Re*/  preCoef[totalAN*43 + i] =      ReIm6[2*i    ]*();
+      /*c96Im*/  preCoef[totalAN*44 + i] =      ReIm6[2*i + 1]*();
+      /*c97Re*/  preCoef[totalAN*43 + i] =      ReIm6[2*i    ]*();
+      /*c97Im*/  preCoef[totalAN*44 + i] =      ReIm6[2*i + 1]*();
+      /*c98Re*/  preCoef[totalAN*43 + i] =      ReIm6[2*i    ]*();
+      /*c98Im*/  preCoef[totalAN*44 + i] =      ReIm6[2*i + 1]*();
+      /*c99Re*/  preCoef[totalAN*43 + i] =      ReIm6[2*i    ]*();
+      /*c99Im*/  preCoef[totalAN*44 + i] =      ReIm6[2*i + 1]*();
+      }
 //================================================================
 int getC(double* C, double* x, double* y, double* z,double* r2, double* ReIm2, double* ReIm3, double* ReIm4, double* ReIm5, double* ReIm6,double* ReIm7, double* ReIm8, double* ReIm9, double* bOa, double* aOa, double* exes, int Hsize, int Asize, int Nsize, int Ntypes,int posI, int typeJ){
 
@@ -357,9 +469,6 @@ int getC(double* C, double* x, double* y, double* z,double* r2, double* ReIm2, d
   int LNsNs ;
   int Nx2 = 2*Nsize;
   int Nx3 = 3*Nsize;
-  int x2;
-  int y2;
-  int z2;
   int LNs ;
   int LNsx2 = 2*LNs;
   int NsTsI = 2*55*Nsize*Ntypes*posI;
@@ -393,42 +502,137 @@ int getC(double* C, double* x, double* y, double* z,double* r2, double* ReIm2, d
   }
 
   if(l > 1){
-     LNsNs=2*NsNs;
-     LNs=2*Nsize;
-     x2 = x[i]*x[i];
+    LNsNs=2*NsNs;
+    LNs=2*Nsize;
+    getReIm2(x, y, ReIm2,Asize);
     for(int k = 0; k < Nsize; k++){
       //exponents
       for(int i = 0; i < Asize; i++){ exes[i] = exp(aOa[LNs + k]*r2[i]);}
       sumMe = 0;//c20
-      for(int i = 0; i < Asize; i++){ sumMe += exes[i];}
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*(3*z2[i] - r2[i]);}
       for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx4 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
       sumMe = 0;//c21Re
-      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*x[i];}
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*x[i]*z[i];}
       for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx5 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
       sumMe = 0;//c21Im
-      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*y[i];}
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*y[i]*z[i];}
       for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx6 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
       sumMe = 0;//c22Re
-      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*y[i];}
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*ReIm2[2*i];}
       for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx7 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
       sumMe = 0;//c22Im
-      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*y[i];}
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*ReIm2[2*i + 1];}
       for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx8 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
     }
   }
-
-
-
-
-  ReIm2(x, y, ReIm2,Asize);
-  ReIm3(x, y, ReIm2, ReIm3,Asize);
-  mulReIm(ReIm2, ReIm2, ReIm4, Asize);
-  mulReIm(ReIm2, ReIm3, ReIm5, Asize);
-  mulReIm(ReIm3, ReIm3, ReIm6, Asize);
-  mulReIm(ReIm4, ReIm3, ReIm7, Asize);
-  mulReIm(ReIm4, ReIm4, ReIm8, Asize);
-  mulReIm(ReIm4, ReIm5, ReIm9, Asize);
-
+  if(l > 2){
+    LNsNs=3*NsNs;
+    LNs=3*Nsize;
+    getReIm3(x, y, ReIm2, ReIm3, Asize);
+    for(int k = 0; k < Nsize; k++){
+      //exponents
+      for(int i = 0; i < Asize; i++){ exes[i] = exp(aOa[LNs + k]*r2[i]);}
+      sumMe = 0;//c30
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*(5*z2[i] - 3*r2[i]);}
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx9 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      sumMe = 0;//c31Re
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*x[i]*(5*z2[i] - r2[i]);}
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx10 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      sumMe = 0;//c31Im
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*y[i]*(5*z2[i] - r2[i]);}
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx11 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      sumMe = 0;//c32Re
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*ReIm2[2*i]*z[i];}
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx12 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      sumMe = 0;//c32Im
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*ReIm2[2*i + 1]*z[i];}
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx13 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      sumMe = 0;//c33Re
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*ReIm3[2*i    ];}
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx14 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      sumMe = 0;//c33Im
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*ReIm3[2*i + 1];}
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx15 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+    }
+  }
+  if(l > 3){
+    LNsNs=4*NsNs;
+    LNs=4*Nsize;
+    getMulReIm(ReIm2,ReIm2, ReIm4, Asize);
+    for(int k = 0; k < Nsize; k++){
+      //exponents
+      for(int i = 0; i < Asize; i++){ exes[i] = exp(aOa[LNs + k]*r2[i]);}
+      sumMe = 0;//c40
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*(35*z4[i] - 30*z2[i]*r2[i] + 3*r4[i]);}
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx16 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      sumMe = 0;//c41Re
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*x[i]*z[i]*(7*z2[i] - 3*r2[i]);}
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx17 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      sumMe = 0;//c41Im
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*y[i]*z[i]*(7*z2[i] - 3*r2[i]);}
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx18 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      sumMe = 0;//c42Re
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*ReIm2[2*i]*(7*z2[i] - r2[i]);}
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx19 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      sumMe = 0;//c42Im
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*ReIm2[2*i + 1]*(7*z2[i] - r2[i]);}
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx20 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      sumMe = 0;//c43Re
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*ReIm3[2*i    ]*z[i];}
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx21 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      sumMe = 0;//c43Im
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*ReIm3[2*i + 1]*z[i];}
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx22 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      sumMe = 0;//c44Re
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*ReIm4[2*i    ];}
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx23 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      sumMe = 0;//c44Im
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*ReIm4[2*i + 1];}
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx24 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+    }
+  }
+  if(l > 4){
+    LNsNs=5*NsNs;
+    LNs=5*Nsize;
+    getMulReIm(ReIm2,ReIm3, ReIm5, Asize);
+    for(int k = 0; k < Nsize; k++){
+      //exponents
+      for(int i = 0; i < Asize; i++){ exes[i] = exp(aOa[LNs + k]*r2[i]);}
+      sumMe = 0;//c50
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*(35*z4[i] - 30*z2[i]*r2[i] + 3*r4[i]);}
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx16 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      sumMe = 0;//c51Re
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*x[i]*z[i]*(7*z2[i] - 3*r2[i]);}
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx17 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      sumMe = 0;//c51Im
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*y[i]*z[i]*(7*z2[i] - 3*r2[i]);}
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx18 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      sumMe = 0;//c52Re
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*ReIm2[2*i]*(7*z2[i] - r2[i]);}
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx19 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      sumMe = 0;//c52Im
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*ReIm2[2*i + 1]*(7*z2[i] - r2[i]);}
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx20 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      sumMe = 0;//c53Re
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*ReIm3[2*i    ]*z[i];}
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx21 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      sumMe = 0;//c53Im
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*ReIm3[2*i + 1]*z[i];}
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx22 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      sumMe = 0;//c54Re
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*ReIm4[2*i    ];}
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx23 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      sumMe = 0;//c54Im
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*ReIm4[2*i + 1];}
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx24 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      sumMe = 0;//c55Re
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*ReIm4[2*i    ];}
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx23 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+      sumMe = 0;//c55Im
+      for(int i = 0; i < Asize; i++){ sumMe += exes[i]*ReIm4[2*i + 1];}
+      for(int n = 0; n < Nsize; n++){ C[NsTsI + NsJ + Nx24 + n] += bOa[LNsNs + n*Nsize + k]*sumMe; }
+    }
+  }
 }
 //=======================================================================
 int main(){
@@ -495,7 +699,7 @@ int main(){
     for(int j = 0; j < Ntypes[0]; j++){
       Asize = getFilteredPos(x, y, z, Apos, Hpos,typeNs, 50.0, i, j);
       getR2(x, y, z, r2,r4,r6,r8,z2,z4,z6,z8, Asize);
-      getC(cn, x, y, z,r2, alphas, betas, Hsize, Asize, Nsize,Ntypes[0],i,j);
+      getC(cn, x, y, z,r2, r4,r8,z2,z4,z6,z8, alphas, betas, Hsize, Asize, Nsize,Ntypes[0],i,j);
     }
   }
 
