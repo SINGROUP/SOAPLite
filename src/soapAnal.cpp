@@ -18,7 +18,7 @@ double* getAlphas(int alphaSize){
   double f;
   double* alphas = (double*) malloc(alphaSize*10*sizeof(double));
   FILE * pFile;
-  pFile = fopen ("alphas5.dat","r");
+  pFile = fopen ("alphas.dat","r");
   for(int i = 0; i < alphaSize*10; i++){
     fscanf (pFile, "%lf", &alphas[i]);
     //  rewind (pFile);
@@ -33,7 +33,7 @@ double* getBetas(int alphaSize){
   double* betas = (double*) malloc(alphaSize*alphaSize*10*sizeof(double));
   FILE * pFile;
 //  pFile = fopen ("betasCorr.dat","r");
-  pFile = fopen ("betas5.dat","r");
+  pFile = fopen ("betas.dat","r");
   for(int i = 0; i < alphaSize*alphaSize*10; i++){
     fscanf (pFile, "%lf", &betas[i]);
     //  rewind (pFile);
@@ -123,7 +123,7 @@ int getAllPos(double* x, double* y, double* z, double* Apos, double* Hpos, int* 
       X =  Apos[3*i    ] - Hpos[3*Ihpos    ];
       Y =  Apos[3*i + 1] - Hpos[3*Ihpos + 1];
       Z =  Apos[3*i + 2] - Hpos[3*Ihpos + 2];
-      if( X*X + Y*Y + Z*Z < 50.0 ){
+      if( X*X + Y*Y + Z*Z < 40.0 ){
         x[count] = X;
         y[count] = Y;
         z[count] = Z;
@@ -150,7 +150,7 @@ int getFilteredPos(double* x, double* y, double* z, double* Apos, double* Hpos,
       X = Apos[3*shiftType + 3*i    ] - Hpos[3*Ihpos    ];
       Y = Apos[3*shiftType + 3*i + 1] - Hpos[3*Ihpos + 1];
       Z = Apos[3*shiftType + 3*i + 2] - Hpos[3*Ihpos + 2];
-      if( X*X + Y*Y + Z*Z < 50.0 ){
+      if( X*X + Y*Y + Z*Z < 40.0 ){
         x[count] = X;
         y[count] = Y;
         z[count] = Z;
@@ -271,7 +271,6 @@ double* getP0(double* x, double* y, double* z,double* r2, double* alphas,
       }
     }
   }
-
 //#pragma omp parallel for schedule(static,chunk)
   for(int n = 0; n < Nsize; n++){
     for(int nd = n; nd < Nsize; nd++){
@@ -309,11 +308,11 @@ double* getP1(double* x, double* y, double* z,double* r2, double* alphas, double
   double* P1 = (double*) malloc(Nsize*Nsize*sizeof(double));
 
   if(Asize == 0){
-  for(int n = 0; n < Nsize*Nsize; n++){
+    for(int n = 0; n < Nsize*Nsize; n++){
       P1[n] = 0.0;
+    }
+    return P1;
   }
-  return P1;
-}
 
   double sumsInner = 0;
   double sumsOuter = 0;
@@ -1208,9 +1207,9 @@ void printP(double* P, int Nsize){
 }
 //-----------------------------------------------------------
 //-----------------------------------------------------------
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[]){
 
-  std::cout.precision(12);
+//  std::cout.precision(12);
 
   int*  totalAN = (int*) malloc(sizeof(int));
   int*  Ntypes = (int*) malloc(sizeof(int));
@@ -1219,7 +1218,8 @@ int main(int argc, char* argv[]) {
   double* y;
   double* z;
 
-  int l = atoi(argv[1]);
+//  int l = atoi(argv[1]);
+  int l = 1;
 
   int* types;
 
