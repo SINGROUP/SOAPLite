@@ -2,7 +2,7 @@
 from ctypes import *
 import os, argparse
 import numpy as np
-import genBasis 
+import genBasis
 import ase, ase.io
 import os
 
@@ -39,7 +39,7 @@ def _get_supercell(obj, rCutHard=8.0):
     """ Takes atoms object (with a defined cell) and a radial cutoff.
     Returns a supercell centered around the original cell
     generously extended to contain all spheres with the given radial
-    cutoff centered around the original atoms. 
+    cutoff centered around the original atoms.
     """
 
     xyz_arr = np.abs(np.diag(obj.get_cell()))
@@ -59,24 +59,25 @@ def _get_supercell(obj, rCutHard=8.0):
 
 def get_soap_locals(obj, Hpos, alp, bet, rCutHard=8.0, NradBas=5, Lmax=5):
     print("XDXX")
-    assert Lmax <= 9, "l cannot exceed 9. Lmax={}".format(Lmax) 
-    assert Lmax >= 0, "l cannot be negative.Lmax={}".format(Lmax) 
-    assert rCutHard < 10.0001 , "hard redius cuttof cannot be larger than 10 Angs. rCut={}".format(rCutHard) 
+    assert Lmax <= 9, "l cannot exceed 9. Lmax={}".format(Lmax)
+    assert Lmax >= 0, "l cannot be negative.Lmax={}".format(Lmax)
+    assert rCutHard < 10.0001 , "hard redius cuttof cannot be larger than 10 Angs. rCut={}".format(rCutHard)
     assert rCutHard > 4.999 , "hard redius cuttof cannot be lower than 5 Ang. rCut={}".format(rCutHard)
     assert NradBas >= 2 , "number of basis functions cannot be lower than 2. NradBas={}".format(NradBas)
     assert NradBas <= 10 , "number of basis functions cannot exceed 10. NradBas={}".format(NradBas)
 
     # get clusgeo internal format for c-code
     Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj)
-    # flatten Hpos array
     Hpos = np.array(Hpos)
     py_Hsize = Hpos.shape[0]
-    Hpos = Hpos.flatten()
 
+    # flatten arrays
+    Hpos = Hpos.flatten()
+    alp = alp.flatten()
+    bet = bet.flatten()
     print("XXXA")
+
     # convert int to c_int
-    alphas = (c_double*len(alp))(*alp)
-    betas = (c_double*len(bet))(*bet)
     lMax = c_int(Lmax)
     Hsize = c_int(py_Hsize)
     Ntypes = c_int(py_Ntypes)
@@ -86,8 +87,11 @@ def get_soap_locals(obj, Hpos, alp, bet, rCutHard=8.0, NradBas=5, Lmax=5):
     #convert int array to c_int array
     typeNs = (c_int * len(typeNs))(*typeNs)
 
-    #print(l, Hsize, Ntypes, totalAN, typeNs, Nsize)
     # convert to c_double arrays
+    # alphas
+    alphas = (c_double * len(alp))(*alp.tolist())
+    # betas
+    betas = (c_double * len(bet))(*bet.tolist())
     #Apos
     axyz = (c_double * len(Apos))(*Apos.tolist())
     #Hpos
@@ -97,7 +101,8 @@ def get_soap_locals(obj, Hpos, alp, bet, rCutHard=8.0, NradBas=5, Lmax=5):
     ### START SOAP###
     path_to_so = os.path.dirname(os.path.abspath(__file__))
     libsoap = CDLL(path_to_so + '/src/libsoapPy.so')
-    libsoap.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),POINTER (c_double),POINTER (c_double), POINTER (c_int),c_double,c_int,c_int,c_int,c_int,c_int]
+    libsoap.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),POINTER (c_double),
+        POINTER (c_double), POINTER (c_int),c_double,c_int,c_int,c_int,c_int,c_int]
     libsoap.soap.restype = POINTER (c_double)
     # double* c, double* Apos,double* Hpos,int* typeNs,
     # int totalAN,int Ntypes,int Nsize, int l, int Hsize);
@@ -117,14 +122,14 @@ def get_periodic_soap_locals(obj, Hpos, alp, bet, rCutHard=8.0, NradBas=5, Lmax=
     # get supercells
     suce = _get_supercell(obj, rCutHard=rCutHard)
 
-    arrsoap = get_soap_locals(suce, Hpos, alp, bet, rCutHard=rCutHard, 
+    arrsoap = get_soap_locals(suce, Hpos, alp, bet, rCutHard=rCutHard,
         NradBas=NradBas, Lmax=Lmax)
 
     return arrsoap
 
 def get_periodic_soap_structure(obj, rCutHard=8.0, NradBas=5, Lmax=5):
     Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj)
-    Hpos = Apos.copy().reshape((-1,3)) 
+    Hpos = Apos.copy().reshape((-1,3))
     suce = _get_supercell(obj, rCutHard=rCutHard)
 
     arrsoap = get_soap_locals(suce, Hpos, alp, bet, rCutHard, NradBas, Lmax)
