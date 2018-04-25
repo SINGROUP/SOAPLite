@@ -238,8 +238,7 @@ void getCfactors(double* preCoef, int Asize, double* x, double* y, double* z, do
       /*c21Re*/  preCoef[totalAN+i] = z[i]*x[i];
     //printf("DCC\n");
       /*c21Im*/  preCoef[t2+i] = z[i]*y[i];
-      /*c22Re*/  preCoef[t3+i] = 0;//      ReIm2[2*i];
-    //printf("DCSCD %i\n", totalAN);
+      /*c22Re*/  preCoef[t3+i] =      ReIm2[2*i];
       /*c22Im*/  preCoef[t4+i] =      ReIm2[i2+1];
     if(lMax > 2){
       /*c30  */  preCoef[t5+i] = c30c*z[i]; 
