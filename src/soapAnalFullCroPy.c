@@ -1261,10 +1261,9 @@ double* soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas,
   free(aOa);
 
   double* soapMat = (double*) malloc(Hs*3*Ns*Ns*(lMax+1)*sizeof(double));// 3 -> aa, ab, bb
-  printf("   %i   \n",Ns);
 //  double* soapMat = (double*) malloc(10000000000);
   getP(soapMat, cnnd, Ns, Nt, Hs, lMax);
   free(cnnd);
-  //printf("xxxxxxxx\n");
+//  printf("xxxxxxxx: %f cut, %i totalAN, %i Nt, %i Ns, %i lMax, %i Hs,\n", soapMat[0], rCut, totalAN, Nt, Ns, lMax, Hs);
   return soapMat;
 }

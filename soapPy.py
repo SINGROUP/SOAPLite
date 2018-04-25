@@ -35,7 +35,8 @@ def _format_ase2clusgeo(obj):
     Apos = np.concatenate(pos_lst).ravel()
     return Apos, typeNs, Ntypes, atomtype_lst, totalAN
 
-def _get_supercell(obj, rCutHard=8.0):
+def _get_supercell(obj, rCut=5.0):
+    rCutHard = rCut + 5; # Giving extra space for hard cutOff
     """ Takes atoms object (with a defined cell) and a radial cutoff.
     Returns a supercell centered around the original cell
     generously extended to contain all spheres with the given radial
@@ -57,14 +58,14 @@ def _get_supercell(obj, rCutHard=8.0):
     return suce
 
 
-def get_soap_locals(obj, Hpos, alp, bet, rCutHard=8.0, NradBas=5, Lmax=5):
-    print("XDXX")
+def get_soap_locals(obj, Hpos, alp, bet, rCut=5.0, NradBas=5, Lmax=5):
+    rCutHard = rCut + 5;
     assert Lmax <= 9, "l cannot exceed 9. Lmax={}".format(Lmax)
     assert Lmax >= 0, "l cannot be negative.Lmax={}".format(Lmax)
-    assert rCutHard < 10.0001 , "hard redius cuttof cannot be larger than 10 Angs. rCut={}".format(rCutHard)
+    assert rCutHard < 12.0001 , "hard redius cuttof cannot be larger than 12 Angs. rCut={}".format(rCutHard)
     assert rCutHard > 4.999 , "hard redius cuttof cannot be lower than 5 Ang. rCut={}".format(rCutHard)
     assert NradBas >= 2 , "number of basis functions cannot be lower than 2. NradBas={}".format(NradBas)
-    assert NradBas <= 10 , "number of basis functions cannot exceed 10. NradBas={}".format(NradBas)
+    assert NradBas <= 12 , "number of basis functions cannot exceed 12. NradBas={}".format(NradBas)
 
     # get clusgeo internal format for c-code
     Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj)
@@ -75,7 +76,6 @@ def get_soap_locals(obj, Hpos, alp, bet, rCutHard=8.0, NradBas=5, Lmax=5):
     Hpos = Hpos.flatten()
     alp = alp.flatten()
     bet = bet.flatten()
-    print("XXXA")
 
     # convert int to c_int
     lMax = c_int(Lmax)
@@ -96,7 +96,6 @@ def get_soap_locals(obj, Hpos, alp, bet, rCutHard=8.0, NradBas=5, Lmax=5):
     axyz = (c_double * len(Apos))(*Apos.tolist())
     #Hpos
     hxyz = (c_double * len(Hpos))(*Hpos.tolist())
-    print("RXXX")
 
     ### START SOAP###
     path_to_so = os.path.dirname(os.path.abspath(__file__))
@@ -108,30 +107,29 @@ def get_soap_locals(obj, Hpos, alp, bet, rCutHard=8.0, NradBas=5, Lmax=5):
     # int totalAN,int Ntypes,int Nsize, int l, int Hsize);
     c = (c_double*(NradBas*NradBas*(Lmax+1)*py_Ntypes*py_Hsize))()
     c = libsoap.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
-    print("XXXX")
     #   return c;
 #    return np.ctypeslib.as_array( c, shape=(py_Hsize,NradBas*NradBas*(Lmax+1)*py_Ntypes))
     return np.ctypeslib.as_array( c, shape=(py_Hsize,NradBas*NradBas*(Lmax+1)*3))
 
-def get_soap_structure(obj, alp, bet, rCutHard=8.0, NradBas=5, Lmax=5):
+def get_soap_structure(obj, alp, bet, rCut=5.0, NradBas=5, Lmax=5):
     Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj)
     Hpos = Apos.copy().reshape((-1,3))
-    arrsoap = get_soap_locals(obj, alp, bet, Hpos, rCutHard, NradBas, Lmax)
+    arrsoap = get_soap_locals(obj, Hpos, alp, bet,  rCut, NradBas, Lmax)
     return arrsoap
 
-def get_periodic_soap_locals(obj, Hpos, alp, bet, rCutHard=8.0, NradBas=5, Lmax=5):
+def get_periodic_soap_locals(obj, Hpos, alp, bet, rCut=5.0, NradBas=5, Lmax=5):
     # get supercells
-    suce = _get_supercell(obj, rCutHard=rCutHard)
+    suce = _get_supercell(obj, rCut=rCut)
 
-    arrsoap = get_soap_locals(suce, Hpos, alp, bet, rCutHard=rCutHard,
+    arrsoap = get_soap_locals(suce, Hpos, alp, bet, rCut=rCut,
         NradBas=NradBas, Lmax=Lmax)
 
     return arrsoap
 
-def get_periodic_soap_structure(obj, rCutHard=8.0, NradBas=5, Lmax=5):
+def get_periodic_soap_structure(obj, rCut=5.0, NradBas=5, Lmax=5):
     Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj)
     Hpos = Apos.copy().reshape((-1,3))
-    suce = _get_supercell(obj, rCutHard=rCutHard)
+    suce = _get_supercell(obj, rCut=rCut)
 
-    arrsoap = get_soap_locals(suce, Hpos, alp, bet, rCutHard, NradBas, Lmax)
+    arrsoap = get_soap_locals(suce, Hpos, alp, bet, rCut, NradBas, Lmax)
     return arrsoap

@@ -39,7 +39,7 @@ def getOrthNorm(X):
     return x
 #--------------------------------------------------
 def getBasisFunc(rcut, n):
-    a = np.linspace(1,rcut - 3,n)
+    a = np.linspace(1,rcut,n)
     alphasFull = np.array([])
     betas = np.array([])
     betasFull = np.array([])
