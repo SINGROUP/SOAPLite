@@ -59,11 +59,11 @@ def getBasisFunc(rcut, n):
 #    np.savetxt('betasPy.dat',  betasFull)
     return  alphasFull, betasFull
 #--------------------------------------------------
-#if __name__ == '__main__':
-#    alphas, betas = getBasisFunc(10.0, 10)
+if __name__ == '__main__':
+    alphas, betas = getBasisFunc(5.0, 10)
 #    print(alphas, betas)
-#    np.savetxt('alphasPy.dat', alphas)
-#    np.savetxt('betasPy.dat',  betas)
+    np.savetxt('alphasPy.dat', alphas)
+    np.savetxt('betasPy.dat',  betas)
 
 
 
