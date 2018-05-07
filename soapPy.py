@@ -58,17 +58,17 @@ def _get_supercell(obj, rCut=5.0):
     return suce
 
 
-def get_soap_locals(obj, Hpos, alp, bet, rCut=5.0, NradBas=5, Lmax=5):
+def get_soap_locals(obj, Hpos, alp, bet, rCut=5.0, NradBas=5, Lmax=5, crossOver=True):
     rCutHard = rCut + 5;
     assert Lmax <= 9, "l cannot exceed 9. Lmax={}".format(Lmax)
     assert Lmax >= 0, "l cannot be negative.Lmax={}".format(Lmax)
-    assert rCutHard < 12.0001 , "hard redius cuttof cannot be larger than 12 Angs. rCut={}".format(rCutHard)
-    assert rCutHard > 4.999 , "hard redius cuttof cannot be lower than 5 Ang. rCut={}".format(rCutHard)
+    assert rCutHard < 20.0001 , "hard redius cuttof cannot be larger than 17 Angs. rCut={}".format(rCutHard)
+    assert rCutHard > 1.999 , "hard redius cuttof cannot be lower than 1 Ang. rCut={}".format(rCutHard)
     assert NradBas >= 2 , "number of basis functions cannot be lower than 2. NradBas={}".format(NradBas)
-    assert NradBas <= 12 , "number of basis functions cannot exceed 12. NradBas={}".format(NradBas)
-
+    assert NradBas <= 13 , "number of basis functions cannot exceed 12. NradBas={}".format(NradBas)
     # get clusgeo internal format for c-code
     Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj)
+    assert  py_Ntypes<=6  , "Number of types cannot exceed 6 with this implementation. types={}".format(py_Ntypes)
     Hpos = np.array(Hpos)
     py_Hsize = Hpos.shape[0]
 
@@ -99,37 +99,83 @@ def get_soap_locals(obj, Hpos, alp, bet, rCut=5.0, NradBas=5, Lmax=5):
 
     ### START SOAP###
     path_to_so = os.path.dirname(os.path.abspath(__file__))
-    libsoap = CDLL(path_to_so + '/src/libsoapPy.so')
-    libsoap.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),POINTER (c_double),
-        POINTER (c_double), POINTER (c_int),c_double,c_int,c_int,c_int,c_int,c_int]
-    libsoap.soap.restype = POINTER (c_double)
+    if(py_Ntypes==1):
+        libsoap = CDLL(path_to_so + '/src/libsoapPy.so')
+        libsoap.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),POINTER (c_double),
+            POINTER (c_double), POINTER (c_int),c_double,c_int,c_int,c_int,c_int,c_int]
+        libsoap.soap.restype = POINTER (c_double)
+    elif(py_Ntypes==2):
+        libsoap2 = CDLL(path_to_so + '/src/libsoapPy2.so')
+        libsoap2.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),POINTER (c_double),
+            POINTER (c_double), POINTER (c_int),c_double,c_int,c_int,c_int,c_int,c_int]
+        libsoap2.soap.restype = POINTER (c_double)
+    elif(py_Ntypes==3):
+        libsoap3 = CDLL(path_to_so + '/src/libsoapPy3.so')
+        libsoap3.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),POINTER (c_double),
+            POINTER (c_double), POINTER (c_int),c_double,c_int,c_int,c_int,c_int,c_int]
+        libsoap3.soap.restype = POINTER (c_double)
+    elif(py_Ntypes==4):
+        libsoap4 = CDLL(path_to_so + '/src/libsoapPy4.so')
+        libsoap4.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),POINTER (c_double),
+            POINTER (c_double), POINTER (c_int),c_double,c_int,c_int,c_int,c_int,c_int]
+        libsoap4.soap.restype = POINTER (c_double)
+    elif(py_Ntypes==5):
+        libsoap5 = CDLL(path_to_so + '/src/libsoapPy5.so')
+        libsoap5.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),POINTER (c_double),
+            POINTER (c_double), POINTER (c_int),c_double,c_int,c_int,c_int,c_int,c_int]
+        libsoap5.soap.restype = POINTER (c_double)
+    elif(py_Ntypes==6):
+        libsoap6 = CDLL(path_to_so + '/src/libsoapPy6.so')
+        libsoap6.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),POINTER (c_double),
+            POINTER (c_double), POINTER (c_int),c_double,c_int,c_int,c_int,c_int,c_int]
+        libsoap6.soap.restype = POINTER (c_double)
     # double* c, double* Apos,double* Hpos,int* typeNs,
     # int totalAN,int Ntypes,int Nsize, int l, int Hsize);
-    c = (c_double*(NradBas*NradBas*(Lmax+1)*py_Ntypes*py_Hsize))()
-    c = libsoap.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
+    if(crossOver):
+        c = (c_double*(NradBas*NradBas*(Lmax+1)*int((py_Ntypes*(py_Ntypes +1))/2)*py_Hsize))()
+        if(py_Ntypes==1):
+            c = libsoap.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
+           
+        elif(py_Ntypes==2):
+            c = libsoap2.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
+        elif(py_Ntypes==3):
+            c = libsoap3.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
+        elif(py_Ntypes==4):
+            c = libsoap4.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
+        elif(py_Ntypes==5):
+            c = libsoap5.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
+        elif(py_Ntypes==6):
+            c = libsoap6.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
+    else:
+        c = (c_double*(NradBas*NradBas*(Lmax+1)*py_Ntypes*py_Hsize))()
+        c = libsoap.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
+   
     #   return c;
-#    return np.ctypeslib.as_array( c, shape=(py_Hsize,NradBas*NradBas*(Lmax+1)*py_Ntypes))
-    return np.ctypeslib.as_array( c, shape=(py_Hsize,NradBas*NradBas*(Lmax+1)*3))
+    if(crossOver):
+        crosTypes = int((py_Ntypes*(py_Ntypes+1))/2)
+        return np.ctypeslib.as_array( c, shape=(py_Hsize,NradBas*NradBas*(Lmax+1)*crosTypes))
+    else:
+        shape = (py_Hsize,NradBas*NradBas*(Lmax+1)*py_Ntypes)
+        return np.ctypeslib.as_array( c, shape=(py_Hsize,NradBas*NradBas*(Lmax+1)*py_Ntypes))
 
-def get_soap_structure(obj, alp, bet, rCut=5.0, NradBas=5, Lmax=5):
+def get_soap_structure(obj, alp, bet, rCut=5.0, NradBas=5, Lmax=5, crossOver=True):
     Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj)
     Hpos = Apos.copy().reshape((-1,3))
-    arrsoap = get_soap_locals(obj, Hpos, alp, bet,  rCut, NradBas, Lmax)
+    arrsoap = get_soap_locals(obj, Hpos, alp, bet,  rCut, NradBas, Lmax, crossOver)
     return arrsoap
 
-def get_periodic_soap_locals(obj, Hpos, alp, bet, rCut=5.0, NradBas=5, Lmax=5):
+def get_periodic_soap_locals(obj, Hpos, alp, bet, rCut=5.0, NradBas=5, Lmax=5,crossOver=True):
     # get supercells
-    suce = _get_supercell(obj, rCut=rCut)
+    suce = _get_supercell(obj, rCut)
 
-    arrsoap = get_soap_locals(suce, Hpos, alp, bet, rCut=rCut,
-        NradBas=NradBas, Lmax=Lmax)
+    arrsoap = get_soap_locals(suce, Hpos, alp, bet, rCut, NradBas=NradBas, Lmax=Lmax, crossOver=crossOver)
 
     return arrsoap
 
-def get_periodic_soap_structure(obj, rCut=5.0, NradBas=5, Lmax=5):
+def get_periodic_soap_structure(obj, alp, bet, rCut=5.0, NradBas=5, Lmax=5, crossOver=True):
     Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj)
     Hpos = Apos.copy().reshape((-1,3))
-    suce = _get_supercell(obj, rCut=rCut)
+    suce = _get_supercell(obj, rCut)
 
-    arrsoap = get_soap_locals(suce, Hpos, alp, bet, rCut, NradBas, Lmax)
+    arrsoap = get_soap_locals(suce, Hpos, alp, bet, rCut, NradBas, Lmax, crossOver)
     return arrsoap

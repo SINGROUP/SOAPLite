@@ -11,23 +11,21 @@ import ase
 import numpy as np
 import argparse
 
-def get_lastatom_soap(atoms, cutoff, myAlphas, myBetas):
-    hardcutoff = cutoff + 3
+def get_lastatom_soap(atoms, cutoff, myAlphas, myBetas, i, j):
     lastatom = atoms[-1]
     Hpos = [lastatom.position]
     structure = atoms[:-1]
-    x = soapPy.get_soap_locals(structure, Hpos, myAlphas, myBetas, rCutHard=hardcutoff, NradBas=10, Lmax=9)
+    x = soapPy.get_soap_locals(structure, Hpos, myAlphas, myBetas, rCut=cutoff, NradBas=i, Lmax=j)
     return x
 
-def create(atoms_list, cutoff = 0, affix="",):
+def create(atoms_list,N, L, cutoff = 0):
     """Takes a trajectory xyz file and writes soap features
     """
-    hardcutoff = cutoff + 3
-    myAlphas, myBetas = genBasis.getBasisFunc(hardcutoff, 10)
+    myAlphas, myBetas = genBasis.getBasisFunc(cutoff, N)
     # get information about feature length
     n_datapoints = len(atoms_list)
     atoms = atoms_list[0]
-    x = get_lastatom_soap(atoms, cutoff, myAlphas, myBetas)
+    x = get_lastatom_soap(atoms, cutoff, myAlphas, myBetas,N,L)
     n_features = x.shape[1]
     print("soap first", x.shape)
     print(n_datapoints, n_features)
@@ -37,10 +35,8 @@ def create(atoms_list, cutoff = 0, affix="",):
     for atoms in atoms_list:
         i +=1
         #atoms
-        print("Processing " + str(atoms.info),
-         " Run time: " + str(time.time()-t0_total),
-        end="\r")
-        soapmatrix[i,:] = get_lastatom_soap(atoms, cutoff, myAlphas, myBetas)
+        print("Processing " + str(atoms.info)," Run time: " + str(time.time()-t0_total), end="\r")
+        soapmatrix[i,:] = get_lastatom_soap(atoms, cutoff, myAlphas, myBetas, N, L)
     print("")
 
     # infos
@@ -53,7 +49,7 @@ def create(atoms_list, cutoff = 0, affix="",):
         cutoffstr = ""
 
     # write descriptor or predictor
-    np.save("soap" + cutoffstr + affix + ".npy", soapmatrix)
+    np.save("soap" +  "N" + str(N) + "L"+ str(L) +"R" + str(cutoffstr) + ".npy", soapmatrix)
     return None
 
 ##########################################################################
@@ -76,26 +72,14 @@ if __name__ == '__main__':
 
     atoms_list = ase.io.read(infilename, ':')
     t0 = time.time()
-    create(atoms_list, cutoff = 8.0, affix = "")
+    for i in range(2,11):
+      for j in range(2,10):
+        for k in range(2,8):
+          print("XXXXX", i)
+          create(atoms_list, i, j, k*1.0)
+          print("soaps saved.")
     t1 = time.time()
     dt = t1 - t0
     t1_total = time.time()
     print("Total run time:", str(t1_total - t0_total))
 
-"""
-print("local soap based on given positions")
-myAlphas, myBetas = genBasis.getBasisFunc(9.0, 10)
-a = datetime.datetime.now()
-x = soapPy.get_soap_locals(atoms, Hpos, myAlphas, myBetas, rCutHard=9.0, NradBas=10, Lmax=9) #rCutSoft = rCutHard - 3.0
-b = datetime.datetime.now()
-c = b - a
-print("xyz",c.microseconds)
-print("soap for each atom in structure")
-#y = soapPy.get_soap_structure(atoms, myAlphas, myBetas, rCutHard=9.0, NradBas=10, Lmax=9) #rCutSoft = rCutHard - 3.0
-
-print("XXX")
-# SOAP solution: x
-#print("soap size: ", np.shape(x))
-np.savetxt('test.txt',x)
-np.savetxt('structure_test.txt',y)
-"""
