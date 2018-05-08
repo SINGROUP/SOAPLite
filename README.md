@@ -16,7 +16,7 @@ Numpy and Scipy and ASE are required. To install them by typing in the terminal:
 sudo pip install numpy
 ```
 ```
-sudo pip install scipy
+sudo pip install scipy 
 ```
 and
 ```
