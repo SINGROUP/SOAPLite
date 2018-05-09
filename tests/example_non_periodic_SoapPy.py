@@ -24,7 +24,7 @@ Hpos = genfromtxt('../Structs/au40cu40H.dat').tolist()
 #-------------- set Basis Function (rCut--soft, N_max) Environment ----------------
 myAlphas, myBetas = genBasis.getBasisFunc(10.0, 5)
 
-#-------------- run local chemical environments on arbitrary points ----------------
+#-------------- run local chemical environments on desired points ----------------
 start = time.time()
 x = soapPy.get_soap_locals(atoms, Hpos, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=5,crossOver=True) 
 endTime = time.time()

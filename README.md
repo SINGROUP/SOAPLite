@@ -46,11 +46,11 @@ if you have gcc compilers.
 
 ## Running the tests
 
-Run 
+Enter the tests/ directory and run 
 ```
-python tests/test_non_periodic_SoapPy.py
+python test_symmetry.py
 ```
-This should generate a test.txt file which contains the SOAP spectrum for every H.dat point of a au40cu40 molecule (in au40cu40.xyz).
+This will compare the rotational and translational symmetry, and same chemical environments.
 
 ## Possible Applications 
 
