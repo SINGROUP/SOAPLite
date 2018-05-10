@@ -22,7 +22,7 @@ atoms = ase.io.read("../Structs/au40cu40.xyz")
 Hpos = genfromtxt('../Structs/au40cu40H.dat').tolist()
 
 #-------------- set Basis Function (rCut--soft, N_max) Environment ----------------
-myAlphas, myBetas = genBasis.getBasisFunc(10.0, 5)
+myAlphas, myBetas = genBasis.getBasisFunc(10.0, 5) # input:(rCut, NradBas)
 
 #-------------- run local chemical environments on desired points ----------------
 start = time.time()
