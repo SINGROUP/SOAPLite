@@ -1,6 +1,6 @@
 # SOAP LITE 
 
-Smooth Overlap of Atomic Positions (SOAP) is an algorithm used for accurately classifying and machine learning chemical environments[1,2].
+Smooth Overlap of Atomic Positions (SOAP) is an algorithm used for accurately classifying and machine learning chemical environments[1,2]. For a detailed documentation, please read soapDoc.pdf in this repository.
 
 
 ## Getting Started
@@ -64,12 +64,12 @@ The power spectrum can also be used as an input for a neural network, kernel rid
 
 * **Eiaki V. Morooka** - [Aki78]( https://github.com/Aki78)
 * **Marc Jäger** - [marchunter](https://github.com/marchunter)
+* **Lauri Himanen** - [lauri-codes](https://github.com/lauri-codes)
 
 See also the list of contributors who participated in this project.
 * **Yu Ninomiya** - [Yu](http://www.sp.u-tokai.ac.jp/~bentz/Members.html)
 * **Filippo Federici** - [fullmetalfelix](https://github.com/fullmetalfelix)
 * **Yashasvi S. Ranawat** - [yashasvi-ranawat](https://github.com/yashasvi-ranawat)
-* **Lauri Himanen** - [lauri-codes](https://github.com/lauri-codes)
 * **Adam Foster** - [suurimonster](https://github.com/suurimonster)
 
 
