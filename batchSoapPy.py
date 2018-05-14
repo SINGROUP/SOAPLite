@@ -11,21 +11,21 @@ import ase
 import numpy as np
 import argparse
 
-def get_lastatom_soap(atoms, cutoff, myAlphas, myBetas, i, j):
+def get_lastatom_soap(atoms, cutoff, myAlphas, myBetas, i, j, all_atomtypes=[]):
     lastatom = atoms[-1]
     Hpos = [lastatom.position]
     structure = atoms[:-1]
-    x = soapPy.get_soap_locals(structure, Hpos, myAlphas, myBetas, rCut=cutoff, NradBas=i, Lmax=j)
+    x = soapPy.get_soap_locals(structure, Hpos, myAlphas, myBetas, rCut=cutoff, NradBas=i, Lmax=j, crossOver=False, all_atomtypes=all_atomtypes)
     return x
 
-def create(atoms_list,N, L, cutoff = 0):
+def create(atoms_list,N, L, cutoff = 0, all_atomtypes=[]):
     """Takes a trajectory xyz file and writes soap features
     """
     myAlphas, myBetas = genBasis.getBasisFunc(cutoff, N)
     # get information about feature length
     n_datapoints = len(atoms_list)
     atoms = atoms_list[0]
-    x = get_lastatom_soap(atoms, cutoff, myAlphas, myBetas,N,L)
+    x = get_lastatom_soap(atoms, cutoff, myAlphas, myBetas,N,L, all_atomtypes=all_atomtypes)
     n_features = x.shape[1]
     print("soap first", x.shape)
     print(n_datapoints, n_features)
@@ -36,21 +36,12 @@ def create(atoms_list,N, L, cutoff = 0):
         i +=1
         #atoms
         print("Processing " + str(atoms.info)," Run time: " + str(time.time()-t0_total), end="\r")
-        soapmatrix[i,:] = get_lastatom_soap(atoms, cutoff, myAlphas, myBetas, N, L)
+        soapmatrix[i,:] = get_lastatom_soap(atoms, cutoff, myAlphas, myBetas, N, L, all_atomtypes=all_atomtypes)
     print("")
 
     # infos
     print("shape", soapmatrix.shape)
-
-    # add cutoff info
-    if cutoff != 0:
-        cutoffstr = "_" + str(cutoff)
-    else:
-        cutoffstr = ""
-
-    # write descriptor or predictor
-    np.save("soap" +  "N" + str(N) + "L"+ str(L) +"R" + str(cutoffstr) + ".npy", soapmatrix)
-    return None
+    return soapmatrix
 
 ##########################################################################
 
@@ -66,18 +57,22 @@ if __name__ == '__main__':
     print("Passed arguments:", args.arguments)
     if len(args.arguments) < 1:
         print('Not enough arguments')
-        exit(1)  
+        exit(1)
     infilename = args.arguments[0]
+    rootname = infilename.replace(".xyz", "") 
     ### PROCESS ###
 
     atoms_list = ase.io.read(infilename, ':')
     t0 = time.time()
-    for i in range(2,11):
-      for j in range(2,10):
-        for k in range(2,8):
-          print("XXXXX", i)
-          create(atoms_list, i, j, k*1.0)
-          print("soaps saved.")
+    for N in range(10,11):
+      for L in range(9,10):
+        for cutoff in range(5,9):
+            print("N:", N)
+            all_atomtypes = [29,79]
+            soapmatrix = create(atoms_list, N, L, cutoff*1.0, all_atomtypes=all_atomtypes)
+            # write descriptor or predictor
+            np.save(rootname +  "_soap_N" + str(N) + "L"+ str(L) +"R" + str(cutoff) + ".npy", soapmatrix)
+            print("soaps saved.")
     t1 = time.time()
     dt = t1 - t0
     t1_total = time.time()
