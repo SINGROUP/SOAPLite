@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stdlib.h>
-#include <omp.h>
 #include <time.h>
 
 #define PI2 9.86960440108936

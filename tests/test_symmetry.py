@@ -40,7 +40,7 @@ for rotation in ['x', 'y', 'z']:
     atoms.rotate(45, rotation)
     rot_features = soapPy.get_soap_structure(atoms, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=9,crossOver=True) 
 
-    deviation = np.max(features- rot_features)
+    deviation = np.max(np.abs(features- rot_features))
     print("maximal numerical deviation:", deviation)
     if deviation > 10e-8:
         IS_PASS = False
@@ -53,10 +53,38 @@ for translation in [[1.0, 1.0, 1.0], [-5.0, 5.0, -5.0], [1.0, 1.0, -10.0],]:
     atoms.translate(translation)
     trans_features = soapPy.get_soap_structure(atoms, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=9,crossOver=True) 
 
-    deviation = np.max(features- trans_features)
+    deviation = np.max(np.abs(features- trans_features))
     print("maximal numerical deviation:", deviation)
     if deviation > 10e-9:
         IS_PASS = False
+
+for i in g2.names:
+#Rotational Check for many molecules
+    atoms = molecule(i)
+    print(i)
+    features = soapPy.get_soap_structure(atoms, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=9,crossOver=True) 
+    for rotation in ['x', 'y', 'z']:
+        print("rotating in", rotation)
+        atoms.rotate(45, rotation)
+        rot_features = soapPy.get_soap_structure(atoms, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=9,crossOver=True) 
+
+        deviation = np.max(np.abs(features- rot_features))
+        print("maximal numerical deviation:", deviation)
+        if deviation > 10e-8:
+            IS_PASS = False
+
+
+#Translation check for many molecules
+    atoms = molecule(i)
+    for translation in [[1.0, 1.0, 1.0], [-5.0, 5.0, -5.0], [1.0, 1.0, -10.0],]:
+        print("translating towards", translation)
+        atoms.translate(translation)
+        trans_features = soapPy.get_soap_structure(atoms, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=9,crossOver=True) 
+
+        deviation = np.max(np.abs(features- trans_features))
+        print("maximal numerical deviation:", deviation)
+        if deviation > 10e-9:
+            IS_PASS = False
 
 #symmetry check
 print("check with molecules")
@@ -65,9 +93,9 @@ atoms = molecule('SiH4')
 features = soapPy.get_soap_structure(atoms, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=9,crossOver=True) 
 
 #deviation = pdist(features[:4])
-print(deviation)
+print("deviation: ",deviation)
 for idx in np.arange(3):
-    deviation = np.max(features[idx] - features[idx + 1])
+    deviation = np.max(np.abs(features[idx] - features[idx + 1]))
     print("maximal numerical deviation:", deviation)
     if deviation > 10e-8:
         IS_PASS = False

@@ -1,6 +1,6 @@
 # SOAP LITE 
 
-Smooth Overlap of Atomic Positions (SOAP) is an algorithm used for accurately classifying and machine learning chemical environments[1,2].
+Smooth Overlap of Atomic Positions (SOAP) is an algorithm used for accurately classifying and machine learning chemical environments[1,2]. For a detailed documentation, please read soapDoc.pdf in this repository.
 
 
 ## Getting Started
@@ -16,7 +16,7 @@ Numpy and Scipy and ASE are required. To install them by typing in the terminal:
 sudo pip install numpy
 ```
 ```
-sudo pip install scipy
+sudo pip install scipy 
 ```
 and
 ```
@@ -46,11 +46,11 @@ if you have gcc compilers.
 
 ## Running the tests
 
-Run 
+Enter the tests/ directory and run 
 ```
-python tests/test_non_periodic_SoapPy.py
+python test_symmetry.py
 ```
-This should generate a test.txt file which contains the SOAP spectrum for every H.dat point of a au40cu40 molecule (in au40cu40.xyz).
+This will compare the rotational and translational symmetry, and same chemical environments.
 
 ## Possible Applications 
 
@@ -64,12 +64,12 @@ The power spectrum can also be used as an input for a neural network, kernel rid
 
 * **Eiaki V. Morooka** - [Aki78]( https://github.com/Aki78)
 * **Marc Jäger** - [marchunter](https://github.com/marchunter)
+* **Lauri Himanen** - [lauri-codes](https://github.com/lauri-codes)
 
 See also the list of contributors who participated in this project.
 * **Yu Ninomiya** - [Yu](http://www.sp.u-tokai.ac.jp/~bentz/Members.html)
 * **Filippo Federici** - [fullmetalfelix](https://github.com/fullmetalfelix)
 * **Yashasvi S. Ranawat** - [yashasvi-ranawat](https://github.com/yashasvi-ranawat)
-* **Lauri Himanen** - [lauri-codes](https://github.com/lauri-codes)
 * **Adam Foster** - [suurimonster](https://github.com/suurimonster)
 
 
