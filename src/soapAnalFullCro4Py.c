@@ -597,7 +597,7 @@ void getP(double* soapMat, double* Cnnd, int Ns, int Ts, int Hs, int lMax){
   int NsNsLmax = NsNs*(lMax+1) ;
   int NsNsLmaxTs = NsNsLmax*getCrosNum(Ts);
 
-  for(int i = 0; i < Hs*Ns*Ns*(lMax+1); i++){soapMat[i] = 0.0;}
+  for(int i = 0; i < Hs*Ns*Ns*getCrosNum(4)*(lMax+1); i++){soapMat[i] = 0.0;}
 
   double   cs0  = pow(PIHalf,2);
   double   cs1  = pow(2.7206990464,2);
