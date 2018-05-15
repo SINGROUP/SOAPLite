@@ -3,8 +3,7 @@ currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentfram
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir)
 
-import soapPyHalf
-#import soapPy
+import soapPy
 import genBasis
 import time
 import datetime
@@ -16,8 +15,7 @@ def get_lastatom_soap(atoms, cutoff, myAlphas, myBetas, i, j, all_atomtypes=[]):
     lastatom = atoms[-1]
     Hpos = [lastatom.position]
     structure = atoms[:-1]
-    x = soapPyHalf.get_soap_locals(structure, Hpos, myAlphas, myBetas, rCut=cutoff, NradBas=i, Lmax=j, crossOver=True, all_atomtypes=all_atomtypes)
-#    x = soapPy.get_soap_locals(structure, Hpos, myAlphas, myBetas, rCut=cutoff, NradBas=i, Lmax=j, crossOver=True)
+    x = soapPy.get_soap_locals(structure, Hpos, myAlphas, myBetas, rCut=cutoff, NradBas=i, Lmax=j, crossOver=True)
     return x
 
 def create(atoms_list,N, L, cutoff = 0, all_atomtypes=[]):

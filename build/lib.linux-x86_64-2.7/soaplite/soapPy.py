@@ -134,7 +134,7 @@ def get_soap_locals(obj, Hpos, alp, bet, rCut=5.0, NradBas=5, Lmax=5, crossOver=
     # double* c, double* Apos,double* Hpos,int* typeNs,
     # int totalAN,int Ntypes,int Nsize, int l, int Hsize);
     if(crossOver):
-        c = (c_double*(NradBas*NradBas*(Lmax+1)*int((py_Ntypes*(py_Ntypes +1))/2)*py_Hsize))()
+        c = (c_double*(int((NradBas*(NradBas+1))/2)*(Lmax+1)*int((py_Ntypes*(py_Ntypes +1))/2)*py_Hsize))()
         if(py_Ntypes==1):
             c = libsoap.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
            
@@ -149,16 +149,16 @@ def get_soap_locals(obj, Hpos, alp, bet, rCut=5.0, NradBas=5, Lmax=5, crossOver=
         elif(py_Ntypes==6):
             c = libsoap6.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
     else:
-        c = (c_double*(NradBas*NradBas*(Lmax+1)*py_Ntypes*py_Hsize))()
+        c = (c_double*(int((NradBas*(NradBas+1))/2)*(Lmax+1)*py_Ntypes*py_Hsize))()
         c = libsoap.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
    
     #   return c;
     if(crossOver):
         crosTypes = int((py_Ntypes*(py_Ntypes+1))/2)
-        return np.ctypeslib.as_array( c, shape=(py_Hsize,NradBas*NradBas*(Lmax+1)*crosTypes))
+        return np.ctypeslib.as_array( c, shape=(py_Hsize,int((NradBas*(NradBas+1))/2)*(Lmax+1)*crosTypes))
     else:
-        shape = (py_Hsize,NradBas*NradBas*(Lmax+1)*py_Ntypes)
-        return np.ctypeslib.as_array( c, shape=(py_Hsize,NradBas*NradBas*(Lmax+1)*py_Ntypes))
+        shape = (py_Hsize,int((NradBas*(NradBas+1))/2)*(Lmax+1)*py_Ntypes)
+        return np.ctypeslib.as_array( c, shape=(py_Hsize,int((NradBas*(NradBas+1))/2)*(Lmax+1)*py_Ntypes))
 
 def get_soap_structure(obj, alp, bet, rCut=5.0, NradBas=5, Lmax=5, crossOver=True, all_atomtypes=[]):
     Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj, all_atomtypes)

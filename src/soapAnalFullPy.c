@@ -591,11 +591,12 @@ int getC(double* C, double* preCoef, double* x, double* y, double* z,double* r2,
 void getP(double* soapMat, double* Cnnd, int Ns, int Ts, int Hs, int lMax){
   int NsTs100 = Ns*Ts*100;
   int Ns100 = Ns*100;
-  int NsNs = Ns*Ns;
+  int NsNs = (Ns*(Ns+1))/2;
   int NsNsLmax = NsNs*(lMax+1) ;
   int NsNsLmaxTs = NsNsLmax*Ts;
+  int shiftN = 0;
 
-  for(int i = 0; i < Hs*Ns*Ns*(lMax+1); i++){soapMat[i] = 0.0;}
+  for(int i = 0; i < Hs*NsNs*(lMax+1); i++){soapMat[i] = 0.0;}
 
   double   cs0  = pow(PIHalf,2);
   double   cs1  = pow(2.7206990464,2);
@@ -621,22 +622,26 @@ void getP(double* soapMat, double* Cnnd, int Ns, int Ts, int Hs, int lMax){
    // SUM M's UP!
   for(int i = 0; i < Hs; i++){
     for(int j = 0; j < Ts; j++){
+      shiftN = 0;
       for(int k = 0; k < Ns; k++){
-        for(int kd = 0; kd < Ns; kd++){
-          soapMat[NsNsLmaxTs*i+ NsNsLmax*j+ 0 +Ns*k+kd] 
+        for(int kd = k; kd < Ns; kd++){
+          soapMat[NsNsLmaxTs*i+ NsNsLmax*j+ 0 +shiftN] 
             = cs0*Cnnd[NsTs100*i + Ns100*j + 0 + k]*Cnnd[NsTs100*i + Ns100*j + 0 + kd];
+          shiftN++;
         }
       }
     }
   }  if(lMax > 0){
     for(int i = 0; i < Hs; i++){
       for(int j = 0; j < Ts; j++){
+        shiftN = 0;
         for(int k = 0; k < Ns; k++){
-          for(int kd = 0; kd < Ns; kd++){
-            soapMat[NsNsLmaxTs*i+NsNsLmax*j+ NsNs + Ns*k+kd] =
+          for(int kd = k; kd < Ns; kd++){
+            soapMat[NsNsLmaxTs*i+NsNsLmax*j+ NsNs + shiftN] =
               cs1*Cnnd[NsTs100*i + Ns100*j + 1*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 1*Ns + kd]
              +cs2*Cnnd[NsTs100*i + Ns100*j + 2*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 2*Ns + kd]
              +cs2*Cnnd[NsTs100*i + Ns100*j + 3*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 3*Ns + kd];
+            shiftN++;
           }
         }
       }
@@ -644,14 +649,16 @@ void getP(double* soapMat, double* Cnnd, int Ns, int Ts, int Hs, int lMax){
   }  if(lMax > 1){
     for(int i = 0; i < Hs; i++){
       for(int j = 0; j < Ts; j++){
+        shiftN = 0;
         for(int k = 0; k < Ns; k++){
-          for(int kd = 0; kd < Ns; kd++){
-            soapMat[NsNsLmaxTs*i+NsNsLmax*j+ 2*NsNs + Ns*k+kd] =
+          for(int kd = k; kd < Ns; kd++){
+            soapMat[NsNsLmaxTs*i+NsNsLmax*j+ 2*NsNs + shiftN] =
               cs3*Cnnd[NsTs100*i + Ns100*j + 4*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 4*Ns + kd]
              +cs4*Cnnd[NsTs100*i + Ns100*j + 5*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 5*Ns + kd]
              +cs4*Cnnd[NsTs100*i + Ns100*j + 6*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 6*Ns + kd]
              +cs5*Cnnd[NsTs100*i + Ns100*j + 7*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 7*Ns + kd]
              +cs5*Cnnd[NsTs100*i + Ns100*j + 8*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 8*Ns + kd];
+            shiftN++;
           }
         }
       }
@@ -659,9 +666,10 @@ void getP(double* soapMat, double* Cnnd, int Ns, int Ts, int Hs, int lMax){
   }  if(lMax > 2){
     for(int i = 0; i < Hs; i++){
       for(int j = 0; j < Ts; j++){
+        shiftN = 0;
         for(int k = 0; k < Ns; k++){
-          for(int kd = 0; kd < Ns; kd++){
-            soapMat[NsNsLmaxTs*i+NsNsLmax*j+ 3*NsNs + Ns*k+kd] =
+          for(int kd = k; kd < Ns; kd++){
+            soapMat[NsNsLmaxTs*i+NsNsLmax*j+ 3*NsNs + shiftN] =
               cs6*Cnnd[NsTs100*i + Ns100*j + 9*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 9*Ns + kd]
              +cs7*Cnnd[NsTs100*i + Ns100*j + 10*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 10*Ns + kd]
              +cs7*Cnnd[NsTs100*i + Ns100*j + 11*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 11*Ns + kd]
@@ -669,6 +677,7 @@ void getP(double* soapMat, double* Cnnd, int Ns, int Ts, int Hs, int lMax){
              +cs8*Cnnd[NsTs100*i + Ns100*j + 13*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 13*Ns + kd]
              +cs9*Cnnd[NsTs100*i + Ns100*j + 14*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 14*Ns + kd]
              +cs9*Cnnd[NsTs100*i + Ns100*j + 15*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 15*Ns + kd];
+            shiftN++;
           }
         }
       }
@@ -676,9 +685,10 @@ void getP(double* soapMat, double* Cnnd, int Ns, int Ts, int Hs, int lMax){
   }  if(lMax > 3){
     for(int i = 0; i < Hs; i++){
       for(int j = 0; j < Ts; j++){
+        shiftN = 0;
         for(int k = 0; k < Ns; k++){
-          for(int kd = 0; kd < Ns; kd++){
-            soapMat[NsNsLmaxTs*i+NsNsLmax*j+ 4*NsNs + Ns*k+kd] =
+          for(int kd = k; kd < Ns; kd++){
+            soapMat[NsNsLmaxTs*i+NsNsLmax*j+ 4*NsNs + shiftN] =
               cs10*Cnnd[NsTs100*i + Ns100*j + 16*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 16*Ns + kd]
              +cs11*Cnnd[NsTs100*i + Ns100*j + 17*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 17*Ns + kd]
              +cs11*Cnnd[NsTs100*i + Ns100*j + 18*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 18*Ns + kd]
@@ -688,6 +698,7 @@ void getP(double* soapMat, double* Cnnd, int Ns, int Ts, int Hs, int lMax){
              +cs13*Cnnd[NsTs100*i + Ns100*j + 22*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 22*Ns + kd]
              +cs14*Cnnd[NsTs100*i + Ns100*j + 23*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 23*Ns + kd]
              +cs14*Cnnd[NsTs100*i + Ns100*j + 24*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 24*Ns + kd];
+            shiftN++;
           }
         }
       }
@@ -695,9 +706,10 @@ void getP(double* soapMat, double* Cnnd, int Ns, int Ts, int Hs, int lMax){
   }  if(lMax > 4){
     for(int i = 0; i < Hs; i++){
       for(int j = 0; j < Ts; j++){
+        shiftN = 0;
         for(int k = 0; k < Ns; k++){
-          for(int kd = 0; kd < Ns; kd++){
-            soapMat[NsNsLmaxTs*i+NsNsLmax*j+ 5*NsNs + Ns*k+kd] =
+          for(int kd = k; kd < Ns; kd++){
+            soapMat[NsNsLmaxTs*i+NsNsLmax*j+ 5*NsNs + shiftN] =
               cs15*Cnnd[NsTs100*i + Ns100*j + 25*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 25*Ns + kd]
              +cs16*Cnnd[NsTs100*i + Ns100*j + 26*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 26*Ns + kd]
              +cs16*Cnnd[NsTs100*i + Ns100*j + 27*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 27*Ns + kd]
@@ -709,6 +721,7 @@ void getP(double* soapMat, double* Cnnd, int Ns, int Ts, int Hs, int lMax){
              +cs19*Cnnd[NsTs100*i + Ns100*j + 33*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 33*Ns + kd]
              +cs20*Cnnd[NsTs100*i + Ns100*j + 34*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 34*Ns + kd]
              +cs20*Cnnd[NsTs100*i + Ns100*j + 35*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 35*Ns + kd];
+            shiftN++;
           }
         }
       }
@@ -716,9 +729,10 @@ void getP(double* soapMat, double* Cnnd, int Ns, int Ts, int Hs, int lMax){
   }  if(lMax > 5){
     for(int i = 0; i < Hs; i++){
       for(int j = 0; j < Ts; j++){
+        shiftN = 0;
         for(int k = 0; k < Ns; k++){
-          for(int kd = 0; kd < Ns; kd++){
-            soapMat[NsNsLmaxTs*i+NsNsLmax*j+ 6*NsNs + Ns*k+kd] =
+          for(int kd = k; kd < Ns; kd++){
+            soapMat[NsNsLmaxTs*i+NsNsLmax*j+ 6*NsNs + shiftN] =
               cs21*Cnnd[NsTs100*i + Ns100*j + 36*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 36*Ns + kd]
              +cs22*Cnnd[NsTs100*i + Ns100*j + 37*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 37*Ns + kd]
              +cs22*Cnnd[NsTs100*i + Ns100*j + 38*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 38*Ns + kd]
@@ -732,6 +746,7 @@ void getP(double* soapMat, double* Cnnd, int Ns, int Ts, int Hs, int lMax){
              +cs26*Cnnd[NsTs100*i + Ns100*j + 46*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 46*Ns + kd]
              +cs27*Cnnd[NsTs100*i + Ns100*j + 47*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 47*Ns + kd]
              +cs27*Cnnd[NsTs100*i + Ns100*j + 48*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 48*Ns + kd];
+            shiftN++;
           }
         }
       }
@@ -739,9 +754,10 @@ void getP(double* soapMat, double* Cnnd, int Ns, int Ts, int Hs, int lMax){
   }  if(lMax > 6){
     for(int i = 0; i < Hs; i++){
       for(int j = 0; j < Ts; j++){
+        shiftN = 0;
         for(int k = 0; k < Ns; k++){
-          for(int kd = 0; kd < Ns; kd++){
-            soapMat[NsNsLmaxTs*i+NsNsLmax*j+ 7*NsNs + Ns*k+kd] =
+          for(int kd = k; kd < Ns; kd++){
+            soapMat[NsNsLmaxTs*i+NsNsLmax*j+ 7*NsNs + shiftN] =
               cs28*Cnnd[NsTs100*i + Ns100*j + 49*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 49*Ns + kd]
              +cs29*Cnnd[NsTs100*i + Ns100*j + 50*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 50*Ns + kd]
              +cs29*Cnnd[NsTs100*i + Ns100*j + 51*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 51*Ns + kd]
@@ -757,6 +773,7 @@ void getP(double* soapMat, double* Cnnd, int Ns, int Ts, int Hs, int lMax){
              +cs34*Cnnd[NsTs100*i + Ns100*j + 61*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 61*Ns + kd]
              +cs35*Cnnd[NsTs100*i + Ns100*j + 62*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 62*Ns + kd]
              +cs35*Cnnd[NsTs100*i + Ns100*j + 63*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 63*Ns + kd];
+            shiftN++;
           }
         }
       }
@@ -764,9 +781,10 @@ void getP(double* soapMat, double* Cnnd, int Ns, int Ts, int Hs, int lMax){
   }  if(lMax > 7){
     for(int i = 0; i < Hs; i++){
       for(int j = 0; j < Ts; j++){
+        shiftN = 0;
         for(int k = 0; k < Ns; k++){
-          for(int kd = 0; kd < Ns; kd++){
-            soapMat[NsNsLmaxTs*i+NsNsLmax*j+ 8*NsNs + Ns*k+kd] =
+          for(int kd = k; kd < Ns; kd++){
+            soapMat[NsNsLmaxTs*i+NsNsLmax*j+ 8*NsNs + shiftN] =
               cs36*Cnnd[NsTs100*i + Ns100*j + 64*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 64*Ns + kd]
              +cs37*Cnnd[NsTs100*i + Ns100*j + 65*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 65*Ns + kd]
              +cs37*Cnnd[NsTs100*i + Ns100*j + 66*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 66*Ns + kd]
@@ -784,6 +802,7 @@ void getP(double* soapMat, double* Cnnd, int Ns, int Ts, int Hs, int lMax){
              +cs43*Cnnd[NsTs100*i + Ns100*j + 78*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 78*Ns + kd]
              +cs44*Cnnd[NsTs100*i + Ns100*j + 79*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 79*Ns + kd]
              +cs44*Cnnd[NsTs100*i + Ns100*j + 80*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 80*Ns + kd];
+            shiftN++;
           }
         }
       }
@@ -791,9 +810,10 @@ void getP(double* soapMat, double* Cnnd, int Ns, int Ts, int Hs, int lMax){
   }  if(lMax > 8){
     for(int i = 0; i < Hs; i++){
       for(int j = 0; j < Ts; j++){
+        shiftN = 0;
         for(int k = 0; k < Ns; k++){
-          for(int kd = 0; kd < Ns; kd++){
-            soapMat[NsNsLmaxTs*i+NsNsLmax*j+ 9*NsNs + Ns*k+kd] =
+          for(int kd = k; kd < Ns; kd++){
+            soapMat[NsNsLmaxTs*i+NsNsLmax*j+ 9*NsNs + shiftN] =
               cs45*Cnnd[NsTs100*i + Ns100*j + 81*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 81*Ns + kd]
              +cs46*Cnnd[NsTs100*i + Ns100*j + 82*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 82*Ns + kd]
              +cs46*Cnnd[NsTs100*i + Ns100*j + 83*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 83*Ns + kd]
@@ -813,6 +833,7 @@ void getP(double* soapMat, double* Cnnd, int Ns, int Ts, int Hs, int lMax){
              +cs53*Cnnd[NsTs100*i + Ns100*j + 97*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 97*Ns + kd]
              +cs54*Cnnd[NsTs100*i + Ns100*j + 98*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 98*Ns + kd]
              +cs54*Cnnd[NsTs100*i + Ns100*j + 99*Ns + k]*Cnnd[NsTs100*i + Ns100*j + 99*Ns + kd];
+            shiftN++;
           }
         }
       }
@@ -957,7 +978,7 @@ double* soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas,
   free(bOa);
   free(aOa);
 
-  double* soapMat = (double*) malloc(Hs*Nt*Ns*Ns*(lMax+1)*sizeof(double));
+  double* soapMat = (double*) malloc(Hs*Nt*(Ns*(Ns+1))/2*(lMax+1)*sizeof(double));
 //  double* soapMat = (double*) malloc(10000000000);
   getP(soapMat, cnnd, Ns, Nt, Hs, lMax);
   free(cnnd);

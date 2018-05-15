@@ -29,6 +29,7 @@ Hpos = genfromtxt('../Structs/au40cu40H.dat').tolist()
 
 #-------------- set Basis Function (rCut--soft, N_max) Environment ----------------
 myAlphas, myBetas = genBasis.getBasisFunc(10.0, 5)
+print("hello")
 
 
 #-------------- run local chemical environments on each atom ----------------
