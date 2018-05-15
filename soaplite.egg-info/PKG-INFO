@@ -1,0 +1,23 @@
+Metadata-Version: 1.1
+Name: soaplite
+Version: 0.9.1
+Summary: fast lightweight smooth overlap atomic position (SOAP) calculator. see github.com/SINGROUP/SOAPLite for detailed documentations.
+Home-page: https://github.com/SINGROUP/SOAPLite
+Author: Eiaki V. Morooka
+Author-email: eiaki.morooka@aalto.fi
+License: LGPLv3
+Description: UNKNOWN
+Keywords: smooth overlap of atomic positions materials science machine learning soap descriptor fast analytic quantum chemistry local environment materials physics symmetry reduction
+Platform: UNKNOWN
+Classifier: Topic :: Scientific/Engineering :: Physics
+Classifier: Operating System :: POSIX :: Linux
+Classifier: Topic :: Scientific/Engineering :: Chemistry
+Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
+Classifier: License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Science/Research
+Classifier: Intended Audience :: Religion
+Classifier: Intended Audience :: Education
+Classifier: Intended Audience :: Developers
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: C
