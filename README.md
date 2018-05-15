@@ -8,6 +8,21 @@ Smooth Overlap of Atomic Positions (SOAP) is an algorithm used for accurately cl
 This is a very lite weight and fast SOAP implementation for machine learning in quantum chenistry and materials physics. Once you give SOAP the .xyz in ASE format,  list of positions, radius cutoff, number of basis functions and l (number of spherical harmonics), soap will return a numpy matrix of the power spectrum for each point. Each row corresponds to each specified point, and each column corresponds the the spectrum value.
 
 
+
+
+### Installing
+
+It might be possible to install by 
+```
+pip install soaplite
+```
+but pip installatoin is still experimental for soaplite,
+to install the latest version, install by
+```
+make
+```
+in the terminal if you have  the gcc compiler.
+
 ### Prerequisites
 
 Numpy and Scipy and ASE are required. To install them by typing in the terminal: 
@@ -33,16 +48,7 @@ and
 ```
 pip install ase --user
 ```
-You also need a gcc compiler.
-
-
-### Installing
-
-Simply type into the terminal:
-```
-make
-```
-if you have gcc compilers.
+You also need a gcc compiler for make.
 
 ## Running the tests
 
