@@ -21,7 +21,7 @@ to install the latest version, install by
 ```
 make
 ```
-in the terminal if you have  the gcc compiler.
+in the terminal after you cloned SOAPLite from github if you have  the gcc compiler.
 
 ### Prerequisites
 
