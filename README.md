@@ -1,8 +1,8 @@
-# SOAPLite
-
 <p align="center">
-  <img src="logoSoapLite.png" height="400">
+  <img src="logoSoapLite.png" height="250">
 </p>
+
+# SOAPLite
 
 Smooth Overlap of Atomic Positions (SOAP) is an algorithm used for accurately
 classifying and machine learning chemical environments [1,2]. For a detailed
