@@ -1,7 +1,7 @@
 # SOAPLite
 
 <p align="center">
-  <img src="logoSoapLite.png" height="400" align="center">
+  <img src="logoSoapLite.png" height="400">
 </p>
 
 Smooth Overlap of Atomic Positions (SOAP) is an algorithm used for accurately
@@ -22,23 +22,32 @@ Here is an example of the python interface:
 from soaplite import getBasisFunc, get_soap_locals
 from ase.build import molecule
 
-#-------------- Define Structure -----------------------------------------------
+#-------------- Define structure -----------------------------------------------
 atoms = molecule("H2O")
 
-#-------------- Define Positions of Desired Local Environments ----------------
+#-------------- Define positions of desired local environments ----------------
 hpos = [
     [0, 1, 2],
     [2, 3, 4]
 ]
 
-#-------------- Set Basis Function (rCut, N_max) Environment -------------------
+#------------------ Basis function settings (rCut, N_max) ----------------------
 n_max = 5
 l_max = 5
 r_cut = 10.0
-my_alphas, my_betas = getBasisFunc(r_cut, n_max)  # input: (rCut, NradBas)
+my_alphas, my_betas = getBasisFunc(r_cut, n_max)
 
-#-------------- Run local chemical environments on each atom -------------------
-x = get_soap_locals(atoms, hpos, my_alphas, my_betas, rCut=r_cut, NradBas=n_max, Lmax=l_max, crossOver=True)
+#--------- Get local chemical environments for each defined position -----------
+x = get_soap_locals(
+    atoms,
+    hpos,
+    my_alphas,
+    my_betas,
+    rCut=r_cut,
+    NradBas=n_max,
+    Lmax=l_max,
+    crossOver=True
+)
 
 print(x)
 print(x.shape)
@@ -54,12 +63,13 @@ pip install soaplite
 ```
 The pip installation is still experimental for soaplite.
 
-If you wish to use the C-libraries directly, you can compile them youself by
+If you wish to use the C-libraries directly, you can compile them yourself by
 running
 ```
 make
 ```
-in the terminal after you cloned SOAPLite from github if you have  the gcc compiler.
+in the terminal after you cloned SOAPLite from github if you have the gcc
+compiler.
 
 ### Prerequisites
 
