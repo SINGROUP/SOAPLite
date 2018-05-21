@@ -1,24 +1,61 @@
-# SOAP LITE 
+# SOAPLite
 
-Smooth Overlap of Atomic Positions (SOAP) is an algorithm used for accurately classifying and machine learning chemical environments[1,2]. For a detailed documentation, please read soapDoc.pdf in this repository.
+<p align="center">
+  <img src="logoSoapLite.png" height="400" align="center">
+</p>
 
-<img src="logoSoapLite.png" height="400">
+Smooth Overlap of Atomic Positions (SOAP) is an algorithm used for accurately
+classifying and machine learning chemical environments [1,2]. For a detailed
+documentation, please read soapDoc.pdf in this repository.
 
 ## Getting Started
 
-This is a very lite weight and fast SOAP implementation for machine learning in quantum chenistry and materials physics. Once you give SOAP the .xyz in ASE format,  list of positions, radius cutoff, number of basis functions and l (number of spherical harmonics), soap will return a numpy matrix of the power spectrum for each point. Each row corresponds to each specified point, and each column corresponds the the spectrum value.
+This is a very lightweight and fast SOAP implementation for machine learning in
+quantum chemistry and materials physics. Once you give SOAP the .xyz in ASE
+format,  list of positions, radius cutoff, number of basis functions and l
+(number of spherical harmonics), SOAP will return a numpy matrix of the power
+spectrum for each point. Each row corresponds to each specified point, and each
+column corresponds the the spectrum value.
 
+Here is an example of the python interface:
+```python
+from soaplite import getBasisFunc, get_soap_locals
+from ase.build import molecule
 
+#-------------- Define Structure -----------------------------------------------
+atoms = molecule("H2O")
 
+#-------------- Define Positions of Desired Local Environments ----------------
+hpos = [
+    [0, 1, 2],
+    [2, 3, 4]
+]
 
-### Installing
+#-------------- Set Basis Function (rCut, N_max) Environment -------------------
+n_max = 5
+l_max = 5
+r_cut = 10.0
+my_alphas, my_betas = getBasisFunc(r_cut, n_max)  # input: (rCut, NradBas)
 
-It might be possible to install by 
+#-------------- Run local chemical environments on each atom -------------------
+x = get_soap_locals(atoms, hpos, my_alphas, my_betas, rCut=r_cut, NradBas=n_max, Lmax=l_max, crossOver=True)
+
+print(x)
+print(x.shape)
+```
+
+### Installation
+
+We provide a python interface to the code with precompiled C-extension. This
+precompiled version should work with linux-based machines, and can be installed
+with:
 ```
 pip install soaplite
 ```
-but pip installatoin is still experimental for soaplite,
-to install the latest version, install by
+The pip installation is still experimental for soaplite.
+
+If you wish to use the C-libraries directly, you can compile them youself by
+running
 ```
 make
 ```
@@ -26,13 +63,15 @@ in the terminal after you cloned SOAPLite from github if you have  the gcc compi
 
 ### Prerequisites
 
-Numpy and Scipy and ASE are required. To install them by typing in the terminal: 
+Numpy, Scipy and ASE are required for the python interface. They will be
+installed automatically if you use the pip installation. To install them
+manully, you can use the following commands:
 
 ```
 sudo pip install numpy
 ```
 ```
-sudo pip install scipy 
+sudo pip install scipy
 ```
 and
 ```
@@ -49,23 +88,29 @@ and
 ```
 pip install ase --user
 ```
-You also need a gcc compiler for make.
+
+If you wish to compile the C-extension yourself, you wil need a gcc compiler
+for make.
 
 ## Running the tests
 
-Enter the tests/ directory and run 
+Enter the tests/ directory and run
 ```
 python test_symmetry.py
 ```
-This will compare the rotational and translational symmetry, and same chemical environments.
+This will compare the rotational and translational symmetry, and same chemical
+environments.
 
-## Possible Applications 
+## Possible Applications
 
-By taking the differences of the soap spectrum, we can compare the differences of the chemical environment. For example, if a point P1 gave a power
-spectrum S1 and at point P2 gave  a spectrum S2, the difference of the chemical environment will be |S2 - S1| where || denotes the Euclidean distance.
-We can use this differences to classify similar/different chemical environments.
+By taking the differences of the soap spectrum, we can compare the differences
+of the chemical environment. For example, if a point P1 gave a power spectrum
+S1 and at point P2 gave  a spectrum S2, the difference of the chemical
+environment will be |S2 - S1| where || denotes the Euclidean distance.  We can
+use this differences to classify similar/different chemical environments.
 
-The power spectrum can also be used as an input for a neural network, kernel ridge regression or other machine learning algorithms.
+The power spectrum can also be used as an input for a neural network, kernel
+ridge regression or other machine learning algorithms.
 
 ## Authors
 
