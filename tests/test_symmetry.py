@@ -3,7 +3,7 @@ currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentfram
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir) 
 
-import soapPy
+import soaplite
 import datetime
 import ase
 import numpy as np
@@ -33,13 +33,13 @@ print("hello")
 
 
 #-------------- run local chemical environments on each atom ----------------
-features = soapPy.get_soap_structure(atoms, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=9,crossOver=True) 
+features = soaplite.get_soap_structure(atoms, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=9,crossOver=True) 
 orig_atoms = atoms.copy()
 # rotation check
 for rotation in ['x', 'y', 'z']:
     print("rotating in", rotation)
     atoms.rotate(45, rotation)
-    rot_features = soapPy.get_soap_structure(atoms, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=9,crossOver=True) 
+    rot_features = soaplite.get_soap_structure(atoms, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=9,crossOver=True) 
 
     deviation = np.max(np.abs(features- rot_features))
     print("maximal numerical deviation:", deviation)
@@ -52,7 +52,7 @@ atoms = orig_atoms.copy()
 for translation in [[1.0, 1.0, 1.0], [-5.0, 5.0, -5.0], [1.0, 1.0, -10.0],]:
     print("translating towards", translation)
     atoms.translate(translation)
-    trans_features = soapPy.get_soap_structure(atoms, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=9,crossOver=True) 
+    trans_features = soaplite.get_soap_structure(atoms, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=9,crossOver=True) 
 
     deviation = np.max(np.abs(features- trans_features))
     print("maximal numerical deviation:", deviation)
@@ -63,11 +63,11 @@ for i in g2.names:
 #Rotational Check for many molecules
     atoms = molecule(i)
     print(i)
-    features = soapPy.get_soap_structure(atoms, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=9,crossOver=True) 
+    features = soaplite.get_soap_structure(atoms, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=9,crossOver=True) 
     for rotation in ['x', 'y', 'z']:
         print("rotating in", rotation)
         atoms.rotate(45, rotation)
-        rot_features = soapPy.get_soap_structure(atoms, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=9,crossOver=True) 
+        rot_features = soaplite.get_soap_structure(atoms, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=9,crossOver=True) 
 
         deviation = np.max(np.abs(features- rot_features))
         print("maximal numerical deviation:", deviation)
@@ -80,7 +80,7 @@ for i in g2.names:
     for translation in [[1.0, 1.0, 1.0], [-5.0, 5.0, -5.0], [1.0, 1.0, -10.0],]:
         print("translating towards", translation)
         atoms.translate(translation)
-        trans_features = soapPy.get_soap_structure(atoms, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=9,crossOver=True) 
+        trans_features = soaplite.get_soap_structure(atoms, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=9,crossOver=True) 
 
         deviation = np.max(np.abs(features- trans_features))
         print("maximal numerical deviation:", deviation)
@@ -91,7 +91,7 @@ for i in g2.names:
 print("check with molecules")
 print(g2.names)
 atoms = molecule('SiH4')
-features = soapPy.get_soap_structure(atoms, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=9,crossOver=True) 
+features = soaplite.get_soap_structure(atoms, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=9,crossOver=True) 
 
 #deviation = pdist(features[:4])
 print("deviation: ",deviation)
