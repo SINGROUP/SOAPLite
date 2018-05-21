@@ -1,4 +1,0 @@
-ctypes
-numpy
-scipy
-ase
