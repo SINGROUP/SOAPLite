@@ -3,7 +3,7 @@ currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentfram
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir) 
 
-import soapPy
+import soaplite
 import datetime
 import ase
 import numpy as np
@@ -26,7 +26,7 @@ myAlphas, myBetas = genBasis.getBasisFunc(10.0, 5) # input:(rCut, NradBas)
 
 #-------------- run local chemical environments on desired points ----------------
 start = time.time()
-x = soapPy.get_soap_locals(atoms, Hpos, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=5,crossOver=True) 
+x = soaplite.get_soap_locals(atoms, Hpos, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=5,crossOver=True) 
 endTime = time.time()
 totalTime = endTime - start
 print("Soap ran in seconds:", totalTime)
@@ -34,7 +34,7 @@ np.savetxt('au40cu40H.txt',x)
 
 #-------------- run local chemical environments on each atom ----------------
 start = time.time()
-y = soapPy.get_soap_structure(atoms, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=5,crossOver=True) 
+y = soaplite.get_soap_structure(atoms, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=5,crossOver=True) 
 endTime = time.time()
 totalTime = endTime - start
 

@@ -1,6 +1,0 @@
-setup.py
-soaplite.egg-info/PKG-INFO
-soaplite.egg-info/SOURCES.txt
-soaplite.egg-info/dependency_links.txt
-soaplite.egg-info/requires.txt
-soaplite.egg-info/top_level.txt

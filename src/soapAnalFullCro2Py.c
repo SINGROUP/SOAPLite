@@ -38,6 +38,15 @@ void getMulDouble(double* c1, double* c3, int Asize){
   }
 }
 //================================================================
+// TO DO SOMEDAY: SPLIT APos in boxes to make the scale from O(N^2) to O(N)
+//int getPreFilteredBoxes(double* x, double* y, double* z, double* Apos, double* Hpos, int Ntypes, int* typeNs){
+//     for(int i = 0; i < Ntypes ; i++){
+//       for(int j = 0; j <typeNs[i] ; j++){
+//          j;
+//       }
+//     }
+//}
+//================================================================
 int getFilteredPos(double* x, double* y, double* z, double* Apos, double* Hpos, int* typeNs, double rCutSqr, int Ihpos, int Itype){
 
   int shiftType = 0; int count = 0;
@@ -1236,6 +1245,7 @@ double* soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas,
   //printf("xzx\n");
 
   double* cnnd = (double*) malloc(100*Nt*Ns*Hs*sizeof(double));
+  double rCutrCut = rCut*rCut;
   for(int i = 0; i < 100*Nt*Ns*Hs; i++){cnnd[i] = 0.0;}
   
   //MAKESURE TO NULLIFY THE CNs!!!!!!!
@@ -1244,7 +1254,7 @@ double* soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas,
   for(int i = 0; i < Hs; i++){
     for(int j = 0; j < Nt; j++){
   //printf("zzz\n");
-      Asize = getFilteredPos(x, y, z, Apos, Hpos,typeNs, rCut*rCut, i, j);
+      Asize = getFilteredPos(x, y, z, Apos, Hpos,typeNs, rCutrCut, i, j);
   //printf("zyz\n");
       getRsZs(x, y, z, r2,r4,r6,r8,z2,z4,z6,z8, Asize);
   //printf("yyy\n");

@@ -3,7 +3,7 @@ currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentfram
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir)
 
-import soapPy
+import soaplite
 import genBasis
 import time
 import datetime
