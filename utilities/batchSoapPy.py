@@ -64,7 +64,7 @@ if __name__ == '__main__':
 
     atoms_list = ase.io.read(infilename, ':')
     t0 = time.time()
-    for N in range(2,3):
+    for N in range(10,11):
       for L in range(6,7):
         for cutoff in range(6,7):
             print("N:", N)

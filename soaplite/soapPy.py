@@ -2,7 +2,7 @@
 from ctypes import *
 import os, argparse
 import numpy as np
-import genBasis
+import soaplite.genBasis
 import ase, ase.io
 import os
 

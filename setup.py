@@ -7,7 +7,7 @@ class BinaryDistribution(Distribution):
 if __name__=="__main__":
   setup(name="soaplite",
       url="https://github.com/SINGROUP/SOAPLite",
-      version="0.9.2",
+      version="0.9.10",
       description=("fast lightweight smooth overlap atomic position (SOAP) calculator. see github.com/SINGROUP/SOAPLite for detailed documentations."), author="Eiaki V. Morooka", author_email="eiaki.morooka@aalto.fi",
       packages = find_packages(),
       install_requires =["numpy",
@@ -17,3 +17,5 @@ if __name__=="__main__":
       package_data={
         'soaplite':['src/libsoapPy2.so','src/libsoapPy3.so','src/libsoapPy4.so','src/libsoapPy5.so','src/libsoapPy6.so','src/libsoapPy.so']})
       #      ,distclass=BinaryDistribution)
+
+
