@@ -1,8 +1,8 @@
 ### DEFINE ###
 from ctypes import *
-import os, argparse
+import os, argparse, glob
 import numpy as np
-import genBasis
+import soaplite.genBasis
 import ase, ase.io
 import os
 
@@ -100,34 +100,38 @@ def get_soap_locals(obj, Hpos, alp, bet, rCut=5.0, NradBas=5, Lmax=5, crossOver=
     hxyz = (c_double * len(Hpos))(*Hpos.tolist())
 
     ### START SOAP###
-    path_to_so = os.path.dirname(os.path.abspath(__file__))
+    #path_to_so = os.path.dirname(os.path.abspath(__file__))
+    _PATH_TO_SOAPLITE_SO = os.path.dirname(os.path.abspath(__file__))
+    _SOAPLITE_SOFILES = glob.glob( "".join([ _PATH_TO_SOAPLITE_SO, "/../lib/libsoapP*.*so"]) )
+    #print(_SOAPLITE_SOFILES)
+    #print(len(_SOAPLITE_SOFILES))
     if(py_Ntypes==1) or not crossOver:
-        libsoap = CDLL(path_to_so + '/src/libsoapPy.so')
+        libsoap = CDLL(_SOAPLITE_SOFILES[0])
         libsoap.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),POINTER (c_double),
             POINTER (c_double), POINTER (c_int),c_double,c_int,c_int,c_int,c_int,c_int]
         libsoap.soap.restype = POINTER (c_double)
     elif(py_Ntypes==2):
-        libsoap2 = CDLL(path_to_so + '/src/libsoapPy2.so')
+        libsoap2 = CDLL(_SOAPLITE_SOFILES[1])
         libsoap2.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),POINTER (c_double),
             POINTER (c_double), POINTER (c_int),c_double,c_int,c_int,c_int,c_int,c_int]
         libsoap2.soap.restype = POINTER (c_double)
     elif(py_Ntypes==3):
-        libsoap3 = CDLL(path_to_so + '/src/libsoapPy3.so')
+        libsoap3 = CDLL(_SOAPLITE_SOFILES[2])
         libsoap3.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),POINTER (c_double),
             POINTER (c_double), POINTER (c_int),c_double,c_int,c_int,c_int,c_int,c_int]
         libsoap3.soap.restype = POINTER (c_double)
     elif(py_Ntypes==4):
-        libsoap4 = CDLL(path_to_so + '/src/libsoapPy4.so')
+        libsoap4 = CDLL(_SOAPLITE_SOFILES[3])
         libsoap4.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),POINTER (c_double),
             POINTER (c_double), POINTER (c_int),c_double,c_int,c_int,c_int,c_int,c_int]
         libsoap4.soap.restype = POINTER (c_double)
     elif(py_Ntypes==5):
-        libsoap5 = CDLL(path_to_so + '/src/libsoapPy5.so')
+        libsoap5 = CDLL(_SOAPLITE_SOFILES[4])
         libsoap5.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),POINTER (c_double),
             POINTER (c_double), POINTER (c_int),c_double,c_int,c_int,c_int,c_int,c_int]
         libsoap5.soap.restype = POINTER (c_double)
     elif(py_Ntypes==6):
-        libsoap6 = CDLL(path_to_so + '/src/libsoapPy6.so')
+        libsoap6 = CDLL(_SOAPLITE_SOFILES[5])
         libsoap6.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),POINTER (c_double),
             POINTER (c_double), POINTER (c_int),c_double,c_int,c_int,c_int,c_int,c_int]
         libsoap6.soap.restype = POINTER (c_double)

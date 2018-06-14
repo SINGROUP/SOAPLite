@@ -7,7 +7,7 @@ import soaplite
 import datetime
 import ase
 import numpy as np
-import genBasis
+from soaplite import genBasis
 from numpy import genfromtxt
 import time
 from ase.structure import molecule
