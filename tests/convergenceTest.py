@@ -9,8 +9,8 @@ x = []
 #-------------- Define Structure ------------------------------------
 for i in range(2,13):
   myAlphas, myBetas = genBasis.getBasisFunc(5.0, i) # input:(rCut, NradBas)
-  atoms1 = ase.io.read("../Structs/h2o.xyz")
-  atoms2 = ase.io.read('../Structs/h2oDiff.xyz')
+  atoms1 = ase.io.read("Structs/h2o.xyz")
+  atoms2 = ase.io.read('Structs/h2oDiff.xyz')
 
 #-------------- set Basis Function (rCut--soft, N_max) Environment ----------------
 
