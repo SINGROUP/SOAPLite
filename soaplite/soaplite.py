@@ -57,22 +57,18 @@ def _get_supercell(obj, rCut=5.0):
     p1 = np.dot(a1, b1) / np.dot(b1, b1) * b1
     p2 = np.dot(a2, b2) / np.dot(b2, b2) * b2
     p3 = np.dot(a3, b3) / np.dot(b3, b3) * b3
-    #print(p1,p2,p3)
-    #xyz_arr = np.abs(np.diag(obj.get_cell()))
     xyz_arr = np.linalg.norm(np.array([p1,p2,p3]), axis = 1)
-    #print(xyz_arr)
     cell_images = np.ceil(rCutHard/xyz_arr)
     nx = int(cell_images[0])
     ny = int(cell_images[1])
     nz = int(cell_images[2])
-    #print(nx,ny,nz)
     suce = obj * (1 + 2*nx, 1+ 2*ny,1+2*nz)
     shift = obj.get_cell()
 
     shifted_suce = suce.copy()
-    shifted_suce.translate(-shift[0]*nx -shift[1]*ny - shift[1]*nz)
+    shifted_suce.translate(-shift[0]*nx -shift[1]*ny - shift[2]*nz)
 
-    return suce
+    return shifted_suce
 
 def get_soap_locals(obj, Hpos, alp, bet, rCut=5.0, NradBas=5, Lmax=5, crossOver=True, all_atomtypes=[]):
     rCutHard = rCut + 5;
@@ -200,7 +196,7 @@ def get_periodic_soap_locals(obj, Hpos, alp, bet, rCut=5.0, NradBas=5, Lmax=5,cr
 
 def get_periodic_soap_structure(obj, alp, bet, rCut=5.0, NradBas=5, Lmax=5, crossOver=True, all_atomtypes=[]):
     Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj, all_atomtypes)
-    Hpos = Apos.copy().reshape((-1,3))
+    Hpos = obj.get_positions().reshape((-1,3))
     suce = _get_supercell(obj, rCut)
 
     arrsoap = get_soap_locals(suce, Hpos, alp, bet, rCut, NradBas, Lmax, crossOver, all_atomtypes=all_atomtypes)
