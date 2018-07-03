@@ -37,6 +37,7 @@ def _format_ase2clusgeo(obj, all_atomtypes=[]):
     Apos = np.concatenate(pos_lst).ravel()
     return Apos, typeNs, Ntypes, atomtype_lst, totalAN
 
+
 def _get_supercell(obj, rCut=5.0):
     rCutHard = rCut + 5; # Giving extra space for hard cutOff
     """ Takes atoms object (with a defined cell) and a radial cutoff.
@@ -45,12 +46,26 @@ def _get_supercell(obj, rCut=5.0):
     cutoff centered around the original atoms.
     """
 
-    xyz_arr = np.abs(np.diag(obj.get_cell()))
+    cell_vectors = obj.get_cell()
+    a1, a2, a3 = cell_vectors[0], cell_vectors[1], cell_vectors[2]
+
+    # vectors perpendicular to two cell vectors
+    b1 = np.cross(a2, a3, axis=0)
+    b2 = np.cross(a3, a1, axis=0)
+    b3 = np.cross(a1, a2, axis=0)
+    # projections onto perpendicular vectors
+    p1 = np.dot(a1, b1) / np.dot(b1, b1) * b1
+    p2 = np.dot(a2, b2) / np.dot(b2, b2) * b2
+    p3 = np.dot(a3, b3) / np.dot(b3, b3) * b3
+    #print(p1,p2,p3)
+    #xyz_arr = np.abs(np.diag(obj.get_cell()))
+    xyz_arr = np.linalg.norm(np.array([p1,p2,p3]), axis = 1)
+    #print(xyz_arr)
     cell_images = np.ceil(rCutHard/xyz_arr)
     nx = int(cell_images[0])
     ny = int(cell_images[1])
     nz = int(cell_images[2])
-
+    #print(nx,ny,nz)
     suce = obj * (1 + 2*nx, 1+ 2*ny,1+2*nz)
     shift = obj.get_cell()
 
@@ -58,7 +73,6 @@ def _get_supercell(obj, rCut=5.0):
     shifted_suce.translate(-shift[0]*nx -shift[1]*ny - shift[1]*nz)
 
     return suce
-
 
 def get_soap_locals(obj, Hpos, alp, bet, rCut=5.0, NradBas=5, Lmax=5, crossOver=True, all_atomtypes=[]):
     rCutHard = rCut + 5;
