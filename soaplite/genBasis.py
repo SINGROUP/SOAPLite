@@ -51,7 +51,7 @@ def getBasisFunc(rcut, n):
         alphaSpace = np.append(alphaSpace, val)
     for l in range(0,10):
        alphas = findAlpha(l,a, alphaSpace)
-       print(alphas)
+       #print(alphas)
        betas = getOrthNorm(intAllMat(l,alphas))
        alphasFull = np.append(alphasFull, alphas)
        betasFull  = np.append(betasFull , betas)

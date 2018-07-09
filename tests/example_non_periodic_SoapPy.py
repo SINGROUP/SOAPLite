@@ -1,25 +1,20 @@
-import os,sys,inspect
-currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-sys.path.insert(0,parentdir) 
-
 import soaplite
 import datetime
 import ase
 import numpy as np
-import genBasis
+from soaplite import genBasis
 from numpy import genfromtxt
 import time
 
 #-------------- Define Structure ------------------------------------
 #atoms = ase.Atoms('CH4', positions=[[-1.5, 0.0, 0.0],[ 1.5, 0.0, 0.0],[0.0, 1.5, 0.0],[ -1.5, 0.0, 0.0]])
-#atoms = ase.io.read("../Structs/mos2_51.xyz")
-atoms = ase.io.read("../Structs/au40cu40.xyz")
+#atoms = ase.io.read("Structs/mos2_51.xyz")
+atoms = ase.io.read("Structs/au40cu40.xyz")
 
 #-------------- Define Position of Local Environment ----------------
 #Hpos = [[1.0,2.0,3.0],[4.0,5.0,6.0],[7.0,8.0,9.0],[10.0,11.0,12.0]]
-#Hpos = genfromtxt('../Structs/mos2H.xyz').tolist()
-Hpos = genfromtxt('../Structs/au40cu40H.dat').tolist()
+#Hpos = genfromtxt('Structs/mos2H.xyz').tolist()
+Hpos = genfromtxt('Structs/au40cu40H.dat').tolist()
 
 #-------------- set Basis Function (rCut--soft, N_max) Environment ----------------
 myAlphas, myBetas = genBasis.getBasisFunc(10.0, 5) # input:(rCut, NradBas)
