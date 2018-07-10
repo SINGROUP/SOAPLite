@@ -1,3 +1,6 @@
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import (bytes, str, open, super, range,
+                      zip, round, input, int, pow, object)
 from scipy.special import *
 from scipy.linalg import *
 from scipy.optimize import *
@@ -51,7 +54,7 @@ def getBasisFunc(rcut, n):
         alphaSpace = np.append(alphaSpace, val)
     for l in range(0,10):
        alphas = findAlpha(l,a, alphaSpace)
-       print(alphas)
+       #print(alphas)
        betas = getOrthNorm(intAllMat(l,alphas))
        alphasFull = np.append(alphasFull, alphas)
        betasFull  = np.append(betasFull , betas)
