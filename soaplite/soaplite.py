@@ -1,7 +1,3 @@
-### DEFINE ###
-from __future__ import absolute_import, division, print_function, unicode_literals
-from builtins import (bytes, str, open, super, range,
-                      zip, round, input, int, pow, object)
 from ctypes import *
 import os, argparse, glob
 import numpy as np
@@ -10,6 +6,7 @@ import ase, ase.io
 import os
 
 
+#=================================================================
 def _format_ase2clusgeo(obj, all_atomtypes=[]):
     """ Takes an ase Atoms object and returns numpy arrays and integers
     which are read by the internal clusgeo. Apos is currently a flattened
@@ -42,6 +39,7 @@ def _format_ase2clusgeo(obj, all_atomtypes=[]):
     return Apos, typeNs, Ntypes, atomtype_lst, totalAN
 
 
+#=================================================================
 def _get_supercell(obj, rCut=5.0):
     rCutHard = rCut + 5; # Giving extra space for hard cutOff
     """ Takes atoms object (with a defined cell) and a radial cutoff.
@@ -78,7 +76,7 @@ def get_soap_locals(obj, Hpos, alp, bet, rCut=5.0, NradBas=5, Lmax=5, crossOver=
     rCutHard = rCut + 5;
     assert Lmax <= 9, "l cannot exceed 9. Lmax={}".format(Lmax)
     assert Lmax >= 0, "l cannot be negative.Lmax={}".format(Lmax)
-    assert rCutHard < 20.0001 , "hard redius cuttof cannot be larger than 17 Angs. rCut={}".format(rCutHard)
+    assert rCutHard < 17.0001 , "hard redius cuttof cannot be larger than 17 Angs. rCut={}".format(rCutHard)
     assert rCutHard > 1.999 , "hard redius cuttof cannot be lower than 1 Ang. rCut={}".format(rCutHard)
     assert NradBas >= 2 , "number of basis functions cannot be lower than 2. NradBas={}".format(NradBas)
     assert NradBas <= 13 , "number of basis functions cannot exceed 12. NradBas={}".format(NradBas)
@@ -183,13 +181,72 @@ def get_soap_locals(obj, Hpos, alp, bet, rCut=5.0, NradBas=5, Lmax=5, crossOver=
     else:
         shape = (py_Hsize,int((NradBas*(NradBas+1))/2)*(Lmax+1)*py_Ntypes)
         return np.ctypeslib.as_array( c, shape=(py_Hsize,int((NradBas*(NradBas+1))/2)*(Lmax+1)*py_Ntypes))
+#=================================================================
+def get_soap_locals_general(obj, Hpos, rx, gss, gaussAlpha=1.0, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[]):
+##    rCutHard = rCut + 5; #//??? I don't think it's needed for the general case. (user's responsibility for cutting.)
+    assert Lmax <= 20, "l cannot exceed 20. Lmax={}".format(Lmax)
+    assert Lmax >= 0, "l cannot be negative.Lmax={}".format(Lmax)
+#    assert rCutHard < 17.0001 , "hard redius cuttof cannot be larger than 17 Angs. rCut={}".format(rCutHard)
+#    assert rCutHard > 1.9999 , "hard redius cuttof cannot be lower than 1 Ang. rCut={}".format(rCutHard)
+    # get clusgeo internal format for c-code
+    Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj, all_atomtypes)
+    Hpos = np.array(Hpos)
+    py_Hsize = Hpos.shape[0]
 
+    # flatten arrays
+    Hpos = Hpos.flatten()
+    alp = alp.flatten()
+    bet = bet.flatten()
+
+    # convert int to c_int
+    lMax = c_int(Lmax)
+    Hsize = c_int(py_Hsize)
+    Ntypes = c_int(py_Ntypes)
+    totalAN = c_int(totalAN)
+    rCutHard = c_double(rCutHard)
+    Nsize = c_int(nMax)
+    #convert int array to c_int array
+    typeNs = (c_int * len(typeNs))(*typeNs)
+
+    # convert to c_double arrays
+    # alphas
+    alphas = (c_double * len(alp))(*alp.tolist())
+    # betas
+    betas = (c_double * len(bet))(*bet.tolist())
+    #Apos
+    axyz = (c_double * len(Apos))(*Apos.tolist())
+    #Hpos
+    hxyz = (c_double * len(Hpos))(*Hpos.tolist())
+
+    ### START SOAP###
+    #path_to_so = os.path.dirname(os.path.abspath(__file__))
+    _PATH_TO_SOAPLITE_SO = os.path.dirname(os.path.abspath(__file__))
+    _SOAPLITE_SOFILES = glob.glob( "".join([ _PATH_TO_SOAPLITE_SO, "/../lib/libsoapP*.*so"]) )
+    #print(_SOAPLITE_SOFILES)
+    #print(len(_SOAPLITE_SOFILES))
+    substring = "lib/libsoapGeneral."
+    libsoap = CDLL(next((s for s in _SOAPLITE_SOFILES if substring in s), None))
+    libsoap.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),POINTER (c_double), POINTER (c_double), POINTER (c_int),c_double,c_int,c_int,c_int,c_int,c_int]
+    libsoap.soap.restype = POINTER (c_double)
+    c = libsoap.soap(c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize,gaussAlaph,rx, gss)
+    #New: gaussAlaph = Double = 1.0
+    #New: rw = double list, size 100 
+    #New: gss = double list, size 100*nMax
+           
+    #   return c;
+    if(crossOver):
+        crosTypes = int((py_Ntypes*(py_Ntypes+1))/2)
+        return np.ctypeslib.as_array( c, shape=(py_Hsize,int((nMax*(nMax+1))/2)*(Lmax+1)*crosTypes))
+    else:
+        shape = (py_Hsize,int((nMax*(nMax+1))/2)*(Lmax+1)*py_Ntypes)
+        return np.ctypeslib.as_array( c, shape=(py_Hsize,int((nMax*(nMax+1))/2)*(Lmax+1)*py_Ntypes))
+#=================================================================
 def get_soap_structure(obj, alp, bet, rCut=5.0, NradBas=5, Lmax=5, crossOver=True, all_atomtypes=[]):
     Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj, all_atomtypes)
     Hpos = Apos.copy().reshape((-1,3))
     arrsoap = get_soap_locals(obj, Hpos, alp, bet,  rCut, NradBas, Lmax, crossOver, all_atomtypes=all_atomtypes)
     return arrsoap
-
+#=================================================================
 def get_periodic_soap_locals(obj, Hpos, alp, bet, rCut=5.0, NradBas=5, Lmax=5,crossOver=True, all_atomtypes=[]):
     # get supercells
     suce = _get_supercell(obj, rCut)
@@ -197,7 +254,7 @@ def get_periodic_soap_locals(obj, Hpos, alp, bet, rCut=5.0, NradBas=5, Lmax=5,cr
     arrsoap = get_soap_locals(suce, Hpos, alp, bet, rCut, NradBas=NradBas, Lmax=Lmax, crossOver=crossOver, all_atomtypes=all_atomtypes)
 
     return arrsoap
-
+#=================================================================
 def get_periodic_soap_structure(obj, alp, bet, rCut=5.0, NradBas=5, Lmax=5, crossOver=True, all_atomtypes=[]):
     Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj, all_atomtypes)
     Hpos = obj.get_positions().reshape((-1,3))
@@ -205,3 +262,4 @@ def get_periodic_soap_structure(obj, alp, bet, rCut=5.0, NradBas=5, Lmax=5, cros
 
     arrsoap = get_soap_locals(suce, Hpos, alp, bet, rCut, NradBas, Lmax, crossOver, all_atomtypes=all_atomtypes)
     return arrsoap
+  

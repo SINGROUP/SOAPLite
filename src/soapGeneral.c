@@ -330,7 +330,11 @@ void accumP(double* Phs, double* Ps, int Nt, int lMax, int gnsize, double rCut2,
 //=========================================================
 //=========================================================
 double* soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas, int* typeNs, double rCut, int totalAN,int Nt,int gnsize, int lMax, int Hs, double alpha, double* rw, double* gss);
+//=========================================================
+//=========================================================
+//=========================================================
 double* soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas, int* typeNs, double rCut, int totalAN,int Nt,int gnsize, int lMax, int Hs, double alpha, double* rw, double* gss){
+// everything same except last three
 
   double* cf = factorListSet();
 
