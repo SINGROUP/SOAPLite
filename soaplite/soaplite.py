@@ -205,6 +205,10 @@ def get_soap_locals_general(obj, Hpos, rx, gss, gaussAlpha=1.0, rCut=5.0, nMax=5
     totalAN = c_int(totalAN)
     rCutHard = c_double(rCutHard)
     Nsize = c_int(nMax)
+    
+    # convert double to c_double
+    gaussAlaph = c_double(gaussAlaph)
+
     #convert int array to c_int array
     typeNs = (c_int * len(typeNs))(*typeNs)
 
@@ -218,6 +222,10 @@ def get_soap_locals_general(obj, Hpos, rx, gss, gaussAlpha=1.0, rCut=5.0, nMax=5
     #Hpos
     hxyz = (c_double * len(Hpos))(*Hpos.tolist())
 
+    rw = (c_double * 100)(*rw)
+
+    gss = (c_double * 100 * nMax)(*gss) 
+
     ### START SOAP###
     #path_to_so = os.path.dirname(os.path.abspath(__file__))
     _PATH_TO_SOAPLITE_SO = os.path.dirname(os.path.abspath(__file__))
@@ -226,7 +234,10 @@ def get_soap_locals_general(obj, Hpos, rx, gss, gaussAlpha=1.0, rCut=5.0, nMax=5
     #print(len(_SOAPLITE_SOFILES))
     substring = "lib/libsoapGeneral."
     libsoap = CDLL(next((s for s in _SOAPLITE_SOFILES if substring in s), None))
-    libsoap.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),POINTER (c_double), POINTER (c_double), POINTER (c_int),c_double,c_int,c_int,c_int,c_int,c_int]
+    libsoap.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),POINTER (c_double), POINTER (c_double), 
+            POINTER (c_int), c_double,
+            c_int,c_int,c_int,c_int,c_int,
+            c_double, POINTER (c_double),POINTER (c_double)]
     libsoap.soap.restype = POINTER (c_double)
     c = libsoap.soap(c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize,gaussAlaph,rx, gss)
     #New: gaussAlaph = Double = 1.0

@@ -8,7 +8,8 @@ for extname, soname in zip(
         "src/soapAnalFullCro3Py.c",
         "src/soapAnalFullCro4Py.c",
         "src/soapAnalFullCro5Py.c",
-        "src/soapAnalFullCro6Py.c"
+        "src/soapAnalFullCro6Py.c",
+        "src/soapGeneral.c",
     ],
     [
         "lib.libsoapPy",
@@ -16,7 +17,8 @@ for extname, soname in zip(
         "lib.libsoapPy3",
         "lib.libsoapPy4",
         "lib.libsoapPy5",
-        "lib.libsoapPy6"
+        "lib.libsoapPy6",
+        "lib/libsoapGeneral",
     ]):
     ext_list.append(Extension(soname,
         [extname],
@@ -25,13 +27,14 @@ for extname, soname in zip(
         extra_compile_args=["-O3", "-std=c99"]
     ))
 
-    extensions = ext_list
+
+extensions = ext_list
 
 if __name__ == "__main__":
     setup(
         name="soaplite",
         url="https://github.com/SINGROUP/SOAPLite",
-        version="0.10.2",
+        version="0.10.3",
         description=("fast lightweight smooth overlap atomic position (SOAP) calculator. see github.com/SINGROUP/SOAPLite for detailed documentations."), author="Eiaki V. Morooka", author_email="eiaki.morooka@aalto.fi",
         packages=find_packages(),
         install_requires=[
@@ -69,7 +72,7 @@ if __name__ == "__main__":
                 'tests/Structs/h2oDiff.xyz',
                 'tests/Structs/h2o.xyz',
                 'tests/Structs/mos2_51.xyz',
-                'tests/Structs/mos2H.dat'
+                'tests/Structs/mos2H.dat',
             ]
         }
     )
