@@ -1,7 +1,6 @@
 from ctypes import *
 import os, argparse, glob
 import numpy as np
-import soaplite.genBasis
 import ase, ase.io
 import os
 
@@ -183,7 +182,7 @@ def get_soap_locals(obj, Hpos, alp, bet, rCut=5.0, NradBas=5, Lmax=5, crossOver=
         return np.ctypeslib.as_array( c, shape=(py_Hsize,int((NradBas*(NradBas+1))/2)*(Lmax+1)*py_Ntypes))
 #=================================================================
 def get_soap_locals_general(obj, Hpos, rx, gss, gaussAlpha=1.0, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[]):
-##    rCutHard = rCut + 5; #//??? I don't think it's needed for the general case. (user's responsibility for cutting.)
+    rCutHard = rCut + 5; #//??? I don't think it's needed for the general case. (user's responsibility for cutting.)
     assert Lmax <= 20, "l cannot exceed 20. Lmax={}".format(Lmax)
     assert Lmax >= 0, "l cannot be negative.Lmax={}".format(Lmax)
 #    assert rCutHard < 17.0001 , "hard redius cuttof cannot be larger than 17 Angs. rCut={}".format(rCutHard)
@@ -195,8 +194,9 @@ def get_soap_locals_general(obj, Hpos, rx, gss, gaussAlpha=1.0, rCut=5.0, nMax=5
 
     # flatten arrays
     Hpos = Hpos.flatten()
-    alp = alp.flatten()
-    bet = bet.flatten()
+#    alp = alp.flatten()
+#    bet = bet.flatten()
+    gss = gss.flatten()
 
     # convert int to c_int
     lMax = c_int(Lmax)
@@ -207,50 +207,51 @@ def get_soap_locals_general(obj, Hpos, rx, gss, gaussAlpha=1.0, rCut=5.0, nMax=5
     Nsize = c_int(nMax)
     
     # convert double to c_double
-    gaussAlaph = c_double(gaussAlaph)
+    gaussAlpha = c_double(gaussAlpha)
 
     #convert int array to c_int array
     typeNs = (c_int * len(typeNs))(*typeNs)
 
     # convert to c_double arrays
     # alphas
-    alphas = (c_double * len(alp))(*alp.tolist())
+#    alphas = (c_double * len(alp))(*alp.tolist())
     # betas
-    betas = (c_double * len(bet))(*bet.tolist())
+#    betas = (c_double * len(bet))(*bet.tolist())
     #Apos
     axyz = (c_double * len(Apos))(*Apos.tolist())
     #Hpos
     hxyz = (c_double * len(Hpos))(*Hpos.tolist())
 
-    rw = (c_double * 100)(*rw)
+    rx = (c_double * 100)(*rx.tolist())
 
-    gss = (c_double * 100 * nMax)(*gss) 
+    gss = (c_double * (100 * nMax))(*gss.tolist()) 
 
     ### START SOAP###
     #path_to_so = os.path.dirname(os.path.abspath(__file__))
     _PATH_TO_SOAPLITE_SO = os.path.dirname(os.path.abspath(__file__))
-    _SOAPLITE_SOFILES = glob.glob( "".join([ _PATH_TO_SOAPLITE_SO, "/../lib/libsoapP*.*so"]) )
-    #print(_SOAPLITE_SOFILES)
-    #print(len(_SOAPLITE_SOFILES))
+    _SOAPLITE_SOFILES = glob.glob( "".join([ _PATH_TO_SOAPLITE_SO, "/../lib/libsoapG*.*so"]) )
+    print(_SOAPLITE_SOFILES)
+    print(len(_SOAPLITE_SOFILES))
     substring = "lib/libsoapGeneral."
     libsoap = CDLL(next((s for s in _SOAPLITE_SOFILES if substring in s), None))
-    libsoap.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),POINTER (c_double), POINTER (c_double), 
+    libsoap.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double), 
             POINTER (c_int), c_double,
             c_int,c_int,c_int,c_int,c_int,
             c_double, POINTER (c_double),POINTER (c_double)]
     libsoap.soap.restype = POINTER (c_double)
-    c = libsoap.soap(c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize,gaussAlaph,rx, gss)
-    #New: gaussAlaph = Double = 1.0
-    #New: rw = double list, size 100 
+    c = (c_double*(int((nMax*(nMax+1))/2)*(Lmax+1)*int((py_Ntypes*(py_Ntypes +1))/2)*py_Hsize))()
+    c = libsoap.soap(c, axyz, hxyz, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize,gaussAlpha,rx, gss)
+    #New: gaussAlpha = Double = 1.0
+    #New: rx = double list, size 100 
     #New: gss = double list, size 100*nMax
            
     #   return c;
-    if(crossOver):
-        crosTypes = int((py_Ntypes*(py_Ntypes+1))/2)
-        return np.ctypeslib.as_array( c, shape=(py_Hsize,int((nMax*(nMax+1))/2)*(Lmax+1)*crosTypes))
-    else:
-        shape = (py_Hsize,int((nMax*(nMax+1))/2)*(Lmax+1)*py_Ntypes)
-        return np.ctypeslib.as_array( c, shape=(py_Hsize,int((nMax*(nMax+1))/2)*(Lmax+1)*py_Ntypes))
+#    if(crossOver):
+#        crosTypes = int((py_Ntypes*(py_Ntypes+1))/2)
+#        return np.ctypeslib.as_array( c, shape=(py_Hsize,int((nMax*(nMax+1))/2)*(Lmax+1)*crosTypes))
+#    else:
+    shape = (py_Hsize,int((nMax*(nMax+1))/2)*(Lmax+1)*py_Ntypes)
+    return np.ctypeslib.as_array( c, shape=(py_Hsize,int((nMax*(nMax+1))/2)*(Lmax+1)*py_Ntypes))
 #=================================================================
 def get_soap_structure(obj, alp, bet, rCut=5.0, NradBas=5, Lmax=5, crossOver=True, all_atomtypes=[]):
     Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj, all_atomtypes)
