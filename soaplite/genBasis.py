@@ -63,17 +63,8 @@ def getBasisFunc(rcut, n):
     return  alphasFull, betasFull
 #--------------------------------------------------
 if __name__ == '__main__':
-    alphas, betas = getBasisFunc(5.0, 10)
+    alphas, betas = getBasisFunc(5.0, 5)
 #    print(alphas, betas)
     np.savetxt('alphasPy.dat', alphas)
     np.savetxt('betasPy.dat',  betas)
-
-
-
-
-
-
-
-
-
 

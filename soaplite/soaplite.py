@@ -250,8 +250,9 @@ def get_soap_locals_general(obj, Hpos, rx, gss, gaussAlpha=1.0, rCut=5.0, nMax=5
 #        crosTypes = int((py_Ntypes*(py_Ntypes+1))/2)
 #        return np.ctypeslib.as_array( c, shape=(py_Hsize,int((nMax*(nMax+1))/2)*(Lmax+1)*crosTypes))
 #    else:
-    shape = (py_Hsize,int((nMax*(nMax+1))/2)*(Lmax+1)*py_Ntypes)
-    return np.ctypeslib.as_array( c, shape=(py_Hsize,int((nMax*(nMax+1))/2)*(Lmax+1)*py_Ntypes))
+    shape = (py_Hsize,int((nMax*(nMax+1))/2)*(Lmax+1)*int((py_Ntypes*(py_Ntypes+1))/2))
+#    return np.ctypeslib.as_array( c, shape=(py_Hsize, int((nMax*(nMax+1))/2)*(Lmax+1)*int((py_Ntypes*(py_Ntypes+1))/2)))
+    return np.ctypeslib.as_array( c, shape)
 #=================================================================
 def get_soap_structure(obj, alp, bet, rCut=5.0, NradBas=5, Lmax=5, crossOver=True, all_atomtypes=[]):
     Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj, all_atomtypes)
