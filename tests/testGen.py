@@ -25,5 +25,8 @@ Hpos = np.genfromtxt('Structs/au40cu40H.dat') # Must be a list of a list
 #Run soap calculations
 x = soaplite.get_soap_locals_general(atoms, Hpos, rx, gss, gaussAlpha=1.0, rCut=5.0, nMax=NMax, Lmax=2, all_atomtypes=[])
 
-#save soap spectrum
+atoms = ase.io.read("Structs/au40cu40.xyz")
+Hpos=[[0,0,0]]
+x = soaplite.get_soap_locals_general(atoms, Hpos, rx, gss, gaussAlpha=1.0, rCut=5.0, nMax=NMax, Lmax=5, all_atomtypes=[])
+
 np.savetxt("testme.txt",x)
