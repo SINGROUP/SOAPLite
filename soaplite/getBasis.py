@@ -104,7 +104,6 @@ w[96] = 0.003655961201326375;
 w[97] = 0.002683925371553482;
 w[98] = 0.001709392653518105;
 w[99] = 7.3463449050567E-4;
-
 x[0] = -0.999713726773441234;
 x[1] = -0.998491950639595818;
 x[2] = -0.996295134733125149;
@@ -206,15 +205,15 @@ x[97] = 0.99629513473312515;
 x[98] = 0.998491950639595818;
 x[99] = 0.99971372677344123;
 
-def getGns(functionList = []):
+def getGns(rCut,functionList = []):
+  rCutVeryHard= rCut*2.0;
 
-  rCut=20.0;
   nMax = len(functionList);
 
   mat = np.zeros([nMax,nMax]);
   gss = np.zeros([nMax,len(x)]);
 
-  rx = 0.5*rCut*(x + 1);
+  rx = 0.5*rCutVeryHard*(x + 1);
 
   y = np.zeros([nMax,len(rx)]);
   for i in range(0,nMax):
@@ -222,7 +221,7 @@ def getGns(functionList = []):
 
   for i in range(0,nMax):
     for j in range(0,nMax):
-      mat[i,j] = rCut*0.5*np.sum(w*rx*rx*y[i,:]*y[j,:]);
+      mat[i,j] = rCutVeryHard*0.5*np.sum(w*rx*rx*y[i,:]*y[j,:]);
 
   print("M:",mat)
   invMat = sqrtm(inv(mat));
