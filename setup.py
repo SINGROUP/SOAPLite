@@ -18,7 +18,7 @@ for extname, soname in zip(
         "lib.libsoapPy4",
         "lib.libsoapPy5",
         "lib.libsoapPy6",
-        "lib/libsoapGeneral",
+        "lib.libsoapGeneral",
     ]):
     ext_list.append(Extension(soname,
         [extname],
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     setup(
         name="soaplite",
         url="https://github.com/SINGROUP/SOAPLite",
-        version="0.10.3",
+        version="0.10.4",
         description=("fast lightweight smooth overlap atomic position (SOAP) calculator. see github.com/SINGROUP/SOAPLite for detailed documentations."), author="Eiaki V. Morooka", author_email="eiaki.morooka@aalto.fi",
         packages=find_packages(),
         install_requires=[
