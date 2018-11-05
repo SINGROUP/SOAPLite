@@ -3458,8 +3458,8 @@ void getP(double* soapMat, double* Cnnd, int Ns, int Ts, int Hs, int lMax){
 }
 //===========================================================================================
 //===========================================================================================
-double* soap(double* c, double* Apos,double* Hpos,double* alphas,double* betas, int* typeNs, double rCut, int totalAN,int Nt,int Ns, int lMax, int Hs);
-double* soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas, int* typeNs, double rCut, int totalAN,int Nt,int Ns, int lMax, int Hs){
+int soap(double* c, double* Apos,double* Hpos,double* alphas,double* betas, int* typeNs, double rCut, int totalAN,int Nt,int Ns, int lMax, int Hs);
+int soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas, int* typeNs, double rCut, int totalAN,int Nt,int Ns, int lMax, int Hs){
 
   double NsNs = Ns*Ns;
   double* x  = (double*) malloc(sizeof(double)*totalAN);
@@ -3586,8 +3586,8 @@ double* soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas,
   free(bOa);
   free(aOa);
 
-  double* soapMat = (double*) malloc(Hs*getCrosNum(6)*(Ns*(Ns+1))/2*(lMax+1)*sizeof(double));
-  getP(soapMat, cnnd, Ns, Nt, Hs, lMax);
+//  double* soapMat = (double*) malloc(Hs*getCrosNum(6)*(Ns*(Ns+1))/2*(lMax+1)*sizeof(double));
+  getP(c, cnnd, Ns, Nt, Hs, lMax);
   free(cnnd);
-  return soapMat;
+  return 0;
 }

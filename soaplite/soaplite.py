@@ -99,7 +99,6 @@ def get_soap_locals(obj, Hpos, alp, bet, rCut=5.0, NradBas=5, Lmax=5, crossOver=
     Nsize = c_int(NradBas)
     #convert int array to c_int array
     typeNs = (c_int * len(typeNs))(*typeNs)
-
     # convert to c_double arrays
     # alphas
     alphas = (c_double * len(alp))(*alp.tolist())
@@ -109,7 +108,6 @@ def get_soap_locals(obj, Hpos, alp, bet, rCut=5.0, NradBas=5, Lmax=5, crossOver=
     axyz = (c_double * len(Apos))(*Apos.tolist())
     #Hpos
     hxyz = (c_double * len(Hpos))(*Hpos.tolist())
-
     ### START SOAP###
     #path_to_so = os.path.dirname(os.path.abspath(__file__))
     _PATH_TO_SOAPLITE_SO = os.path.dirname(os.path.abspath(__file__))
@@ -157,21 +155,21 @@ def get_soap_locals(obj, Hpos, alp, bet, rCut=5.0, NradBas=5, Lmax=5, crossOver=
     if(crossOver):
         c = (c_double*(int((NradBas*(NradBas+1))/2)*(Lmax+1)*int((py_Ntypes*(py_Ntypes +1))/2)*py_Hsize))()
         if(py_Ntypes==1):
-            c = libsoap.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
+            libsoap.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
            
         elif(py_Ntypes==2):
-            c = libsoap2.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
+            libsoap2.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
         elif(py_Ntypes==3):
-            c = libsoap3.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
+            libsoap3.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
         elif(py_Ntypes==4):
-            c = libsoap4.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
+            libsoap4.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
         elif(py_Ntypes==5):
-            c = libsoap5.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
+            libsoap5.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
         elif(py_Ntypes==6):
-            c = libsoap6.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
+            libsoap6.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
     else:
         c = (c_double*(int((NradBas*(NradBas+1))/2)*(Lmax+1)*py_Ntypes*py_Hsize))()
-        c = libsoap.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
+        libsoap.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
    
     #   return c;
     if(crossOver):
@@ -182,7 +180,7 @@ def get_soap_locals(obj, Hpos, alp, bet, rCut=5.0, NradBas=5, Lmax=5, crossOver=
         return np.ctypeslib.as_array( c, shape=(py_Hsize,int((NradBas*(NradBas+1))/2)*(Lmax+1)*py_Ntypes))
 #=================================================================
 def get_soap_locals_general(obj, Hpos, rx, gss, gaussAlpha=1.0, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[]):
-    rCutHard = rCut + 5; #//??? I don't think it's needed for the general case. (user's responsibility for cutting.)
+###    rCutHard = rCut #// + 5; #//??? I don't think it's needed for the general case. (user's responsibility for cutting.)
     assert Lmax <= 20, "l cannot exceed 20. Lmax={}".format(Lmax)
     assert Lmax >= 0, "l cannot be negative.Lmax={}".format(Lmax)
 #    assert rCutHard < 17.0001 , "hard redius cuttof cannot be larger than 17 Angs. rCut={}".format(rCutHard)
@@ -203,7 +201,7 @@ def get_soap_locals_general(obj, Hpos, rx, gss, gaussAlpha=1.0, rCut=5.0, nMax=5
     Hsize = c_int(py_Hsize)
     Ntypes = c_int(py_Ntypes)
     totalAN = c_int(totalAN)
-    rCutHard = c_double(rCutHard)
+    rCut = c_double(rCut)
     Nsize = c_int(nMax)
     
     # convert double to c_double
@@ -221,9 +219,7 @@ def get_soap_locals_general(obj, Hpos, rx, gss, gaussAlpha=1.0, rCut=5.0, nMax=5
     axyz = (c_double * len(Apos))(*Apos.tolist())
     #Hpos
     hxyz = (c_double * len(Hpos))(*Hpos.tolist())
-
     rx = (c_double * 100)(*rx.tolist())
-
     gss = (c_double * (100 * nMax))(*gss.tolist()) 
 
     ### START SOAP###
@@ -239,10 +235,12 @@ def get_soap_locals_general(obj, Hpos, rx, gss, gaussAlpha=1.0, rCut=5.0, nMax=5
             c_int,c_int,c_int,c_int,c_int,
             c_double, POINTER (c_double),POINTER (c_double)]
     libsoap.soap.restype = POINTER (c_double)
-    c = (c_double*(int((nMax*(nMax+1))/2)*(Lmax+1)*int((py_Ntypes*(py_Ntypes +1))/2)*py_Hsize))()
-    c = libsoap.soap(c, axyz, hxyz, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize,gaussAlpha,rx, gss)
+
+    c = (c_double*(int((nMax*(nMax+1))/2)*(Lmax+1)*int((py_Ntypes*(py_Ntypes+1))/2)*py_Hsize))()
+    c = libsoap.soap(c, axyz, hxyz, typeNs, rCut, totalAN, Ntypes, Nsize, lMax, Hsize,gaussAlpha,rx, gss)
+
     #New: gaussAlpha = Double = 1.0
-    #New: rx = double list, size 100 
+    #New: rx = double list, size 100
     #New: gss = double list, size 100*nMax
            
     #   return c;

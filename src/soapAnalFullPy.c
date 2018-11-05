@@ -842,8 +842,8 @@ void getP(double* soapMat, double* Cnnd, int Ns, int Ts, int Hs, int lMax){
 }
 //===========================================================================================
 //===========================================================================================
-double* soap(double* c, double* Apos,double* Hpos,double* alphas,double* betas, int* typeNs, double rCut, int totalAN,int Nt,int Ns, int lMax, int Hs);
-double* soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas, int* typeNs, double rCut, int totalAN,int Nt,int Ns, int lMax, int Hs){
+int soap(double* c, double* Apos,double* Hpos,double* alphas,double* betas, int* typeNs, double rCut, int totalAN,int Nt,int Ns, int lMax, int Hs);
+int soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas, int* typeNs, double rCut, int totalAN,int Nt,int Ns, int lMax, int Hs){
 
   //printf("xxx\n");
   double NsNs = Ns*Ns;
@@ -978,10 +978,10 @@ double* soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas,
   free(bOa);
   free(aOa);
 
-  double* soapMat = (double*) malloc(Hs*Nt*(Ns*(Ns+1))/2*(lMax+1)*sizeof(double));
+//  double* soapMat = (double*) malloc(Hs*Nt*(Ns*(Ns+1))/2*(lMax+1)*sizeof(double));
 //  double* soapMat = (double*) malloc(10000000000);
-  getP(soapMat, cnnd, Ns, Nt, Hs, lMax);
+  getP(c, cnnd, Ns, Nt, Hs, lMax);
   free(cnnd);
   //printf("xxxxxxxx\n");
-  return soapMat;
+  return 0;
 }

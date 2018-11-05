@@ -1502,7 +1502,7 @@ int getFilteredPos(double* x, double* y, double* z,double* xNow, double* yNow, d
     Yi = Apos[3*shiftType + 3*i + 1] - Hpos[3*Ihpos + 1];
     Zi = Apos[3*shiftType + 3*i + 2] - Hpos[3*Ihpos + 2];
     ri2 = Xi*Xi + Yi*Yi + Zi*Zi;
-    if(ri2 < rCut*rCut){
+    if(ri2 < rCut*rCut + 25){ // 25 -> halo +5 Ang
       xNow[icount] = Xi; yNow[icount] = Yi; zNow[icount] = Zi;
       ri[icount] = sqrt(ri2);
       oOri[icount] = 1/ri[icount];
@@ -1681,7 +1681,6 @@ void getC(double* Cs, double* ws, double* rw2, double * gns, double* summed, dou
           Cs[2*(lMax+1)*(lMax+1)*n + l*2*(lMax+1) + 2*m    ] += rw2[rw]*ws[rw]*gns[rsize*n + rw]*summed[2*(lMax+1)*l*rsize + 2*m*rsize + 2*rw    ]; // Re
           Cs[2*(lMax+1)*(lMax+1)*n + l*2*(lMax+1) + 2*m + 1] += rw2[rw]*ws[rw]*gns[rsize*n + rw]*summed[2*(lMax+1)*l*rsize + 2*m*rsize + 2*rw + 1]; //Im
 
-
         }
      }
       }
@@ -1762,17 +1761,15 @@ void accumP(double* Phs, double* Ps, int Nt, int lMax, int gnsize, double rCut2,
 //=========================================================
 //=========================================================
 //=========================================================
-double* soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas, int* typeNs, double rCut, int totalAN,int Nt,int gnsize, int lMax, int Hs, double alpha, double* rw, double* gss);
-//=========================================================
-//=========================================================
-//=========================================================
-double* soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas, int* typeNs, double rCut, int totalAN,int Nt,int gnsize, int lMax, int Hs, double alpha, double* rw, double* gss){
+double* soap(double* c, double* Apos,double* Hpos, int* typeNs, double rCut, int totalAN,int Nt,int gnsize, int lMax, int Hs, double alpha, double* rw, double* gss);
+double* soap(double* c, double* Apos,double* Hpos, int* typeNs, double rCut, int totalAN,int Nt,int gnsize, int lMax, int Hs, double alpha, double* rw, double* gss){
 // everything same except last three
 
   double* cf = factorListSet();
 
   int rsize = 100; // constant
   double rCut2 = rCut*rCut;
+  
 
 
   double* x    = tot  double* y    = tot  double* z    = tot double* xNow    = tot double* yNow    = tot double* zNow    = tot
@@ -1812,27 +1809,6 @@ double* soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas,
     accumP(Phs, Ps, Nt, lMax, gnsize,rCut2, Ihpos);
   }
 
-//  int NN =((gnsize+1)*gnsize)/2;
-//  int TT =((Nt+1)*Nt)/2;
-//
-//  for(int Ihpos = 0; Ihpos < Hs; Ihpos++){
-//  int tshift=0;
-//    for(int t1 = 0; t1 < Nt; t1++){
-//      for(int t2 = t1; t2 < Nt; t2++){
-//        for(int l = 0; l < lMax+1; l++){
-//          int nshift=0;
-//          for(int n = 0; n < gnsize; n++){
-//            for(int nd = n; nd < gnsize; nd++){
-//               cout <<  Phs[Ihpos*TT*(lMax+1)*NN + tshift*(lMax+1)*NN + l*NN + nshift] << " " ;
-//               nshift++;
-//          }
-//        }
-//      }
-//      tshift++;
-//    }
-//  }
-//  cout << endl;
-//  }
   return Phs;
 }
 //=========================================================
