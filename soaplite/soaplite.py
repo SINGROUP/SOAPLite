@@ -156,7 +156,7 @@ def get_soap_locals(obj, Hpos, alp, bet, rCut=5.0, NradBas=5, Lmax=5, crossOver=
         c = (c_double*(int((NradBas*(NradBas+1))/2)*(Lmax+1)*int((py_Ntypes*(py_Ntypes +1))/2)*py_Hsize))()
         if(py_Ntypes==1):
             libsoap.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
-           
+
         elif(py_Ntypes==2):
             libsoap2.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
         elif(py_Ntypes==3):
@@ -170,14 +170,20 @@ def get_soap_locals(obj, Hpos, alp, bet, rCut=5.0, NradBas=5, Lmax=5, crossOver=
     else:
         c = (c_double*(int((NradBas*(NradBas+1))/2)*(Lmax+1)*py_Ntypes*py_Hsize))()
         libsoap.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize)
-   
+
     #   return c;
     if(crossOver):
         crosTypes = int((py_Ntypes*(py_Ntypes+1))/2)
-        return np.ctypeslib.as_array( c, shape=(py_Hsize,int((NradBas*(NradBas+1))/2)*(Lmax+1)*crosTypes))
+        shape = (py_Hsize, int((NradBas*(NradBas+1))/2)*(Lmax+1)*crosTypes)
+        a = np.ctypeslib.as_array(c)
+        a = a.reshape(shape)
+        return a
     else:
-        shape = (py_Hsize,int((NradBas*(NradBas+1))/2)*(Lmax+1)*py_Ntypes)
-        return np.ctypeslib.as_array( c, shape=(py_Hsize,int((NradBas*(NradBas+1))/2)*(Lmax+1)*py_Ntypes))
+        shape = (py_Hsize, int((NradBas*(NradBas+1))/2)*(Lmax+1)*py_Ntypes)
+        a = np.ctypeslib.as_array(c)
+        a = a.reshape(shape)
+        return a
+
 #=================================================================
 def get_soap_locals_general(obj, Hpos, rx, gss, gaussAlpha=1.0, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[]):
 ###    rCutHard = rCut #// + 5; #//??? I don't think it's needed for the general case. (user's responsibility for cutting.)
@@ -203,7 +209,7 @@ def get_soap_locals_general(obj, Hpos, rx, gss, gaussAlpha=1.0, rCut=5.0, nMax=5
     totalAN = c_int(totalAN)
     rCut = c_double(rCut)
     Nsize = c_int(nMax)
-    
+
     # convert double to c_double
     gaussAlpha = c_double(gaussAlpha)
 
@@ -220,7 +226,7 @@ def get_soap_locals_general(obj, Hpos, rx, gss, gaussAlpha=1.0, rCut=5.0, nMax=5
     #Hpos
     hxyz = (c_double * len(Hpos))(*Hpos.tolist())
     rx = (c_double * 100)(*rx.tolist())
-    gss = (c_double * (100 * nMax))(*gss.tolist()) 
+    gss = (c_double * (100 * nMax))(*gss.tolist())
 
     ### START SOAP###
     #path_to_so = os.path.dirname(os.path.abspath(__file__))
@@ -230,7 +236,7 @@ def get_soap_locals_general(obj, Hpos, rx, gss, gaussAlpha=1.0, rCut=5.0, nMax=5
     print(len(_SOAPLITE_SOFILES))
     substring = "lib/libsoapGeneral."
     libsoap = CDLL(next((s for s in _SOAPLITE_SOFILES if substring in s), None))
-    libsoap.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double), 
+    libsoap.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),
             POINTER (c_int), c_double,
             c_int,c_int,c_int,c_int,c_int,
             c_double, POINTER (c_double),POINTER (c_double)]
@@ -242,7 +248,7 @@ def get_soap_locals_general(obj, Hpos, rx, gss, gaussAlpha=1.0, rCut=5.0, nMax=5
     #New: gaussAlpha = Double = 1.0
     #New: rx = double list, size 100
     #New: gss = double list, size 100*nMax
-           
+
     #   return c;
 #    if(crossOver):
 #        crosTypes = int((py_Ntypes*(py_Ntypes+1))/2)
@@ -273,4 +279,3 @@ def get_periodic_soap_structure(obj, alp, bet, rCut=5.0, NradBas=5, Lmax=5, cros
 
     arrsoap = get_soap_locals(suce, Hpos, alp, bet, rCut, NradBas, Lmax, crossOver, all_atomtypes=all_atomtypes)
     return arrsoap
-  
