@@ -13,28 +13,28 @@ int getCrosNum(int n){return n*(n+1)/2;}
 double* getReIm2(double* x, double* y, double* c3, int Asize){
   for(int i = 0; i < Asize; i++){
     c3[2*i  ] = x[i]*x[i]-y[i]*y[i];
-    c3[2*i+1] = 2*y[i]*x[i]; 
+    c3[2*i+1] = 2*y[i]*x[i];
   }
 }
 //===========================================================
 void getReIm3(double* x, double* y, double* c2, double* c3, int Asize){
   for(int i = 0; i < Asize; i++){
     c3[2*i  ] = x[i]*c2[2*i] - y[i]*c2[2*i + 1];
-    c3[2*i+1] = x[i]*c2[2*i+1] + y[i]*c2[2*i  ]; 
+    c3[2*i+1] = x[i]*c2[2*i+1] + y[i]*c2[2*i  ];
   }
 }
 //===========================================================
 void getMulReIm(double* c1, double* c2, double* c3, int Asize){
   for(int i = 0; i < Asize; i++){
     c3[2*i  ] = c1[2*i  ]*c2[2*i  ] - c1[2*i+1]*c2[2*i+1];
-    c3[2*i+1] = c1[2*i  ]*c2[2*i+1] + c1[2*i+1]*c2[2*i  ]; 
+    c3[2*i+1] = c1[2*i  ]*c2[2*i+1] + c1[2*i+1]*c2[2*i  ];
   }
 }
 //===========================================================
 void getMulDouble(double* c1, double* c3, int Asize){
   for(int i = 0; i < Asize; i++){
     c3[2*i  ] = c1[2*i]*c1[2*i] - c1[2*i+1]*c1[2*i+1];
-    c3[2*i+1] = 2*c1[2*i]*c1[2*i+1]; 
+    c3[2*i+1] = 2*c1[2*i]*c1[2*i+1];
   }
 }
 //================================================================
@@ -251,7 +251,7 @@ void getCfactors(double* preCoef, int Asize, double* x, double* y, double* z, do
       /*c22Re*/  preCoef[t3+i] =      ReIm2[2*i];
       /*c22Im*/  preCoef[t4+i] =      ReIm2[i2+1];
     if(lMax > 2){
-      /*c30  */  preCoef[t5+i] = c30c*z[i]; 
+      /*c30  */  preCoef[t5+i] = c30c*z[i];
       /*c31Re*/  preCoef[t6+i] =       x[i]*c31c;
       /*c31Im*/  preCoef[t7+i] =       y[i]*c31c;
       /*c32Re*/  preCoef[t8+i] = z[i]*ReIm2[i2];
@@ -280,7 +280,7 @@ void getCfactors(double* preCoef, int Asize, double* x, double* y, double* z, do
       /*c53Re*/  preCoef[t26+i] =      ReIm3[i2  ]*c53c;
       /*c53Im*/  preCoef[t27+i] =      ReIm3[i2+1]*c53c;
       /*c54Re*/  preCoef[t28+i] = z[i]*ReIm4[i2  ];
-      /*c54Im*/  preCoef[t29+i] = z[i]*ReIm4[i2+1]; 
+      /*c54Im*/  preCoef[t29+i] = z[i]*ReIm4[i2+1];
       /*c55Re*/  preCoef[t30+i] =      ReIm5[i2  ];
       /*c55Im*/  preCoef[t31+i] =      ReIm5[i2+1];
     }
@@ -321,16 +321,16 @@ void getCfactors(double* preCoef, int Asize, double* x, double* y, double* z, do
       /*c80  */  preCoef[t60+i] = c80c;
       /*c81Re*/  preCoef[t61+i] = z[i]*x[i]*c81c;
       /*c81Im*/  preCoef[t62+i] = z[i]*y[i]*c81c;
-      /*c82Re*/  preCoef[t63+i] =      ReIm2[i2  ]*c82c; 
-      /*c82Im*/  preCoef[t64+i] =      ReIm2[i2+1]*c82c; 
-      /*c83Re*/  preCoef[t65+i] = z[i]*ReIm3[i2  ]*c83c; 
-      /*c83Im*/  preCoef[t66+i] = z[i]*ReIm3[i2+1]*c83c; 
-      /*c84Re*/  preCoef[t67+i] =      ReIm4[i2  ]*c84c; 
-      /*c84Im*/  preCoef[t68+i] =      ReIm4[i2+1]*c84c; 
-      /*c85Re*/  preCoef[t69+i] = z[i]*ReIm5[i2  ]*c85c; 
-      /*c85Im*/  preCoef[t70+i] = z[i]*ReIm5[i2+1]*c85c; 
-      /*c86Re*/  preCoef[t71+i] =      ReIm6[i2  ]*c86c; 
-      /*c86Im*/  preCoef[t72+i] =      ReIm6[i2+1]*c86c; 
+      /*c82Re*/  preCoef[t63+i] =      ReIm2[i2  ]*c82c;
+      /*c82Im*/  preCoef[t64+i] =      ReIm2[i2+1]*c82c;
+      /*c83Re*/  preCoef[t65+i] = z[i]*ReIm3[i2  ]*c83c;
+      /*c83Im*/  preCoef[t66+i] = z[i]*ReIm3[i2+1]*c83c;
+      /*c84Re*/  preCoef[t67+i] =      ReIm4[i2  ]*c84c;
+      /*c84Im*/  preCoef[t68+i] =      ReIm4[i2+1]*c84c;
+      /*c85Re*/  preCoef[t69+i] = z[i]*ReIm5[i2  ]*c85c;
+      /*c85Im*/  preCoef[t70+i] = z[i]*ReIm5[i2+1]*c85c;
+      /*c86Re*/  preCoef[t71+i] =      ReIm6[i2  ]*c86c;
+      /*c86Im*/  preCoef[t72+i] =      ReIm6[i2+1]*c86c;
       /*c87Re*/  preCoef[t73+i] = z[i]*ReIm7[i2  ];
       /*c87Im*/  preCoef[t74+i] = z[i]*ReIm7[i2+1];
       /*c88Re*/  preCoef[t75+i] =      ReIm8[i2  ];
@@ -373,7 +373,7 @@ int getC(double* C, double* preCoef, double* x, double* y, double* z,double* r2,
     for(int k = 0; k < Ns; k++){
       for(int i = 0; i < Asize; i++){exes[i] = exp(aOa[LNs + k]*r2[i]);}//exponents
       sumMe = 0;/*c10*/ for(int i = 0; i < Asize; i++){sumMe += exes[i]*z[i];}
-      for(int n = 0; n < Ns; n++){C[NsTsI + NsJ + Ns + n] += bOa[LNsNs + n*Ns + k]*sumMe;} 
+      for(int n = 0; n < Ns; n++){C[NsTsI + NsJ + Ns + n] += bOa[LNsNs + n*Ns + k]*sumMe;}
       sumMe = 0;/*c11Re*/ for(int i = 0; i < Asize; i++){sumMe += exes[i]*x[i];}
       for(int n = 0; n < Ns; n++){C[NsTsI + NsJ + Nx2 + n] += bOa[LNsNs + n*Ns + k]*sumMe;}
       sumMe = 0;/*c11Im*/ for(int i = 0; i < Asize; i++){sumMe += exes[i]*y[i];}
@@ -484,7 +484,7 @@ int getC(double* C, double* preCoef, double* x, double* y, double* z,double* r2,
       for(int n = 0; n < Ns; n++){C[NsTsI + NsJ + Nx47 + n] += bOa[LNsNs + n*Ns + k]*sumMe;}
       sumMe = 0;/*c66Im*/ for(int i = 0; i < Asize; i++){sumMe += exes[i]*(preCoef[t44+i]);}
       for(int n = 0; n < Ns; n++){C[NsTsI + NsJ + Nx48 + n] += bOa[LNsNs + n*Ns + k]*sumMe;}
-    }} if(lMax > 6) { LNsNs=7*NsNs; LNs=7*Ns; 
+    }} if(lMax > 6) { LNsNs=7*NsNs; LNs=7*Ns;
     for(int k = 0; k < Ns; k++){
       for(int i = 0; i < Asize; i++){exes[i] = exp(aOa[LNs + k]*r2[i]);}//exponents
       sumMe = 0;/*c70*/ for(int i = 0; i < Asize; i++){sumMe += exes[i]*(preCoef[t45+i]);}
@@ -503,7 +503,7 @@ int getC(double* C, double* preCoef, double* x, double* y, double* z,double* r2,
       for(int n = 0; n < Ns; n++){C[NsTsI + NsJ + Nx55 + n] += bOa[LNsNs + n*Ns + k]*sumMe;}
       sumMe = 0;/*c74Re*/ for(int i = 0; i < Asize; i++){sumMe += exes[i]*(preCoef[t52+i]);}
       for(int n = 0; n < Ns; n++){C[NsTsI + NsJ + Nx56 + n] += bOa[LNsNs + n*Ns + k]*sumMe;}
-      sumMe = 0;/*c74Im*/ for(int i = 0; i < Asize; i++){sumMe += exes[i]*(preCoef[t53+i]);} 
+      sumMe = 0;/*c74Im*/ for(int i = 0; i < Asize; i++){sumMe += exes[i]*(preCoef[t53+i]);}
       for(int n = 0; n < Ns; n++){C[NsTsI + NsJ + Nx57 + n] += bOa[LNsNs + n*Ns + k]*sumMe;}
       sumMe = 0;/*c75Re*/ for(int i = 0; i < Asize; i++){sumMe += exes[i]*(preCoef[t54+i]);}
       for(int n = 0; n < Ns; n++){C[NsTsI + NsJ + Nx58 + n] += bOa[LNsNs + n*Ns + k]*sumMe;}
@@ -609,29 +609,48 @@ void getP(double* soapMat, double* Cnnd, int Ns, int Ts, int Hs, int lMax){
 
   for(int i = 0; i < Hs*NsNs*(lMax+1)*3; i++){soapMat[i] = 0.0;}
 
-  double   cs0  = pow(PIHalf,2);
-  double   cs1  = pow(2.7206990464,2);
-  double cs2  = 2*pow(1.9238247452,2); double   cs3  = pow(1.7562036828,2); double cs4  = 2*pow(4.3018029072,2);
-  double cs5  = 2*pow(2.1509014536,2); double   cs6  = pow(2.0779682205,2); double cs7  = 2*pow(1.7995732672,2);
-  double cs8  = 2*pow(5.6907503408,2); double cs9  = 2*pow(2.3232390981,2); double   cs10 = pow(0.5890486225,2);
-  double cs11 = 2*pow(2.6343055241,2); double cs12 = 2*pow(1.8627352998,2); double cs13 = 2*pow(6.9697172942,2);
-  double cs14 = 2*pow(2.4641671809,2); double   cs15 = pow(0.6512177548,2); double cs16 = 2*pow(1.7834332706,2);
-  double cs17 = 2*pow(9.4370418280,2); double cs18 = 2*pow(1.9263280966,2); double cs19 = 2*pow(8.1727179596,2);
-  double cs20 = 2*pow(2.5844403427,2); double   cs21 = pow(0.3539741687,2); double cs22 = 2*pow(2.2940148014,2);
-  double cs23 = 2*pow(1.8135779397,2); double cs24 = 2*pow(3.6271558793,2); double cs25 = 2*pow(1.9866750947,2);
-  double cs26 = 2*pow(9.3183321738,2); double cs27 = 2*pow(2.6899707945,2); double   cs28 = pow(0.3802292509,2);
-  double cs29 = 2*pow(0.3556718963,2); double cs30 = 2*pow(0.8712146618,2); double cs31 = 2*pow(0.6160417952,2);
-  double cs32 = 2*pow(4.0863589798,2); double cs33 = 2*pow(2.0431794899,2); double cs34 = 2*pow(10.418212089,2);
-  double cs35 = 2*pow(2.7843843014,2); double   cs36 = pow(0.0505981185,2); double cs37 = 2*pow(0.4293392727,2);
-  double cs38 = 2*pow(1.7960550366,2); double cs39 = 2*pow(4.8637400313,2); double cs40 = 2*pow(1.8837184141,2);
-  double cs41 = 2*pow(13.583686661,2); double cs42 = 2*pow(2.0960083567,2); double cs43 = 2*pow(11.480310577,2);
-  double cs44 = 2*pow(2.8700776442,2); double   cs45 = pow(0.0534917379,2); double cs46 = 2*pow(0.2537335916,2);
-  double cs47 = 2*pow(2.3802320735,2); double cs48 = 2*pow(1.8179322747,2); double cs49 = 2*pow(16.055543121,2);
-  double cs50 = 2*pow(1.9190044477,2); double cs51 = 2*pow(4.9548481782,2); double cs52 = 2*pow(2.1455121971,2);
-  double cs53 = 2*pow(12.510378411,2); double cs54 = 2*pow(2.9487244699,2);
+//  double   cs0  = pow(PIHalf,2);
+//  double   cs1  = pow(2.7206990464,2);
+//  double cs2  = 2*pow(1.9238247452,2); double   cs3  = pow(1.7562036828,2); double cs4  = 2*pow(4.3018029072,2);
+//  double cs5  = 2*pow(2.1509014536,2); double   cs6  = pow(2.0779682205,2); double cs7  = 2*pow(1.7995732672,2);
+//  double cs8  = 2*pow(5.6907503408,2); double cs9  = 2*pow(2.3232390981,2); double   cs10 = pow(0.5890486225,2);
+//  double cs11 = 2*pow(2.6343055241,2); double cs12 = 2*pow(1.8627352998,2); double cs13 = 2*pow(6.9697172942,2);
+//  double cs14 = 2*pow(2.4641671809,2); double   cs15 = pow(0.6512177548,2); double cs16 = 2*pow(1.7834332706,2);
+//  double cs17 = 2*pow(9.4370418280,2); double cs18 = 2*pow(1.9263280966,2); double cs19 = 2*pow(8.1727179596,2);
+//  double cs20 = 2*pow(2.5844403427,2); double   cs21 = pow(0.3539741687,2); double cs22 = 2*pow(2.2940148014,2);
+//  double cs23 = 2*pow(1.8135779397,2); double cs24 = 2*pow(3.6271558793,2); double cs25 = 2*pow(1.9866750947,2);
+//  double cs26 = 2*pow(9.3183321738,2); double cs27 = 2*pow(2.6899707945,2); double   cs28 = pow(0.3802292509,2);
+//  double cs29 = 2*pow(0.3556718963,2); double cs30 = 2*pow(0.8712146618,2); double cs31 = 2*pow(0.6160417952,2);
+//  double cs32 = 2*pow(4.0863589798,2); double cs33 = 2*pow(2.0431794899,2); double cs34 = 2*pow(10.418212089,2);
+//  double cs35 = 2*pow(2.7843843014,2); double   cs36 = pow(0.0505981185,2); double cs37 = 2*pow(0.4293392727,2);
+//  double cs38 = 2*pow(1.7960550366,2); double cs39 = 2*pow(4.8637400313,2); double cs40 = 2*pow(1.8837184141,2);
+//  double cs41 = 2*pow(13.583686661,2); double cs42 = 2*pow(2.0960083567,2); double cs43 = 2*pow(11.480310577,2);
+//  double cs44 = 2*pow(2.8700776442,2); double   cs45 = pow(0.0534917379,2); double cs46 = 2*pow(0.2537335916,2);
+//  double cs47 = 2*pow(2.3802320735,2); double cs48 = 2*pow(1.8179322747,2); double cs49 = 2*pow(16.055543121,2);
+//  double cs50 = 2*pow(1.9190044477,2); double cs51 = 2*pow(4.9548481782,2); double cs52 = 2*pow(2.1455121971,2);
+//  double cs53 = 2*pow(12.510378411,2); double cs54 = 2*pow(2.9487244699,2);
+double cs0=2.4674011003; double cs1=7.4022033011; double cs2=7.4022033005;
+double cs3=3.0842513755; double cs4=37.0110165048; double cs5=9.2527541262;
+double cs6=4.3179519254; double cs7=6.4769278880; double cs8=64.7692788826;
+double cs9=10.7948798139; double cs10=0.3469782797; double cs11=13.8791311886;
+double cs12=6.9395655942; double cs13=97.1539183221; double cs14=12.1442397908;
+double cs15=0.4240845642; double cs16=6.3612684614; double cs17=178.1155169268;
+double cs18=7.4214798715; double cs19=133.5866376943; double cs20=13.3586637700;
+double cs21=0.1252977121; double cs22=10.5250078181; double cs23=6.5781298867;
+double cs24=26.3125195455; double cs25=7.8937558638; double cs26=173.6626290026;
+double cs27=14.4718857505; double cs28=0.1445742832; double cs29=0.2530049956;
+double cs30=1.5180299739; double cs31=0.7590149869; double cs32=33.3966594236;
+double cs33=8.3491648559; double cs34=217.0782862628; double cs35=15.5055918758;
+double cs36=0.0025601696; double cs37=0.3686644222; double cs38=6.4516273890;
+double cs39=47.3119341841; double cs40=7.0967901272; double cs41=369.0330866085;
+double cs42=8.7865020627; double cs43=263.5950618888; double cs44=16.4746913675;
+double cs45=0.0028613660; double cs46=0.1287614710; double cs47=11.3310094474;
+double cs48=6.6097555108; double cs49=515.5609298206; double cs50=7.3651561406;
+double cs51=49.1010409380; double cs52=9.2064451758; double cs53=313.0191359728;
+double cs54=17.3899519988;
 
    // SUM M's UP!
- 
+
   for(int i = 0; i < Hs; i++){
     for(int j = 0; j < Ts; j++){
      for(int jd = j; jd < Ts; jd++){
@@ -639,13 +658,13 @@ void getP(double* soapMat, double* Cnnd, int Ns, int Ts, int Hs, int lMax){
       for(int k = 0; k < Ns; k++){
         for(int kd = k; kd < Ns; kd++){
           if(j==0 && jd==0){
-            soapMat[NsNsLmaxTs*i+ NsNsLmax*0 + 0 + shiftN] 
+            soapMat[NsNsLmaxTs*i+ NsNsLmax*0 + 0 + shiftN]
               = cs0*Cnnd[NsTs100*i + Ns100*j + 0 + k]*Cnnd[NsTs100*i + Ns100*jd + 0 + kd];
           } else if(j==0 && jd==1){
-            soapMat[NsNsLmaxTs*i+ NsNsLmax*1 + 0 + shiftN] 
+            soapMat[NsNsLmaxTs*i+ NsNsLmax*1 + 0 + shiftN]
               = cs0*Cnnd[NsTs100*i + Ns100*j + 0 + k]*Cnnd[NsTs100*i + Ns100*jd + 0 + kd];
           } else if(j==1 && jd==1){
-            soapMat[NsNsLmaxTs*i+ NsNsLmax*2 + 0 + shiftN] 
+            soapMat[NsNsLmaxTs*i+ NsNsLmax*2 + 0 + shiftN]
               = cs0*Cnnd[NsTs100*i + Ns100*j + 0 + k]*Cnnd[NsTs100*i + Ns100*jd + 0 + kd];
           }
           shiftN++;
@@ -1246,7 +1265,7 @@ int soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas, int
   double* cnnd = (double*) malloc(100*Nt*Ns*Hs*sizeof(double));
   double rCutrCut = rCut*rCut;
   for(int i = 0; i < 100*Nt*Ns*Hs; i++){cnnd[i] = 0.0;}
-  
+
   //MAKESURE TO NULLIFY THE CNs!!!!!!!
   //Triple Check the implementation, Triple times. Then Triple that again.
   getAlphaBeta(aOa,bOa,alphas,betas,Ns,lMax);
@@ -1258,7 +1277,7 @@ int soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas, int
       getC(cnnd,preCoef,x,y,z,r2,bOa,aOa,exes,totalAN,Asize,Ns,Nt, lMax, i, j, Nx2, Nx3, Nx4, Nx5, Nx6, Nx7, Nx8, Nx9, Nx10, Nx11, Nx12, Nx13, Nx14, Nx15, Nx16, Nx17, Nx18, Nx19, Nx20, Nx21, Nx22, Nx23, Nx24, Nx25, Nx26, Nx27, Nx28, Nx29, Nx30, Nx31, Nx32, Nx33, Nx34, Nx35, Nx36, Nx37, Nx38, Nx39, Nx40, Nx41, Nx42, Nx43, Nx44, Nx45, Nx46, Nx47, Nx48, Nx49, Nx50, Nx51, Nx52, Nx53, Nx54, Nx55, Nx56, Nx57, Nx58, Nx59, Nx60, Nx61, Nx62, Nx63, Nx64, Nx65, Nx66, Nx67, Nx68, Nx69, Nx70, Nx71, Nx72, Nx73, Nx74, Nx75, Nx76, Nx77, Nx78, Nx79, Nx80, Nx81, Nx82, Nx83, Nx84, Nx85, Nx86, Nx87, Nx88, Nx89, Nx90, Nx91, Nx92, Nx93, Nx94, Nx95, Nx96, Nx97, Nx98, Nx99, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24, t25, t26, t27, t28, t29, t30, t31, t32, t33, t34, t35, t36, t37, t38, t39, t40, t41, t42, t43, t44, t45, t46, t47, t48, t49, t50, t51, t52, t53, t54, t55, t56, t57, t58, t59, t60, t61, t62, t63, t64, t65, t66, t67, t68, t69, t70, t71, t72, t73, t74, t75, t76, t77, t78, t79, t80, t81, t82, t83, t84, t85, t86, t87, t88, t89, t90, t91, t92, t93, t94, t95, t96, t97, t98, t99);
     }
   }
-  free(x); 
+  free(x);
   free(y);
   free(z);
   free(z2);
