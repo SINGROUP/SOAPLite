@@ -336,14 +336,14 @@ def get_soap_locals_general(obj, Hpos, rx, gss, gaussAlpha=1.0, rCut=5.0, nMax=5
 def get_soap_structure(obj, alp, bet, rCut=5.0, NradBas=5, Lmax=5, crossOver=True, all_atomtypes=[], eta=1.0):
     Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj, all_atomtypes)
     Hpos = Apos.copy().reshape((-1,3))
-    arrsoap = get_soap_locals(obj, Hpos, alp, bet,  rCut, NradBas, Lmax, crossOver, all_atomtypes=all_atomtypes,eta)
+    arrsoap = get_soap_locals(obj, Hpos, alp, bet,  rCut, NradBas, Lmax, crossOver, all_atomtypes=all_atomtypes,eta=eta)
     return arrsoap
 #=================================================================
 def get_periodic_soap_locals(obj, Hpos, alp, bet, rCut=5.0, NradBas=5, Lmax=5,crossOver=True, all_atomtypes=[], eta=1.0):
     # get supercells
     suce = _get_supercell(obj, rCut)
 
-    arrsoap = get_soap_locals(suce, Hpos, alp, bet, rCut, NradBas=NradBas, Lmax=Lmax, crossOver=crossOver, all_atomtypes=all_atomtypes, eta)
+    arrsoap = get_soap_locals(suce, Hpos, alp, bet, rCut, NradBas=NradBas, Lmax=Lmax, crossOver=crossOver, all_atomtypes=all_atomtypes, eta=eta)
 
     return arrsoap
 #=================================================================
@@ -352,5 +352,5 @@ def get_periodic_soap_structure(obj, alp, bet, rCut=5.0, NradBas=5, Lmax=5, cros
     Hpos = obj.get_positions().reshape((-1,3))
     suce = _get_supercell(obj, rCut)
 
-    arrsoap = get_soap_locals(suce, Hpos, alp, bet, rCut, NradBas, Lmax, crossOver, all_atomtypes=all_atomtypes, eta)
+    arrsoap = get_soap_locals(suce, Hpos, alp, bet, rCut, NradBas, Lmax, crossOver, all_atomtypes=all_atomtypes, eta=eta)
     return arrsoap

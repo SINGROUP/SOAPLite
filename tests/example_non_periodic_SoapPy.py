@@ -21,7 +21,7 @@ myAlphas, myBetas = genBasis.getBasisFunc(10.0, 5) # input:(rCut, NradBas)
 
 #-------------- run local chemical environments on desired points ----------------
 start = time.time()
-x = soaplite.get_soap_locals(atoms, Hpos, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=5,crossOver=True) 
+x = soaplite.get_soap_locals(atoms, Hpos, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=5,crossOver=True, eta=1.0) 
 endTime = time.time()
 totalTime = endTime - start
 print("Soap ran in seconds:", totalTime)
@@ -29,7 +29,7 @@ np.savetxt('au40cu40H.txt',x)
 
 #-------------- run local chemical environments on each atom ----------------
 start = time.time()
-y = soaplite.get_soap_structure(atoms, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=5,crossOver=True) 
+y = soaplite.get_soap_structure(atoms, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=5,crossOver=True, eta=1.00) 
 endTime = time.time()
 totalTime = endTime - start
 
