@@ -6,16 +6,11 @@
 
 Smooth Overlap of Atomic Positions (SOAP) is an algorithm used for accurately
 classifying and machine learning chemical environments [1,2]. For a detailed
-documentation, please read soapDoc.pdf in this repository.
+documentation, please read soapDoc.pdf in this repository and visit [DScribe](https://github.com/SINGROUP/dscribe).
 
 ## Getting Started
 
-This is a very lightweight and fast SOAP implementation for machine learning in
-quantum chemistry and materials physics. Once you give SOAP the .xyz in ASE
-format,  list of positions, radius cutoff, number of basis functions and l
-(number of spherical harmonics), SOAP will return a numpy matrix of the power
-spectrum for each point. Each row corresponds to each specified point, and each
-column corresponds the the spectrum value.
+This is a low level, lightweight and fast implementation of SOAP for machine learning in quantum chemistry and materials physics. Inputting structure and SOAP parameters, SOAPLite will spit out the SOAP spectra of local points in space. For a higher level inplementation with kernel methods, please use [DScribe](https://github.com/SINGROUP/dscribe) instead.
 
 Here is an example of the python interface:
 ```python
@@ -61,66 +56,12 @@ with:
 ```
 pip install soaplite
 ```
-The pip installation is still experimental for soaplite.
 
-If you wish to use the C-libraries directly, you can compile them yourself by
-running
+Or by cloning this repository, you can install it by
 ```
-make
+pip3 install .
 ```
-in the terminal after you cloned SOAPLite from github if you have the gcc
-compiler.
-
-### Prerequisites
-
-Numpy, Scipy and ASE are required for the python interface. They will be
-installed automatically if you use the pip installation. To install them
-manully, you can use the following commands:
-
-```
-sudo pip install numpy
-```
-```
-sudo pip install scipy
-```
-and
-```
-sudo pip install ase
-```
-If you don't have super user access, install them by
-```
-pip install numpy --user
-```
-```
-pip install scipy --user
-```
-and
-```
-pip install ase --user
-```
-
-If you wish to compile the C-extension yourself, you wil need a gcc compiler
-for make.
-
-## Running the tests
-
-Enter the tests/ directory and run
-```
-python test_symmetry.py
-```
-This will compare the rotational and translational symmetry, and same chemical
-environments.
-
-## Possible Applications
-
-By taking the differences of the soap spectrum, we can compare the differences
-of the chemical environment. For example, if a point P1 gave a power spectrum
-S1 and at point P2 gave  a spectrum S2, the difference of the chemical
-environment will be |S2 - S1| where || denotes the Euclidean distance.  We can
-use this differences to classify similar/different chemical environments.
-
-The power spectrum can also be used as an input for a neural network, kernel
-ridge regression or other machine learning algorithms.
+in the SOAPLite directory.
 
 ## Authors
 
