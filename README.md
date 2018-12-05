@@ -61,6 +61,7 @@ Or by cloning this repository, you can install it by
 ```
 pip3 install .
 ```
+in the SOAPLite directory.
 
 ## Authors
 
