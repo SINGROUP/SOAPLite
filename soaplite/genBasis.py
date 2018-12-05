@@ -37,7 +37,7 @@ def findAlpha(l,a, alphaSpace):
     return alphas 
 #--------------------------------------------------
 def getOrthNorm(X):
-    x = sqrtm(inv(X))
+    x = sqrtm(pinv(X))
 #    print("inv",x)
     return x
 #--------------------------------------------------
@@ -63,7 +63,7 @@ def getBasisFunc(rcut, n):
     return  alphasFull, betasFull
 #--------------------------------------------------
 if __name__ == '__main__':
-    alphas, betas = getBasisFunc(5.0, 5)
+    alphas, betas = getBasisFunc(1.0001, 10)
 #    print(alphas, betas)
     np.savetxt('alphasPy.dat', alphas)
     np.savetxt('betasPy.dat',  betas)
