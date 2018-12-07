@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
 from scipy.linalg import *
 
 w = np.zeros(100);
@@ -205,14 +206,78 @@ x[97] = 0.99629513473312515;
 x[98] = 0.998491950639595818;
 x[99] = 0.99971372677344123;
 
-def getGns(rCut,functionList = []):
-  rCutVeryHard= rCut*2.0;
+from scipy.special import *
+from scipy.linalg import *
+from scipy.optimize import *
 
-  nMax = len(functionList);
+#--------------------------------------------------
+def myGamma(l,x):
+    return gamma(l)*gammaincc(l,x)
+#--------------------------------------------------
+def intAllMat(l,a):
+    m = np.zeros((a.shape[0],a.shape[0]))
+    m[:,:] = a
+    m = m + m.transpose()
+    return 0.5*gamma(l + 3.0/2.0)*m**(-l-3.0/2.0)
+#--------------------------------------------------
+def intAllSqr(l,a):
+    return 0.5*gamma(l + 3.0/2.0)*(2*a)**(-l-3.0/2.0)
+#--------------------------------------------------
+def intPartSqr(l,a,x):
+    return x**(2*l - 1)/2./(2*a)**2*(2*a*x**2)**(0.5 - l)*(gamma(l + 3.0/2.0) - myGamma(l + 3.0/2.0,2*a*x**2))
+#--------------------------------------------------
+def minimizeMe(alpha,l,x):
+    return np.abs(intPartSqr(l,alpha,x)/intAllSqr(l,alpha) - .99)
+#--------------------------------------------------
+def findAlpha(l,a, alphaSpace):
+    alphas = np.zeros(a.shape[0])
+    for i,j in enumerate(a):
+      initG = alphaSpace[np.argmin(minimizeMe(alphaSpace,l,j))]
+      alphas[i] = fmin(minimizeMe, x0=initG, args=(l,j), disp=False)
+    return alphas 
+#--------------------------------------------------
+def getOrthNorm(X):
+    x = sqrtm(pinv(X))
+    return x
+#--------------------------------------------------
+def getBasisFuncSing(rcut, n):
+    a = np.linspace(1,rcut,n)
+    alphasFull = np.array([])
+    betas = np.array([])
+    betasFull = np.array([])
+    alphaSpace = np.array([])
+    val = 0.00001
+    for i in range(1100):
+        val = val*1.015
+        alphaSpace = np.append(alphaSpace, val)
+    for l in range(0,1):
+       alphas = findAlpha(l,a, alphaSpace)
+       betas = getOrthNorm(intAllMat(l,alphas))
+       alphasFull = np.append(alphasFull, alphas)
+       betasFull  = np.append(betasFull , betas)
+    return  alphasFull, betasFull
+#---------------------------------------------------
+def getGns(rCut,nMax,functionList=[]):
+  rCutVeryHard= rCut+5.0;
+##  functionList = [lambda x: np.exp(-x*x), lambda x: np.exp(-2*x*x)]
+#  x = np.linspace(0.01,10,100)
+  if not functionList:
+    print(rCut,nMax)
+    alphas, betas = getBasisFuncSing(rCut, nMax)
+#    print("alphas", alphas)
+    basisFunctions = []
+    for i in range(nMax):
+      basisFunctions.append(lambda x: np.exp(-alphas[i]*x*x))
+
+    functionList = basisFunctions
+  else:
+      if nMax != len(functionList):
+          print("nMax Doesn't match number of functions!")
+          exit(1)
 
   mat = np.zeros([nMax,nMax]);
   gss = np.zeros([nMax,len(x)]);
-
+#  print("nMax",nMax)
   rx = 0.5*rCutVeryHard*(x + 1);
 
   y = np.zeros([nMax,len(rx)]);
@@ -223,13 +288,62 @@ def getGns(rCut,functionList = []):
     for j in range(0,nMax):
       mat[i,j] = rCutVeryHard*0.5*np.sum(w*rx*rx*y[i,:]*y[j,:]);
 
-  print("M:",mat)
-  invMat = sqrtm(inv(mat));
-  print("inv:", invMat)
+#  print("M:",mat)
+  invMat = sqrtm(pinv(mat));
+#  print("invmat",invMat)
+#  print("inv:", invMat)
   for n in range(0,nMax):
     for a in range(0,nMax):
       gss[n,:] = gss[n,:] + invMat[n,a]*y[a,:] 
 
+  for i in range(nMax):
+    plt.plot(x,gss[i])
+
+
   return nMax,rx,gss
+#---------------------------------------------------
+##def getGTOs(rCut,nMax):
+##  rCutVeryHard= rCut*2.0; # This is only for numerical reasons
+##  alphas, betas = getBasisFuncSing(2.0000, nMax)
+##  betas = betas.reshape([nMax,nMax])
+##
+##  nMax = len(functionList);
+##  mat = np.zeros([nMax,nMax]);
+##  gss = np.zeros([nMax,len(x)]);
+##
+##  rx = 0.5*rCutVeryHard*(x + 1);
+##
+##  y = np.zeros([nMax,len(rx)]);
+##  for i in range(0,nMax):
+##    y[i,:] = functionList[i](rx);
+##
+##  for i in range(0,nMax):
+##    for j in range(0,nMax):
+##      mat[i,j] = rCutVeryHard*0.5*np.sum(w*rx*rx*y[i,:]*y[j,:]);
+
+##  print("M:",mat)
+##  invMat = sqrtm(inv(mat));
+##  print("inv:", invMat)
+##  for n in range(0,nMax):
+##    for a in range(0,nMax):
+##      gss[n,:] = gss[n,:] + invMat[n,a]*y[a,:] 
+##
+##  return nMax,rx,gss
+#------Out of Stack Memory-------------------------------------------
+###def getGTOs(rCut,nMax):
+##  np.set_printoptions(precision=32)
+##  sys.setrecursionlimit(100000)
+###  alphas, betas = getBasisFuncSing(rCut, nMax)
+###  print("alphas", alphas)
+###  betas = betas.reshape([nMax,nMax])
+###  basisFunctions = []
+###  for i in range(nMax):
+###    basisFunctions.append(lambda x: np.exp(-alphas[i]*x*x))
+###  nMax,rx,gss = getGns(rCut, basisFunctions)
+###  return nMax,rx,gss
+
+if __name__=="__main__":
+    nMax,rx,gss=getGns(2.0,10)
+    plt.show()
 
 ## example nMax, rx, gss = getGns([np.exp, np.sin, ...., np.cos])

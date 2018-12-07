@@ -1,3 +1,3 @@
-from .soaplite import get_soap_locals, get_soap_structure, get_periodic_soap_locals, get_periodic_soap_structure, get_soap_locals_general
+from .soaplite import get_soap_locals, get_soap_structure, get_periodic_soap_locals, get_periodic_soap_structure, get_soap_locals_general, get_soap_locals_proper, get_soap_structure_proper, get_periodic_soap_locals_proper, get_periodic_soap_structure_proper
 from .genBasis import getBasisFunc
 from .getBasis import getGns

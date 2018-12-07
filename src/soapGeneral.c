@@ -1784,7 +1784,7 @@ double* soap(double* c, double* Apos,double* Hpos, int* typeNs, double rCut, int
   double* Cs = (double*) malloc(2*sd*(lMax+1)*(lMax+1)*gnsize);
   double* Cts = (double*) malloc(2*sd*(lMax+1)*(lMax+1)*gnsize*Nt);
   double* Ps = (double*) malloc((Nt*(Nt+1))/2*sd*(lMax+1)*((gnsize+1)*gnsize)/2);
-  double* Phs = (double*) malloc(Hs*(Nt*(Nt + 1))/2*sd*(lMax+1)*((gnsize+1)*gnsize)/2);
+//  double* Phs = (double*) malloc(Hs*(Nt*(Nt + 1))/2*sd*(lMax+1)*((gnsize+1)*gnsize)/2);
   int icount;
 
   for(int Ihpos = 0; Ihpos < Hs; Ihpos++){
@@ -1806,10 +1806,22 @@ double* soap(double* c, double* Apos,double* Hpos, int* typeNs, double rCut, int
     }
 
     getPs(Ps, Cts,  Nt, lMax, gnsize); 
-    accumP(Phs, Ps, Nt, lMax, gnsize,rCut2, Ihpos);
+    accumP(c, Ps, Nt, lMax, gnsize,rCut2, Ihpos);
   }
 
-  return Phs;
+  free(cf);
+
+  free(x);  free(y);    free(z);    free(xNow);    free(yNow);    free(zNow);   
+  free(ris);  free(oOri); 
+
+  free(ws);
+  free(oOr);  free(rw2) ;
+
+  free(oO4arri); free(minExp); free(pluExp); 
+  free(Cs) ;
+  free(Cts) ;
+  free(Ps) ;
+//  return Phs;
 }
 //=========================================================
 //=========================================================
