@@ -346,7 +346,7 @@ def get_soap_locals_proper(obj, Hpos, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[]
     assert rCutHard > 1.9999 , "hard redius cuttof cannot be lower than 1 Ang. rCut={}".format(rCutHard)
     # get clusgeo internal format for c-code
     Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj, all_atomtypes)
-    Hpos = np.array(Hpos)
+    Hpos = np.array(Hpos) + np.array([1e-6, 1e-6, 1e-6])
     py_Hsize = Hpos.shape[0]
 
     # flatten arrays
@@ -423,7 +423,7 @@ def get_soap_structure(obj, alp, bet, rCut=5.0, NradBas=5, Lmax=5, crossOver=Tru
 #=================================================================
 def get_soap_structure_proper(obj, rCut=5.0, nMax=5, Lmax=5,  all_atomtypes=[], eta=1.0):
     Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj, all_atomtypes)
-    Hpos = Apos.copy().reshape((-1,3))
+    Hpos = Apos.copy().reshape((-1,3)) 
     arrsoap = get_soap_locals_proper(obj, Hpos, rCut, nMax, Lmax, all_atomtypes=all_atomtypes,eta=eta)
     return arrsoap
 #=================================================================

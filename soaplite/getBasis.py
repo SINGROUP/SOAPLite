@@ -258,16 +258,18 @@ def getBasisFuncSing(rcut, n):
     return  alphasFull, betasFull
 #---------------------------------------------------
 def getGns(rCut,nMax,functionList=[]):
+  alphas, betas = getBasisFuncSing(rCut, nMax)
   rCutVeryHard= rCut+5.0;
 ##  functionList = [lambda x: np.exp(-x*x), lambda x: np.exp(-2*x*x)]
 #  x = np.linspace(0.01,10,100)
   if not functionList:
     print(rCut,nMax)
-    alphas, betas = getBasisFuncSing(rCut, nMax)
-#    print("alphas", alphas)
+
+    print("alphas", alphas)
+    print("betas", betas)
     basisFunctions = []
     for i in range(nMax):
-      basisFunctions.append(lambda x: np.exp(-alphas[i]*x*x))
+      basisFunctions.append(lambda x, i=i: np.exp(-alphas[i]*x*x))
 
     functionList = basisFunctions
   else:
