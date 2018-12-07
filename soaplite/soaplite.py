@@ -358,7 +358,7 @@ def get_soap_locals_proper(obj, Hpos, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[]
     Hsize = c_int(py_Hsize)
     Ntypes = c_int(py_Ntypes)
     totalAN = c_int(totalAN)
-    rCut = c_double(rCut)
+    rCutHard = c_double(rCutHard)
     Nsize = c_int(nMax)
 
     # convert double to c_double
@@ -394,7 +394,7 @@ def get_soap_locals_proper(obj, Hpos, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[]
     libsoap.soap.restype = POINTER (c_double)
 
     c = (c_double*(int((nMax*(nMax+1))/2)*(Lmax+1)*int((py_Ntypes*(py_Ntypes+1))/2)*py_Hsize))()
-    libsoap.soap(c, axyz, hxyz, typeNs, rCut, totalAN, Ntypes, Nsize, lMax, Hsize,c_eta,rx, gss)
+    libsoap.soap(c, axyz, hxyz, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize,c_eta,rx, gss)
 
     #New: c_eta = Double = 1.0
     #New: rx = double list, size 100
