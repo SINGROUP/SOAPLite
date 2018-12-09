@@ -263,7 +263,7 @@ def get_soap_locals(obj, Hpos, alp, bet, rCut=5.0, NradBas=5, Lmax=5, crossOver=
 #=================================================================
 def get_soap_locals_general(obj, Hpos, rx, gss,  rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[],eta=1.0):
 ###    rCutHard = rCut #// + 5; #//??? I don't think it's needed for the general case. (user's responsibility for cutting.)
-    rCutHard = rCut  + 5; 
+    rCutHard = rCut  + 5;
     assert Lmax <= 20, "l cannot exceed 20. Lmax={}".format(Lmax)
     assert Lmax >= 0, "l cannot be negative.Lmax={}".format(Lmax)
     assert rCutHard < 17.0001 , "hard redius cuttof cannot be larger than 17 Angs. rCut={}".format(rCutHard)
@@ -309,8 +309,8 @@ def get_soap_locals_general(obj, Hpos, rx, gss,  rCut=5.0, nMax=5, Lmax=5, all_a
     #path_to_so = os.path.dirname(os.path.abspath(__file__))
     _PATH_TO_SOAPLITE_SO = os.path.dirname(os.path.abspath(__file__))
     _SOAPLITE_SOFILES = glob.glob( "".join([ _PATH_TO_SOAPLITE_SO, "/../lib/libsoapG*.*so"]) )
-    print(_SOAPLITE_SOFILES)
-    print(len(_SOAPLITE_SOFILES))
+    # print(_SOAPLITE_SOFILES)
+    # print(len(_SOAPLITE_SOFILES))
     substring = "lib/libsoapGeneral."
     libsoap = CDLL(next((s for s in _SOAPLITE_SOFILES if substring in s), None))
     libsoap.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),
@@ -335,9 +335,9 @@ def get_soap_locals_general(obj, Hpos, rx, gss,  rCut=5.0, nMax=5, Lmax=5, all_a
 #    return np.ctypeslib.as_array( c, shape=(py_Hsize, int((nMax*(nMax+1))/2)*(Lmax+1)*int((py_Ntypes*(py_Ntypes+1))/2)))
     return np.ctypeslib.as_array( c, shape)
 #=================================================================
-def get_soap_locals_proper(obj, Hpos, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[],eta=1.0):
+def get_soap_locals_proper(obj, Hpos, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[], eta=1.0):
 ###    rCutHard = rCut #// + 5; #//??? I don't think it's needed for the general case. (user's responsibility for cutting.)
-    rCutHard = rCut  + 5; 
+    rCutHard = rCut  + 5;
     nMax,rx,gss=getBasis.getGns(rCut,nMax)
 
     assert Lmax <= 20, "l cannot exceed 20. Lmax={}".format(Lmax)
@@ -383,8 +383,8 @@ def get_soap_locals_proper(obj, Hpos, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[]
     #path_to_so = os.path.dirname(os.path.abspath(__file__))
     _PATH_TO_SOAPLITE_SO = os.path.dirname(os.path.abspath(__file__))
     _SOAPLITE_SOFILES = glob.glob( "".join([ _PATH_TO_SOAPLITE_SO, "/../lib/libsoapG*.*so"]) )
-    print(_SOAPLITE_SOFILES)
-    print(len(_SOAPLITE_SOFILES))
+    # print(_SOAPLITE_SOFILES)
+    # print(len(_SOAPLITE_SOFILES))
     substring = "lib/libsoapGeneral."
     libsoap = CDLL(next((s for s in _SOAPLITE_SOFILES if substring in s), None))
     libsoap.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),
@@ -418,12 +418,12 @@ def get_soap_locals_proper(obj, Hpos, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[]
 def get_soap_structure(obj, alp, bet, rCut=5.0, NradBas=5, Lmax=5, crossOver=True, all_atomtypes=[], eta=1.0):
     Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj, all_atomtypes)
     Hpos = Apos.copy().reshape((-1,3))
-    arrsoap = get_soap_locals(obj, Hpos, alp, bet,  rCut, NradBas, Lmax, crossOver, all_atomtypes=all_atomtypes,eta=eta)
+    arrsoap = get_soap_locals(obj, Hpos, alp, bet,  rCut, NradBas, Lmax, crossOver, all_atomtypes=all_atomtypes, eta=eta)
     return arrsoap
 #=================================================================
 def get_soap_structure_proper(obj, rCut=5.0, nMax=5, Lmax=5,  all_atomtypes=[], eta=1.0):
     Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj, all_atomtypes)
-    Hpos = Apos.copy().reshape((-1,3)) 
+    Hpos = Apos.copy().reshape((-1,3))
     arrsoap = get_soap_locals_proper(obj, Hpos, rCut, nMax, Lmax, all_atomtypes=all_atomtypes,eta=eta)
     return arrsoap
 #=================================================================

@@ -234,7 +234,7 @@ def findAlpha(l,a, alphaSpace):
     for i,j in enumerate(a):
       initG = alphaSpace[np.argmin(minimizeMe(alphaSpace,l,j))]
       alphas[i] = fmin(minimizeMe, x0=initG, args=(l,j), disp=False)
-    return alphas 
+    return alphas
 #--------------------------------------------------
 def getOrthNorm(X):
     x = sqrtm(pinv(X))
@@ -263,10 +263,10 @@ def getGns(rCut,nMax,functionList=[]):
 ##  functionList = [lambda x: np.exp(-x*x), lambda x: np.exp(-2*x*x)]
 #  x = np.linspace(0.01,10,100)
   if not functionList:
-    print(rCut,nMax)
+    # print(rCut,nMax)
 
-    print("alphas", alphas)
-    print("betas", betas)
+    # print("alphas", alphas)
+    # print("betas", betas)
     basisFunctions = []
     for i in range(nMax):
       basisFunctions.append(lambda x, i=i: np.exp(-alphas[i]*x*x))
@@ -296,7 +296,7 @@ def getGns(rCut,nMax,functionList=[]):
 #  print("inv:", invMat)
   for n in range(0,nMax):
     for a in range(0,nMax):
-      gss[n,:] = gss[n,:] + invMat[n,a]*y[a,:] 
+      gss[n,:] = gss[n,:] + invMat[n,a]*y[a,:]
 
   for i in range(nMax):
     plt.plot(x,gss[i])
@@ -328,7 +328,7 @@ def getGns(rCut,nMax,functionList=[]):
 ##  print("inv:", invMat)
 ##  for n in range(0,nMax):
 ##    for a in range(0,nMax):
-##      gss[n,:] = gss[n,:] + invMat[n,a]*y[a,:] 
+##      gss[n,:] = gss[n,:] + invMat[n,a]*y[a,:]
 ##
 ##  return nMax,rx,gss
 #------Out of Stack Memory-------------------------------------------

@@ -30,10 +30,10 @@ def findAlpha(l,a, alphaSpace):
     for i,j in enumerate(a):
       initG = alphaSpace[np.argmin(minimizeMe(alphaSpace,l,j))]
       alphas[i] = fmin(minimizeMe, x0=initG, args=(l,j), disp=False)
-    return alphas 
+    return alphas
 #--------------------------------------------------
 def getOrthNorm(X):
-    x = sqrtm(pinv(X))
+    x = sqrtm(inv(X))
     return x
 #--------------------------------------------------
 def getBasisFunc(rcut, n):
