@@ -237,7 +237,7 @@ def findAlpha(l,a, alphaSpace):
     return alphas
 #--------------------------------------------------
 def getOrthNorm(X):
-    x = sqrtm(pinv(X))
+    x = sqrtm(inv(X))
     return x
 #--------------------------------------------------
 def getBasisFuncSing(rcut, n):
@@ -291,7 +291,7 @@ def getGns(rCut,nMax,functionList=[]):
       mat[i,j] = rCutVeryHard*0.5*np.sum(w*rx*rx*y[i,:]*y[j,:]);
 
 #  print("M:",mat)
-  invMat = sqrtm(pinv(mat));
+  invMat = sqrtm(inv(mat));
 #  print("invmat",invMat)
 #  print("inv:", invMat)
   for n in range(0,nMax):
