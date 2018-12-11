@@ -35,7 +35,7 @@ for extname, soname in zip(
     ext_list.append(Extension(soname,
         [extname],
         include_dirs=["src"],
-        libraries=["m"],
+        # libraries=["m"],
         extra_compile_args=["-O3", "-std=c99"]
     ))
 
