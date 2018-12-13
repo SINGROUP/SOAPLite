@@ -2708,7 +2708,7 @@ int soap(double* c, double* Apos,double* Hpos,double* alphas,double* betas, int*
 int soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas, int* typeNs, double rCut, int totalAN,int Nt,int Ns, int lMax, int Hs, double sigma){
 
   double oOsigma = 1/sigma;
-  double oOsigma3O2 = oOsigma*oOsigma*oOsigma;
+  double oOsigma3O2 = sqrt(oOsigma*oOsigma*oOsigma);
 
   double NsNs = Ns*Ns;
   double* x  = (double*) malloc(sizeof(double)*totalAN);
