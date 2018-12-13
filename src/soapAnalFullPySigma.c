@@ -83,7 +83,7 @@ void getAlphaBeta(double* aOa, double* bOa, double* alphas, double* betas, int N
     oneO1alphaSqrt = sqrt(oneO1alpha);
     aOa[k] = -alphas[k]*oneO1alpha; //got alpha_0k
     oneO1alphaSqrtX = oneO1alphaSqrt*oneO1alpha;
-    for(int n = 0; n < Ns; n++){ bOa[n*Ns + k] = betas[n*Ns + k]*oneO1alphaSqrtX*oOsigma3O2;} // got beta_0nk
+    for(int n = 0; n < Ns; n++){ bOa[n*Ns + k] = oOsigma3O2*betas[n*Ns + k]*oneO1alphaSqrtX;} // got beta_0nk
   }
   if(lMax > 0){
     for(int k = 0; k < Ns; k++){
@@ -864,7 +864,7 @@ double cs54=17.3899519988;
 int soap(double* c, double* Apos,double* Hpos,double* alphas,double* betas, int* typeNs, double rCut, int totalAN,int Nt,int Ns, int lMax, int Hs, double sigma);
 int soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas, int* typeNs, double rCut, int totalAN,int Nt,int Ns, int lMax, int Hs, double sigma){
 
-  double oOsigma = 1/sigma;
+  double oOsigma = 1.0/sigma;
   double oOsigma3O2 = sqrt(oOsigma*oOsigma*oOsigma);
 
   //printf("xxx\n");
