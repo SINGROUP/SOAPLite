@@ -304,45 +304,47 @@ def getGns(rCut,nMax,functionList=[]):
 
   return nMax,rx,gss
 #---------------------------------------------------
-##def getGTOs(rCut,nMax):
-##  rCutVeryHard= rCut*2.0; # This is only for numerical reasons
-##  alphas, betas = getBasisFuncSing(2.0000, nMax)
-##  betas = betas.reshape([nMax,nMax])
-##
-##  nMax = len(functionList);
-##  mat = np.zeros([nMax,nMax]);
-##  gss = np.zeros([nMax,len(x)]);
-##
-##  rx = 0.5*rCutVeryHard*(x + 1);
-##
-##  y = np.zeros([nMax,len(rx)]);
-##  for i in range(0,nMax):
-##    y[i,:] = functionList[i](rx);
-##
-##  for i in range(0,nMax):
-##    for j in range(0,nMax):
-##      mat[i,j] = rCutVeryHard*0.5*np.sum(w*rx*rx*y[i,:]*y[j,:]);
+def getPoly(rCut,nMax,functionList=[]):
+  rCutVeryHard= rCut+5.0;
+  if not functionList:
+    # print(rCut,nMax)
 
-##  print("M:",mat)
-##  invMat = sqrtm(inv(mat));
-##  print("inv:", invMat)
-##  for n in range(0,nMax):
-##    for a in range(0,nMax):
-##      gss[n,:] = gss[n,:] + invMat[n,a]*y[a,:]
-##
-##  return nMax,rx,gss
-#------Out of Stack Memory-------------------------------------------
-###def getGTOs(rCut,nMax):
-##  np.set_printoptions(precision=32)
-##  sys.setrecursionlimit(100000)
-###  alphas, betas = getBasisFuncSing(rCut, nMax)
-###  print("alphas", alphas)
-###  betas = betas.reshape([nMax,nMax])
-###  basisFunctions = []
-###  for i in range(nMax):
-###    basisFunctions.append(lambda x: np.exp(-alphas[i]*x*x))
-###  nMax,rx,gss = getGns(rCut, basisFunctions)
-###  return nMax,rx,gss
+    for i in range(1 ,nMax + 1):
+      Na = np.sqrt(rCut**(2.0*i + 7.0)/(i+3.0)/(2.0*i+5.0)/(2.0*i+7.0))
+      basisFunctions.append(lambda x, i=i: (rCut - x)**(i+2)/Na if x < rCut else 0)
+
+    functionList = basisFunctions
+  else:
+      if nMax != len(functionList):
+          print("nMax Doesn't match number of functions!")
+          exit(1)
+
+  mat = np.zeros([nMax,nMax]);
+  gss = np.zeros([nMax,len(x)]);
+#  print("nMax",nMax)
+  rx = 0.5*rCutVeryHard*(x + 1);
+
+  y = np.zeros([nMax,len(rx)]);
+  for i in range(0,nMax):
+    y[i,:] = functionList[i](rx);
+
+  for i in range(0,nMax):
+    for j in range(0,nMax):
+      mat[i,j] = rCutVeryHard*0.5*np.sum(w*rx*rx*y[i,:]*y[j,:]);
+
+#  print("M:",mat)
+  invMat = sqrtm(inv(mat));
+#  print("invmat",invMat)
+#  print("inv:", invMat)
+  for n in range(0,nMax):
+    for a in range(0,nMax):
+      gss[n,:] = gss[n,:] + invMat[n,a]*y[a,:]
+
+  for i in range(nMax):
+    plt.plot(x,gss[i])
+
+
+  return nMax,rx,gss
 
 if __name__=="__main__":
     nMax,rx,gss=getGns(2.0,10)

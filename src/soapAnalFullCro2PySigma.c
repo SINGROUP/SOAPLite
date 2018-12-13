@@ -658,13 +658,13 @@ double cs54=17.3899519988;
       for(int k = 0; k < Ns; k++){
         for(int kd = k; kd < Ns; kd++){
           if(j==0 && jd==0){
-            soapMat[NsNsLmaxTs*i+ NsNsLmax*0 + 0 + shiftN]
+            soapMat[NsNsLmaxTs*i + NsNsLmax*0 + 0 + shiftN]
               = cs0*Cnnd[NsTs100*i + Ns100*j + 0 + k]*Cnnd[NsTs100*i + Ns100*jd + 0 + kd];
           } else if(j==0 && jd==1){
-            soapMat[NsNsLmaxTs*i+ NsNsLmax*1 + 0 + shiftN]
+            soapMat[NsNsLmaxTs*i + NsNsLmax*1 + 0 + shiftN]
               = cs0*Cnnd[NsTs100*i + Ns100*j + 0 + k]*Cnnd[NsTs100*i + Ns100*jd + 0 + kd];
           } else if(j==1 && jd==1){
-            soapMat[NsNsLmaxTs*i+ NsNsLmax*2 + 0 + shiftN]
+            soapMat[NsNsLmaxTs*i + NsNsLmax*2 + 0 + shiftN]
               = cs0*Cnnd[NsTs100*i + Ns100*j + 0 + k]*Cnnd[NsTs100*i + Ns100*jd + 0 + kd];
           }
           shiftN++;
