@@ -1,4 +1,5 @@
 all:
+	gcc -fPIC -O3 -shared -o src/libsoapGTO.so src/soapGTO.c -lm 
 	gcc -fPIC -O3 -shared -o src/libsoapPy.so src/soapAnalFullPy.c -lm 
 	gcc -fPIC -O3 -shared -o src/libsoapPy2.so src/soapAnalFullCro2Py.c -lm
 	gcc -fPIC -O3 -shared -o src/libsoapPy3.so src/soapAnalFullCro3Py.c -lm
