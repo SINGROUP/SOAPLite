@@ -4,38 +4,17 @@ ext_list = []
 for extname, soname in zip(
     [
         "src/soapAnalFullPy.c",
-        "src/soapAnalFullCro2Py.c",
-        "src/soapAnalFullCro3Py.c",
-        "src/soapAnalFullCro4Py.c",
-        "src/soapAnalFullCro5Py.c",
-        "src/soapAnalFullCro6Py.c",
-        "src/soapAnalFullPySigma.c",
-        "src/soapAnalFullCro2PySigma.c",
-        "src/soapAnalFullCro3PySigma.c",
-        "src/soapAnalFullCro4PySigma.c",
-        "src/soapAnalFullCro5PySigma.c",
-        "src/soapAnalFullCro6PySigma.c",
+        "src/soapGTO.c",
         "src/soapGeneral.c",
     ],
     [
         "lib.libsoapPy",
-        "lib.libsoapPy2",
-        "lib.libsoapPy3",
-        "lib.libsoapPy4",
-        "lib.libsoapPy5",
-        "lib.libsoapPy6",
-        "lib.libsoapPysig",
-        "lib.libsoapPy2sig",
-        "lib.libsoapPy3sig",
-        "lib.libsoapPy4sig",
-        "lib.libsoapPy5sig",
-        "lib.libsoapPy6sig",
+        "lib.libsoapGTO",
         "lib.libsoapGeneral",
     ]):
     ext_list.append(Extension(soname,
         [extname],
         include_dirs=["src"],
-        # libraries=["m"],
         extra_compile_args=["-O3", "-std=c99"]
     ))
 
@@ -46,7 +25,7 @@ if __name__ == "__main__":
     setup(
         name="soaplite",
         url="https://github.com/SINGROUP/SOAPLite",
-        version="0.14.0",
+        version="0.14.5",
         description=("fast lightweight smooth overlap atomic position (SOAP) calculator. see github.com/SINGROUP/SOAPLite for detailed documentations."), author="Eiaki V. Morooka", author_email="eiaki.morooka@aalto.fi",
         packages=find_packages(),
         install_requires=[
