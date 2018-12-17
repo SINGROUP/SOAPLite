@@ -3,12 +3,12 @@ from setuptools import setup, find_packages, Extension
 ext_list = []
 for extname, soname in zip(
     [
-        "src/soapAnalFullPy.c",
+        "src/soapAnalFullPySigma.c",
         "src/soapGTO.c",
         "src/soapGeneral.c",
     ],
     [
-        "lib.libsoapPy",
+        "lib.libsoapPySig",
         "lib.libsoapGTO",
         "lib.libsoapGeneral",
     ]):
@@ -25,7 +25,7 @@ if __name__ == "__main__":
     setup(
         name="soaplite",
         url="https://github.com/SINGROUP/SOAPLite",
-        version="0.14.5",
+        version="0.14.6",
         description=("fast lightweight smooth overlap atomic position (SOAP) calculator. see github.com/SINGROUP/SOAPLite for detailed documentations."), author="Eiaki V. Morooka", author_email="eiaki.morooka@aalto.fi",
         packages=find_packages(),
         install_requires=[
