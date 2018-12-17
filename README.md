@@ -87,3 +87,4 @@ If you use this software, please cite
 * [2] Comparing molecules and solids across structural and alchemical space -  Sandip De, Albert P. Bartók, Gábor Cásnyi, and Michele Ceriotti [paper](https://arxiv.org/pdf/1601.04077.pdf)
 * Machine learning hydrogen adsorption on nanoclusters through structural descriptors - Marc O. J. Jäger, Eiaki V. Morooka, Filippo Federici Canova, Lauri Himanen & Adam S. Foster   [paper](https://www.nature.com/articles/s41524-018-0096-5)
 
+The theory is based on the first two papers, and the implementation is based on the third paper.
