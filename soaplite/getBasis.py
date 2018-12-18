@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import sys
 from scipy.linalg import *
 
 w = np.zeros(100);
@@ -232,8 +231,8 @@ def minimizeMe(alpha,l,x):
 def findAlpha(l,a, alphaSpace):
     alphas = np.zeros(a.shape[0])
     for i,j in enumerate(a):
-      initG = alphaSpace[np.argmin(minimizeMe(alphaSpace,l,j))]
-      alphas[i] = fmin(minimizeMe, x0=initG, args=(l,j), disp=False)
+        initG = alphaSpace[np.argmin(minimizeMe(alphaSpace,l,j))]
+        alphas[i] = fmin(minimizeMe, x0=initG, args=(l,j), disp=False)
     return alphas
 #--------------------------------------------------
 def getOrthNorm(X):
@@ -251,100 +250,99 @@ def getBasisFuncSing(rcut, n):
         val = val*1.015
         alphaSpace = np.append(alphaSpace, val)
     for l in range(0,1):
-       alphas = findAlpha(l,a, alphaSpace)
-       betas = getOrthNorm(intAllMat(l,alphas))
-       alphasFull = np.append(alphasFull, alphas)
-       betasFull  = np.append(betasFull , betas)
-    return  alphasFull, betasFull
+        alphas = findAlpha(l,a, alphaSpace)
+        betas = getOrthNorm(intAllMat(l,alphas))
+        alphasFull = np.append(alphasFull, alphas)
+        betasFull  = np.append(betasFull , betas)
+    return alphasFull, betasFull
 #---------------------------------------------------
 def getGns(rCut,nMax,functionList=[]):
-  alphas, betas = getBasisFuncSing(rCut, nMax)
-  rCutVeryHard= rCut+5.0;
+    alphas, betas = getBasisFuncSing(rCut, nMax)
+    rCutVeryHard = rCut+5.0
 ##  functionList = [lambda x: np.exp(-x*x), lambda x: np.exp(-2*x*x)]
 #  x = np.linspace(0.01,10,100)
-  if not functionList:
-    # print(rCut,nMax)
+    if not functionList:
+        # print(rCut,nMax)
 
-    # print("alphas", alphas)
-    # print("betas", betas)
-    basisFunctions = []
+        # print("alphas", alphas)
+        # print("betas", betas)
+        basisFunctions = []
+        for i in range(nMax):
+            basisFunctions.append(lambda x, i=i: np.exp(-alphas[i]*x*x))
+
+        functionList = basisFunctions
+    else:
+        if nMax != len(functionList):
+            print("nMax Doesn't match number of functions!")
+            exit(1)
+
+    mat = np.zeros([nMax,nMax])
+    gss = np.zeros([nMax,len(x)])
+    #  print("nMax",nMax)
+    rx = 0.5*rCutVeryHard*(x + 1)
+
+    y = np.zeros([nMax,len(rx)])
+    for i in range(0,nMax):
+        y[i,:] = functionList[i](rx)
+
+    for i in range(0,nMax):
+        for j in range(0,nMax):
+            mat[i,j] = rCutVeryHard*0.5*np.sum(w*rx*rx*y[i,:]*y[j,:])
+
+    #  print("M:",mat)
+    invMat = sqrtm(inv(mat))
+    #  print("invmat",invMat)
+    #  print("inv:", invMat)
+    for n in range(0,nMax):
+        for a in range(0,nMax):
+            gss[n,:] = gss[n,:] + invMat[n,a]*y[a,:]
+
     for i in range(nMax):
-      basisFunctions.append(lambda x, i=i: np.exp(-alphas[i]*x*x))
+        plt.plot(x,gss[i])
 
-    functionList = basisFunctions
-  else:
-      if nMax != len(functionList):
-          print("nMax Doesn't match number of functions!")
-          exit(1)
-
-  mat = np.zeros([nMax,nMax]);
-  gss = np.zeros([nMax,len(x)]);
-#  print("nMax",nMax)
-  rx = 0.5*rCutVeryHard*(x + 1);
-
-  y = np.zeros([nMax,len(rx)]);
-  for i in range(0,nMax):
-    y[i,:] = functionList[i](rx);
-
-  for i in range(0,nMax):
-    for j in range(0,nMax):
-      mat[i,j] = rCutVeryHard*0.5*np.sum(w*rx*rx*y[i,:]*y[j,:]);
-
-#  print("M:",mat)
-  invMat = sqrtm(inv(mat));
-#  print("invmat",invMat)
-#  print("inv:", invMat)
-  for n in range(0,nMax):
-    for a in range(0,nMax):
-      gss[n,:] = gss[n,:] + invMat[n,a]*y[a,:]
-
-  for i in range(nMax):
-    plt.plot(x,gss[i])
-
-
-  return nMax,rx,gss
+    return nMax,rx,gss
 #---------------------------------------------------
-def getPoly(rCut,nMax,functionList=[]):
-  rCutVeryHard= rCut+5.0;
-  if not functionList:
-    # print(rCut,nMax)
+def getPoly(rCut, nMax, functionList=[]):
+    rCutVeryHard = rCut+5.0
+    if not functionList:
+        # print(rCut,nMax)
 
-    for i in range(1 ,nMax + 1):
-      Na = np.sqrt(rCut**(2.0*i + 7.0)/(i+3.0)/(2.0*i+5.0)/(2.0*i+7.0))
-      basisFunctions.append(lambda x, i=i: (rCut - x)**(i+2)/Na if x < rCut else 0)
+        basisFunctions = []
+        for i in range(1, nMax + 1):
+            Na = np.sqrt(rCut**(2.0*i + 7.0)/(i+3.0)/(2.0*i+5.0)/(2.0*i+7.0))
+            basisFunctions.append(lambda x, i=i: (rCut - x)**(i+2)/Na if x < rCut else 0)
 
-    functionList = basisFunctions
-  else:
-      if nMax != len(functionList):
-          print("nMax Doesn't match number of functions!")
-          exit(1)
+        functionList = basisFunctions
+    else:
+        if nMax != len(functionList):
+            print("nMax Doesn't match number of functions!")
+            exit(1)
 
-  mat = np.zeros([nMax,nMax]);
-  gss = np.zeros([nMax,len(x)]);
-#  print("nMax",nMax)
-  rx = 0.5*rCutVeryHard*(x + 1);
+    mat = np.zeros([nMax,nMax])
+    gss = np.zeros([nMax,len(x)])
+    #  print("nMax",nMax)
+    rx = 0.5*rCutVeryHard*(x + 1)
 
-  y = np.zeros([nMax,len(rx)]);
-  for i in range(0,nMax):
-    y[i,:] = functionList[i](rx);
+    y = np.zeros([nMax,len(rx)])
+    for i in range(0,nMax):
+        y[i,:] = functionList[i](rx)
 
-  for i in range(0,nMax):
-    for j in range(0,nMax):
-      mat[i,j] = rCutVeryHard*0.5*np.sum(w*rx*rx*y[i,:]*y[j,:]);
+    for i in range(0,nMax):
+        for j in range(0,nMax):
+            mat[i,j] = rCutVeryHard*0.5*np.sum(w*rx*rx*y[i,:]*y[j,:])
 
 #  print("M:",mat)
-  invMat = sqrtm(inv(mat));
+    invMat = sqrtm(inv(mat))
 #  print("invmat",invMat)
 #  print("inv:", invMat)
-  for n in range(0,nMax):
-    for a in range(0,nMax):
-      gss[n,:] = gss[n,:] + invMat[n,a]*y[a,:]
+    for n in range(0,nMax):
+        for a in range(0,nMax):
+            gss[n,:] = gss[n,:] + invMat[n,a]*y[a,:]
 
-  for i in range(nMax):
-    plt.plot(x,gss[i])
+    # for i in range(nMax):
+        # plt.plot(x, gss[i])
 
-
-  return nMax,rx,gss
+    return nMax, rx, gss
 
 if __name__=="__main__":
     nMax,rx,gss=getGns(2.0,10)
