@@ -1,3 +1,4 @@
-from .core import get_soap_locals, get_soap_structure, get_periodic_soap_locals, get_periodic_soap_structure, get_soap_locals_general, get_soap_locals_proper, get_soap_structure_proper, get_periodic_soap_locals_proper, get_periodic_soap_structure_proper
+from .core import get_soap_locals, get_soap_structure, get_periodic_soap_locals, get_periodic_soap_structure,  get_soap_locals_gauss, get_soap_structure_gauss, get_periodic_soap_locals_gauss, get_periodic_soap_structure_gauss,get_soap_locals_poly, get_soap_structure_poly, get_periodic_soap_locals_poly, get_periodic_soap_structure_poly
+
 from .genBasis import getBasisFunc
 from .getBasis import getGns

@@ -258,14 +258,8 @@ def getBasisFuncSing(rcut, n):
 #---------------------------------------------------
 def getGns(rCut,nMax,functionList=[]):
     alphas, betas = getBasisFuncSing(rCut, nMax)
-    rCutVeryHard = rCut+5.0
-##  functionList = [lambda x: np.exp(-x*x), lambda x: np.exp(-2*x*x)]
-#  x = np.linspace(0.01,10,100)
+    rCutVeryHard= rCut+5.0
     if not functionList:
-        # print(rCut,nMax)
-
-        # print("alphas", alphas)
-        # print("betas", betas)
         basisFunctions = []
         for i in range(nMax):
             basisFunctions.append(lambda x, i=i: np.exp(-alphas[i]*x*x))
@@ -305,13 +299,10 @@ def getGns(rCut,nMax,functionList=[]):
 def getPoly(rCut, nMax, functionList=[]):
     rCutVeryHard = rCut+5.0
     if not functionList:
-        # print(rCut,nMax)
-
         basisFunctions = []
         for i in range(1, nMax + 1):
             Na = np.sqrt(rCut**(2.0*i + 7.0)/(i+3.0)/(2.0*i+5.0)/(2.0*i+7.0))
-            basisFunctions.append(lambda x, i=i: (rCut - x)**(i+2)/Na if x < rCut else 0)
-
+            basisFunctions.append(lambda rr, i=i, rCut=rCut: (rCut - rr)**(i+2)/Na * np.heaviside(rCut-rr+0.00001,rr))
         functionList = basisFunctions
     else:
         if nMax != len(functionList):
