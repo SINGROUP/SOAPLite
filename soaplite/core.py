@@ -113,7 +113,7 @@ def get_soap_locals(obj, Hpos, alp, bet, rCut=5.0, nMax=5, Lmax=5, crossOver=Tru
     _PATH_TO_SOAPLITE_SO = os.path.dirname(os.path.abspath(__file__))
     _SOAPLITE_SOFILES = glob.glob( "".join([ _PATH_TO_SOAPLITE_SO, "/../lib/libsoap*.*so"]) ) ## NOT SURE ABOUT THIS
 
-    if(py_Ntypes==1 or (not crossOver)):
+    if py_Ntypes == 1 or (not crossOver):
         substring = "lib/libsoapPySig."
         libsoap = CDLL(next((s for s in _SOAPLITE_SOFILES if substring in s), None))
         libsoap.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),POINTER (c_double), POINTER (c_double), POINTER (c_int),c_double,c_int,c_int,c_int,c_int,c_int,c_double]
@@ -129,17 +129,27 @@ def get_soap_locals(obj, Hpos, alp, bet, rCut=5.0, nMax=5, Lmax=5, crossOver=Tru
         libsoapGTO.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize,c_eta)
 
     #   return c;
-    if(crossOver):
+    if crossOver:
         crosTypes = int((py_Ntypes*(py_Ntypes+1))/2)
         shape = (py_Hsize, int((nMax*(nMax+1))/2)*(Lmax+1)*crosTypes)
-        a = np.ctypeslib.as_array(c)
-        a = a.reshape(shape)
-        return a
     else:
         shape = (py_Hsize, int((nMax*(nMax+1))/2)*(Lmax+1)*py_Ntypes)
-        a = np.ctypeslib.as_array(c)
-        a = a.reshape(shape)
-        return a
+
+    a = np.ctypeslib.as_array(c)
+    a = a.reshape(shape)
+
+    # Make the prefactor correction
+    for l in range(Lmax+1):
+        prefactor = np.pi*np.sqrt(8/(2*l+1))
+        if crossOver:
+            n_types = int(nMax*(nMax+1)/2*py_Ntypes*(py_Ntypes+1)/2)
+        else:
+            n_types = int(nMax*(nMax+1)/2*py_Ntypes)
+        start = l*n_types
+        end = (l+1)*n_types
+        a[:, start:end] *= prefactor
+
+    return a
 
 #=================================================================
 def get_soap_structure(obj, alp, bet, rCut=5.0, nMax=5, Lmax=5, crossOver=True, all_atomtypes=[], eta=1.0):
