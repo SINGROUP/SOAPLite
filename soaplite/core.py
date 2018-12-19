@@ -139,15 +139,15 @@ def get_soap_locals(obj, Hpos, alp, bet, rCut=5.0, nMax=5, Lmax=5, crossOver=Tru
     a = a.reshape(shape)
 
     # Make the prefactor correction
-    for l in range(Lmax+1):
-        prefactor = np.pi*np.sqrt(8/(2*l+1))
-        if crossOver:
-            n_types = int(nMax*(nMax+1)/2*py_Ntypes*(py_Ntypes+1)/2)
-        else:
-            n_types = int(nMax*(nMax+1)/2*py_Ntypes)
-        start = l*n_types
-        end = (l+1)*n_types
-        a[:, start:end] *= prefactor
+    # for l in range(Lmax+1):
+        # prefactor = np.pi*np.sqrt(8/(2*l+1))
+        # if crossOver:
+            # n_types = int(nMax*(nMax+1)/2*py_Ntypes*(py_Ntypes+1)/2)
+        # else:
+            # n_types = int(nMax*(nMax+1)/2*py_Ntypes)
+        # start = l*n_types
+        # end = (l+1)*n_types
+        # a[:, start:end] *= prefactor
 
     return a
 
