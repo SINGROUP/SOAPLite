@@ -298,91 +298,42 @@ def getGns(rCut,nMax,functionList=[]):
 #---------------------------------------------------
 def getPoly(rCut, nMax, functionList=[]):
     rCutVeryHard = rCut+5.0
-
-    # This is the fixed intergation space from 0-cutVeryHard
-    rx = 0.5*rCutVeryHard*(x + 1)
-
-    # If function list not given, use the default polynomial basis
     if not functionList:
-
-        # These are the analytically calculated weights for an orthonormalized
-        # set
-        weights = np.zeros((nMax, nMax))
-        for i in range(nMax):
-            for j in range(nMax):
-                weights[i, j] = np.sqrt((5+2*i)*(5+2*j))/(5+i+j)
-        weights = np.linalg.inv(weights)
-        weights = sqrtm(weights)
-
-        # Create orthonormalized functions by multiplying with weights
-        k = np.arange(0, nMax)
-        polys = np.power((rCut-np.clip(rx, 0, rCut)), (k+2)[:, np.newaxis])
-        na = np.sqrt((rCut**(2*k+5))/(2*k+5))
-        polys = np.divide(polys, na[:, np.newaxis])
-        gss = np.dot(weights, polys)
-
+        basisFunctions = []
+        for i in range(1, nMax + 1):
+            Na = np.sqrt(rCut**(2.0*i + 7.0)/(i+3.0)/(2.0*i+5.0)/(2.0*i+7.0))
+            basisFunctions.append(lambda rr, i=i, rCut=rCut: (rCut - np.clip(rr, 0, rCut))**(i+2)/Na)
+        functionList = basisFunctions
     else:
         if nMax != len(functionList):
             print("nMax Doesn't match number of functions!")
             exit(1)
 
-        # This will contain the final orthonormalized and discretized basis
-        # functions
-        gss = np.zeros([nMax, len(x)])
+    mat = np.zeros([nMax,nMax])
+    gss = np.zeros([nMax,len(x)])
+    #  print("nMax",nMax)
+    rx = 0.5*rCutVeryHard*(x + 1)
 
-        mat = np.zeros([nMax,nMax])
-        #  print("nMax",nMax)
+    y = np.zeros([nMax,len(rx)])
+    for i in range(0,nMax):
+        y[i,:] = functionList[i](rx)
 
-        y = np.zeros([nMax,len(rx)])
-        for i in range(0,nMax):
-            y[i,:] = functionList[i](rx)
+    for i in range(0,nMax):
+        for j in range(0,nMax):
+            mat[i,j] = rCutVeryHard*0.5*np.sum(w*rx*rx*y[i,:]*y[j,:])
 
-        for i in range(0,nMax):
-            for j in range(0,nMax):
-                mat[i,j] = rCutVeryHard*0.5*np.sum(w*rx*rx*y[i,:]*y[j,:])
+#  print("M:",mat)
+    invMat = sqrtm(inv(mat))
+#  print("invmat",invMat)
+#  print("inv:", invMat)
+    for n in range(0,nMax):
+        for a in range(0,nMax):
+            gss[n,:] = gss[n,:] + invMat[n,a]*y[a,:]
 
-        invMat = sqrtm(inv(mat))
-        #  print("invmat",invMat)
-        #  print("inv:", invMat)
-        for n in range(0,nMax):
-            for a in range(0,nMax):
-                gss[n,:] = gss[n,:] + invMat[n,a]*y[a,:]
-
-        # for i in range(nMax):
-            # plt.plot(x, gss[i])
+    # for i in range(nMax):
+        # plt.plot(x, gss[i])
 
     return nMax, rx, gss
-
-# def getPoly(rCut, nMax, functionList=[]):
-    # """Used to calculate an orthonormalized set of polynomials to use as radial
-    # basis function.
-    # """
-    # # rCutVeryHard = rCut+5.0
-
-    # # This will contain the final orthonormalized and discretized basis
-    # # functions
-    # gss = np.zeros([nMax, len(x)])
-
-    # # This is the fixed intergation space from 0-cutVeryHard
-    # rx = 0.5*rCut*(x + 1)
-
-    # # Calculates the weights for an orthonormalized set
-    # weights = np.zeros((nMax, nMax))
-    # for i in range(nMax):
-        # for j in range(nMax):
-            # weights[i, j] = np.sqrt((5+2*i)*(5+2*j))/(5+i+j)
-    # weights = np.linalg.inv(weights)
-    # weights = sqrtm(weights)
-
-    # # Create orthonormalized functions
-    # for ni in range(nMax):
-        # poly = np.zeros((len(rx)))
-        # for k in range(nMax):
-            # na = np.sqrt((rCut**(2*k+5))/(2*k+5))
-            # poly += weights[ni, k]*(rCut-np.clip(rx, 0, rCut))**(k+2)/na
-        # gss[ni, :] = poly
-
-    # return nMax, rx, gss
 
 if __name__=="__main__":
     nMax,rx,gss=getGns(2.0,10)
