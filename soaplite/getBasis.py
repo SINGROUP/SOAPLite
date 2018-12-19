@@ -298,40 +298,63 @@ def getGns(rCut,nMax,functionList=[]):
 #---------------------------------------------------
 def getPoly(rCut, nMax, functionList=[]):
     rCutVeryHard = rCut+5.0
+    rx = 0.5*rCutVeryHard*(x + 1)
+
     if not functionList:
         basisFunctions = []
         for i in range(1, nMax + 1):
-            Na = np.sqrt(rCut**(2.0*i + 7.0)/(i+3.0)/(2.0*i+5.0)/(2.0*i+7.0))
-            basisFunctions.append(lambda rr, i=i, rCut=rCut: (rCut - np.clip(rr, 0, rCut))**(i+2)/Na)
+            basisFunctions.append(lambda rr, i=i, rCut=rCut: (rCut - np.clip(rr, 0, rCut))**(i+2))
         functionList = basisFunctions
+
+        # Calculate the functions on a grid
+        nr = 10000
+        functions = np.zeros((nMax, nr))
+        rspace = np.linspace(0, rCut, nr)
+        for n in range(nMax):
+            functions[n, :] = (rCut-rspace)**(n+2)
+
+        # Calculate the weight matrix that orthonormalizes the set
+        S = np.zeros((nMax, nMax))
+        for i in range(nMax):
+            for j in range(nMax):
+                overlap = np.trapz(rspace**2*functions[i, :]*functions[j, :], dx=(rCut)/nr)
+                S[i, j] = overlap
+
+        betas = sqrtm(np.linalg.inv(S))
+
+        fs = np.zeros([nMax, len(x)])
+        for n in range(nMax):
+            fs[n, :] = (rCut-np.clip(rx, 0, rCut))**(n+2)
+
+        gss = np.dot(betas, fs)
+
     else:
         if nMax != len(functionList):
             print("nMax Doesn't match number of functions!")
             exit(1)
 
-    mat = np.zeros([nMax,nMax])
-    gss = np.zeros([nMax,len(x)])
-    #  print("nMax",nMax)
-    rx = 0.5*rCutVeryHard*(x + 1)
+        mat = np.zeros([nMax,nMax])
+        gss = np.zeros([nMax,len(x)])
+        #  print("nMax",nMax)
 
-    y = np.zeros([nMax,len(rx)])
-    for i in range(0,nMax):
-        y[i,:] = functionList[i](rx)
+        y = np.zeros([nMax,len(rx)])
+        for i in range(0,nMax):
+            y[i,:] = functionList[i](rx)
 
-    for i in range(0,nMax):
-        for j in range(0,nMax):
-            mat[i,j] = rCutVeryHard*0.5*np.sum(w*rx*rx*y[i,:]*y[j,:])
+        for i in range(0,nMax):
+            for j in range(0,nMax):
+                mat[i,j] = rCutVeryHard*0.5*np.sum(w*rx*rx*y[i,:]*y[j,:])
 
-#  print("M:",mat)
-    invMat = sqrtm(inv(mat))
-#  print("invmat",invMat)
-#  print("inv:", invMat)
-    for n in range(0,nMax):
-        for a in range(0,nMax):
-            gss[n,:] = gss[n,:] + invMat[n,a]*y[a,:]
+        #  print("M:",mat)
+        invMat = sqrtm(inv(mat))
+        #  print("invmat",invMat)
+        #  print("inv:", invMat)
+        for n in range(0,nMax):
+            for a in range(0,nMax):
+                gss[n,:] = gss[n,:] + invMat[n,a]*y[a,:]
 
-    # for i in range(nMax):
-        # plt.plot(x, gss[i])
+        # for i in range(nMax):
+            # plt.plot(x, gss[i])
 
     return nMax, rx, gss
 
