@@ -179,7 +179,7 @@ def get_periodic_soap_structure(obj, alp, bet, rCut=5.0, nMax=5, Lmax=5, crossOv
 #=================================================================
 def get_soap_locals_gauss(obj, Hpos, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[], eta=1.0):
 ###    rCutHard = rCut #// + 5; #//??? I don't think it's needed for the general case. (user's responsibility for cutting.)
-    rCutHard = rCut  + 5;
+    rCutHard = rCut;
     nMax,rx,gss=getBasis.getGns(rCut,nMax)
 
     assert Lmax <= 20, "l cannot exceed 20. Lmax={}".format(Lmax)
@@ -284,7 +284,7 @@ def get_periodic_soap_structure_gauss(obj,  rCut=5.0, nMax=5, Lmax=5,  all_atomt
 #=================================================================
 def get_soap_locals_poly(obj, Hpos, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[], eta=1.0):
 ###    rCutHard = rCut #// + 5; #//??? I don't think it's needed for the general case. (user's responsibility for cutting.)
-    rCutHard = rCut  + 5;
+    rCutHard = rCut;
     nMax,rx,gss=getBasis.getPoly(rCut,nMax)
 
     assert Lmax <= 20, "l cannot exceed 20. Lmax={}".format(Lmax)
