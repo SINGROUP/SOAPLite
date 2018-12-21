@@ -178,7 +178,7 @@ def get_periodic_soap_structure(obj, alp, bet, rCut=5.0, nMax=5, Lmax=5, crossOv
 # GAUSSIAN FROM HERE, NOT GTOs
 #=================================================================
 def get_soap_locals_gauss(obj, Hpos, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[], eta=1.0):
-###    rCutHard = rCut #// + 5; #//??? I don't think it's needed for the general case. (user's responsibility for cutting.)
+###    rCutHard = rCut + 5 #// + 5; #//??? I don't think it's needed for the general case. (user's responsibility for cutting.)
     rCutHard = rCut;
     nMax,rx,gss=getBasis.getGns(rCut,nMax)
 
