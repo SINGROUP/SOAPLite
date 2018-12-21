@@ -8,40 +8,65 @@
 #define PI 3.14159265359
 #define PIHalf 1.57079632679490
 //===========================================================
+float myExp(float x){
+    if(x<-10){
+        return 0.0;
+    }
+    else if(x>=0.1 || x <= -0.1){
+        return exp(x);
+    }
+    if(x > -0.001 && x < 0.001){
+      float x2 = x*x;
+      return 1 + x + 0.5*x2;
+    }
+    if(x > -0.01 && x < 0.01){
+      float x2 = x*x;
+      float x3 = x*x2;
+      return 1 + x + 0.5*x2 + 0.166667*x3;
+    }
+    if(x > -0.1 && x < 0.1){
+      float x2 = x*x;
+      float x3 = x*x2;
+      float x4 = x2*x2;
+      return 1 + x + 0.5*x2 + 0.166667*x3 + 0.04166667*x4;
+    }
+
+}
+//===========================================================
 int getCrosNum(int n){return n*(n+1)/2;}
 //===========================================================
-double* getReIm2(double* x, double* y, double* c3, int Asize){
+float* getReIm2(float* x, float* y, float* c3, int Asize){
   for(int i = 0; i < Asize; i++){
     c3[2*i  ] = x[i]*x[i]-y[i]*y[i];
     c3[2*i+1] = 2*y[i]*x[i];
   }
 }
 //===========================================================
-void getReIm3(double* x, double* y, double* c2, double* c3, int Asize){
+void getReIm3(float* x, float* y, float* c2, float* c3, int Asize){
   for(int i = 0; i < Asize; i++){
     c3[2*i  ] = x[i]*c2[2*i] - y[i]*c2[2*i + 1];
     c3[2*i+1] = x[i]*c2[2*i+1] + y[i]*c2[2*i  ];
   }
 }
 //===========================================================
-void getMulReIm(double* c1, double* c2, double* c3, int Asize){
+void getMulReIm(float* c1, float* c2, float* c3, int Asize){
   for(int i = 0; i < Asize; i++){
     c3[2*i  ] = c1[2*i  ]*c2[2*i  ] - c1[2*i+1]*c2[2*i+1];
     c3[2*i+1] = c1[2*i  ]*c2[2*i+1] + c1[2*i+1]*c2[2*i  ];
   }
 }
 //===========================================================
-void getMulDouble(double* c1, double* c3, int Asize){
+void getMulDouble(float* c1, float* c3, int Asize){
   for(int i = 0; i < Asize; i++){
     c3[2*i  ] = c1[2*i]*c1[2*i] - c1[2*i+1]*c1[2*i+1];
     c3[2*i+1] = 2*c1[2*i]*c1[2*i+1];
   }
 }
 //================================================================
-int getFilteredPos(double* x, double* y, double* z, double* Apos, double* Hpos, int* typeNs, double rCutSqr, int Ihpos, int Itype){
+int getFilteredPos(float* x, float* y, float* z, float* Apos, float* Hpos, int* typeNs, float rCutSqr, int Ihpos, int Itype){
 
   int shiftType = 0; int count = 0;
-  double X = 0; double Y = 0; double Z = 0;
+  float X = 0; float Y = 0; float Z = 0;
 
     for(int i = 0; i < Itype ; i++){
       shiftType += typeNs[i];
@@ -61,7 +86,7 @@ int getFilteredPos(double* x, double* y, double* z, double* Apos, double* Hpos, 
   return count;
 }
 //================================================================
-double* getRsZs(double* x, double* y, double* z,double* r2,double* r4,double* r6,double* r8,double* z2,double* z4,double* z6,double* z8, int size){
+float* getRsZs(float* x, float* y, float* z,float* r2,float* r4,float* r6,float* r8,float* z2,float* z4,float* z6,float* z8, int size){
   for(int i = 0; i < size; i++){
     r2[i] = x[i]*x[i] + y[i]*y[i] + z[i]*z[i];
     r4[i] = r2[i]*r2[i]; r6[i] = r2[i]*r4[i]; r8[i] = r4[i]*r4[i];
@@ -69,15 +94,15 @@ double* getRsZs(double* x, double* y, double* z,double* r2,double* r4,double* r6
   }
 }
 //================================================================
-void getAlphaBeta(double* aOa, double* bOa, double* alphas, double* betas, int Ns,int lMax, double oOsigma, double oOsigma3O2){
+void getAlphaBeta(float* aOa, float* bOa, float* alphas, float* betas, int Ns,int lMax, float oOsigma, float oOsigma3O2){
 
   int  NsNs = Ns*Ns;
-  double  oneO1alpha;      double  oneO1alpha2; double  oneO1alpha3;
-  double  oneO1alpha4; double  oneO1alpha5; double  oneO1alpha6;
-  double  oneO1alpha7; double  oneO1alpha8; double  oneO1alpha9;
-  double  oneO1alpha10;
-  double  oneO1alphaSqrt;// = (double*) malloc(Ns*sizeof(double));
-  double  oneO1alphaSqrtX;
+  float  oneO1alpha;      float  oneO1alpha2; float  oneO1alpha3;
+  float  oneO1alpha4; float  oneO1alpha5; float  oneO1alpha6;
+  float  oneO1alpha7; float  oneO1alpha8; float  oneO1alpha9;
+  float  oneO1alpha10;
+  float  oneO1alphaSqrt;// = (float*) malloc(Ns*sizeof(float));
+  float  oneO1alphaSqrtX;
 
   // MY POEWR MISSING (see beggning functions);
 
@@ -162,13 +187,13 @@ void getAlphaBeta(double* aOa, double* bOa, double* alphas, double* betas, int N
   }
 }
 //================================================================
-void getCfactors(double* preCoef, int Asize, double* x, double* y, double* z, double* z2, double* z4, double* z6, double* z8, double* r2, double* r4, double* r6, double* r8, double* ReIm2, double* ReIm3, double* ReIm4, double* ReIm5, double* ReIm6, double* ReIm7, double* ReIm8, double* ReIm9,int totalAN, int lMax, int t2, int t3, int t4, int t5, int t6, int t7, int t8, int t9, int t10, int t11, int t12, int t13, int t14, int t15, int t16, int t17, int t18, int t19, int t20, int t21, int t22, int t23, int t24, int t25, int t26, int t27, int t28, int t29, int t30, int t31, int t32, int t33, int t34, int t35, int t36, int t37, int t38, int t39, int t40, int t41, int t42, int t43, int t44, int t45, int t46, int t47, int t48, int t49, int t50, int t51, int t52, int t53, int t54, int t55, int t56, int t57, int t58, int t59, int t60, int t61, int t62, int t63, int t64, int t65, int t66, int t67, int t68, int t69, int t70, int t71, int t72, int t73, int t74, int t75, int t76, int t77, int t78, int t79, int t80, int t81, int t82, int t83, int t84, int t85, int t86, int t87, int t88, int t89, int t90, int t91, int t92, int t93, int t94, int t95, int t96, int t97, int t98, int t99){
-  double c20c;double c30c;double c31c;double c40c;double c41c;double c42c;
-  double c50c;double c51c;double c52c;double c53c;double c60c;double c61c;
-  double c62c;double c63c;double c64c;double c70c;double c71c;double c72c;
-  double c73c;double c74c;double c75c;double c80c;double c81c;double c82c;
-  double c83c;double c84c;double c85c;double c86c;double c90c;double c91c;
-  double c92c;double c93c;double c94c;double c95c;double c96c;double c97c;
+void getCfactors(float* preCoef, int Asize, float* x, float* y, float* z, float* z2, float* z4, float* z6, float* z8, float* r2, float* r4, float* r6, float* r8, float* ReIm2, float* ReIm3, float* ReIm4, float* ReIm5, float* ReIm6, float* ReIm7, float* ReIm8, float* ReIm9,int totalAN, int lMax, int t2, int t3, int t4, int t5, int t6, int t7, int t8, int t9, int t10, int t11, int t12, int t13, int t14, int t15, int t16, int t17, int t18, int t19, int t20, int t21, int t22, int t23, int t24, int t25, int t26, int t27, int t28, int t29, int t30, int t31, int t32, int t33, int t34, int t35, int t36, int t37, int t38, int t39, int t40, int t41, int t42, int t43, int t44, int t45, int t46, int t47, int t48, int t49, int t50, int t51, int t52, int t53, int t54, int t55, int t56, int t57, int t58, int t59, int t60, int t61, int t62, int t63, int t64, int t65, int t66, int t67, int t68, int t69, int t70, int t71, int t72, int t73, int t74, int t75, int t76, int t77, int t78, int t79, int t80, int t81, int t82, int t83, int t84, int t85, int t86, int t87, int t88, int t89, int t90, int t91, int t92, int t93, int t94, int t95, int t96, int t97, int t98, int t99){
+  float c20c;float c30c;float c31c;float c40c;float c41c;float c42c;
+  float c50c;float c51c;float c52c;float c53c;float c60c;float c61c;
+  float c62c;float c63c;float c64c;float c70c;float c71c;float c72c;
+  float c73c;float c74c;float c75c;float c80c;float c81c;float c82c;
+  float c83c;float c84c;float c85c;float c86c;float c90c;float c91c;
+  float c92c;float c93c;float c94c;float c95c;float c96c;float c97c;
 
     getReIm2(x, y, ReIm2,Asize);
     getReIm3(x, y, ReIm2, ReIm3, Asize);
@@ -352,10 +377,10 @@ void getCfactors(double* preCoef, int Asize, double* x, double* y, double* z, do
     //printf("EEE\n");
 }
 //================================================================
-int getC(double* C, double* preCoef, double* x, double* y, double* z,double* r2, double* bOa, double* aOa, double* exes,  int totalAN, int Asize, int Ns, int Ntypes, int lMax, int posI, int typeJ, int Nx2, int Nx3, int Nx4, int Nx5, int Nx6, int Nx7, int Nx8, int Nx9, int Nx10, int Nx11, int Nx12, int Nx13, int Nx14, int Nx15, int Nx16, int Nx17, int Nx18, int Nx19, int Nx20, int Nx21, int Nx22, int Nx23, int Nx24, int Nx25, int Nx26, int Nx27, int Nx28, int Nx29, int Nx30, int Nx31, int Nx32, int Nx33, int Nx34, int Nx35, int Nx36, int Nx37, int Nx38, int Nx39, int Nx40, int Nx41, int Nx42, int Nx43, int Nx44, int Nx45, int Nx46, int Nx47, int Nx48, int Nx49, int Nx50, int Nx51, int Nx52, int Nx53, int Nx54, int Nx55, int Nx56, int Nx57, int Nx58, int Nx59, int Nx60, int Nx61, int Nx62, int Nx63, int Nx64, int Nx65, int Nx66, int Nx67, int Nx68, int Nx69, int Nx70, int Nx71, int Nx72, int Nx73, int Nx74, int Nx75, int Nx76, int Nx77, int Nx78, int Nx79, int Nx80, int Nx81, int Nx82, int Nx83, int Nx84, int Nx85, int Nx86, int Nx87, int Nx88, int Nx89, int Nx90, int Nx91, int Nx92, int Nx93, int Nx94, int Nx95, int Nx96, int Nx97, int Nx98, int Nx99, int t2, int t3, int t4, int t5, int t6, int t7, int t8, int t9, int t10, int t11, int t12, int t13, int t14, int t15, int t16, int t17, int t18, int t19, int t20, int t21, int t22, int t23, int t24, int t25, int t26, int t27, int t28, int t29, int t30, int t31, int t32, int t33, int t34, int t35, int t36, int t37, int t38, int t39, int t40, int t41, int t42, int t43, int t44, int t45, int t46, int t47, int t48, int t49, int t50, int t51, int t52, int t53, int t54, int t55, int t56, int t57, int t58, int t59, int t60, int t61, int t62, int t63, int t64, int t65, int t66, int t67, int t68, int t69, int t70, int t71, int t72, int t73, int t74, int t75, int t76, int t77, int t78, int t79, int t80, int t81, int t82, int t83, int t84, int t85, int t86, int t87, int t88, int t89, int t90, int t91, int t92, int t93, int t94, int t95, int t96, int t97, int t98, int t99){
+int getC(float* C, float* preCoef, float* x, float* y, float* z,float* r2, float* bOa, float* aOa, float* exes,  int totalAN, int Asize, int Ns, int Ntypes, int lMax, int posI, int typeJ, int Nx2, int Nx3, int Nx4, int Nx5, int Nx6, int Nx7, int Nx8, int Nx9, int Nx10, int Nx11, int Nx12, int Nx13, int Nx14, int Nx15, int Nx16, int Nx17, int Nx18, int Nx19, int Nx20, int Nx21, int Nx22, int Nx23, int Nx24, int Nx25, int Nx26, int Nx27, int Nx28, int Nx29, int Nx30, int Nx31, int Nx32, int Nx33, int Nx34, int Nx35, int Nx36, int Nx37, int Nx38, int Nx39, int Nx40, int Nx41, int Nx42, int Nx43, int Nx44, int Nx45, int Nx46, int Nx47, int Nx48, int Nx49, int Nx50, int Nx51, int Nx52, int Nx53, int Nx54, int Nx55, int Nx56, int Nx57, int Nx58, int Nx59, int Nx60, int Nx61, int Nx62, int Nx63, int Nx64, int Nx65, int Nx66, int Nx67, int Nx68, int Nx69, int Nx70, int Nx71, int Nx72, int Nx73, int Nx74, int Nx75, int Nx76, int Nx77, int Nx78, int Nx79, int Nx80, int Nx81, int Nx82, int Nx83, int Nx84, int Nx85, int Nx86, int Nx87, int Nx88, int Nx89, int Nx90, int Nx91, int Nx92, int Nx93, int Nx94, int Nx95, int Nx96, int Nx97, int Nx98, int Nx99, int t2, int t3, int t4, int t5, int t6, int t7, int t8, int t9, int t10, int t11, int t12, int t13, int t14, int t15, int t16, int t17, int t18, int t19, int t20, int t21, int t22, int t23, int t24, int t25, int t26, int t27, int t28, int t29, int t30, int t31, int t32, int t33, int t34, int t35, int t36, int t37, int t38, int t39, int t40, int t41, int t42, int t43, int t44, int t45, int t46, int t47, int t48, int t49, int t50, int t51, int t52, int t53, int t54, int t55, int t56, int t57, int t58, int t59, int t60, int t61, int t62, int t63, int t64, int t65, int t66, int t67, int t68, int t69, int t70, int t71, int t72, int t73, int t74, int t75, int t76, int t77, int t78, int t79, int t80, int t81, int t82, int t83, int t84, int t85, int t86, int t87, int t88, int t89, int t90, int t91, int t92, int t93, int t94, int t95, int t96, int t97, int t98, int t99){
 
   if(Asize == 0){return 0;}
-  double sumMe = 0; int NsNs = Ns*Ns;  int NsJ = 100*Ns*typeJ; int LNsNs;
+  float sumMe = 0; int NsNs = Ns*Ns;  int NsJ = 100*Ns*typeJ; int LNsNs;
   int LNs; int NsTsI = 100*Ns*Ntypes*posI;
   for(int k = 0; k < Ns; k++){
     sumMe = 0; for(int i = 0; i < Asize; i++){ sumMe += exp(aOa[k]*r2[i]);}
@@ -592,7 +617,7 @@ int getC(double* C, double* preCoef, double* x, double* y, double* z,double* r2,
 /**
  * Used to calculate the partial power spectrum.
  */
-void getP(double* soapMat, double* Cnnd, int Ns, int Ts, int Hs, int lMax){
+void getP(float* soapMat, float* Cnnd, int Ns, int Ts, int Hs, int lMax){
   int NsTs100 = Ns*Ts*100;
   int Ns100 = Ns*100;
   int NsNs = (Ns*(Ns+1))/2;
@@ -604,45 +629,45 @@ void getP(double* soapMat, double* Cnnd, int Ns, int Ts, int Hs, int lMax){
 
   for(int i = 0; i < Hs*NsNs*(lMax+1)*3; i++){soapMat[i] = 0.0;}
 
-//  double   cs0  = pow(PIHalf,2);
-//  double   cs1  = pow(2.7206990464,2);
-//  double cs2  = 2*pow(1.9238247452,2); double   cs3  = pow(1.7562036828,2); double cs4  = 2*pow(4.3018029072,2);
-//  double cs5  = 2*pow(2.1509014536,2); double   cs6  = pow(2.0779682205,2); double cs7  = 2*pow(1.7995732672,2);
-//  double cs8  = 2*pow(5.6907503408,2); double cs9  = 2*pow(2.3232390981,2); double   cs10 = pow(0.5890486225,2);
-//  double cs11 = 2*pow(2.6343055241,2); double cs12 = 2*pow(1.8627352998,2); double cs13 = 2*pow(6.9697172942,2);
-//  double cs14 = 2*pow(2.4641671809,2); double   cs15 = pow(0.6512177548,2); double cs16 = 2*pow(1.7834332706,2);
-//  double cs17 = 2*pow(9.4370418280,2); double cs18 = 2*pow(1.9263280966,2); double cs19 = 2*pow(8.1727179596,2);
-//  double cs20 = 2*pow(2.5844403427,2); double   cs21 = pow(0.3539741687,2); double cs22 = 2*pow(2.2940148014,2);
-//  double cs23 = 2*pow(1.8135779397,2); double cs24 = 2*pow(3.6271558793,2); double cs25 = 2*pow(1.9866750947,2);
-//  double cs26 = 2*pow(9.3183321738,2); double cs27 = 2*pow(2.6899707945,2); double   cs28 = pow(0.3802292509,2);
-//  double cs29 = 2*pow(0.3556718963,2); double cs30 = 2*pow(0.8712146618,2); double cs31 = 2*pow(0.6160417952,2);
-//  double cs32 = 2*pow(4.0863589798,2); double cs33 = 2*pow(2.0431794899,2); double cs34 = 2*pow(10.418212089,2);
-//  double cs35 = 2*pow(2.7843843014,2); double   cs36 = pow(0.0505981185,2); double cs37 = 2*pow(0.4293392727,2);
-//  double cs38 = 2*pow(1.7960550366,2); double cs39 = 2*pow(4.8637400313,2); double cs40 = 2*pow(1.8837184141,2);
-//  double cs41 = 2*pow(13.583686661,2); double cs42 = 2*pow(2.0960083567,2); double cs43 = 2*pow(11.480310577,2);
-//  double cs44 = 2*pow(2.8700776442,2); double   cs45 = pow(0.0534917379,2); double cs46 = 2*pow(0.2537335916,2);
-//  double cs47 = 2*pow(2.3802320735,2); double cs48 = 2*pow(1.8179322747,2); double cs49 = 2*pow(16.055543121,2);
-//  double cs50 = 2*pow(1.9190044477,2); double cs51 = 2*pow(4.9548481782,2); double cs52 = 2*pow(2.1455121971,2);
-//  double cs53 = 2*pow(12.510378411,2); double cs54 = 2*pow(2.9487244699,2);
-double cs0=2.4674011003; double cs1=7.4022033011; double cs2=7.4022033005;
-double cs3=3.0842513755; double cs4=37.0110165048; double cs5=9.2527541262;
-double cs6=4.3179519254; double cs7=6.4769278880; double cs8=64.7692788826;
-double cs9=10.7948798139; double cs10=0.3469782797; double cs11=13.8791311886;
-double cs12=6.9395655942; double cs13=97.1539183221; double cs14=12.1442397908;
-double cs15=0.4240845642; double cs16=6.3612684614; double cs17=178.1155169268;
-double cs18=7.4214798715; double cs19=133.5866376943; double cs20=13.3586637700;
-double cs21=0.1252977121; double cs22=10.5250078181; double cs23=6.5781298867;
-double cs24=26.3125195455; double cs25=7.8937558638; double cs26=173.6626290026;
-double cs27=14.4718857505; double cs28=0.1445742832; double cs29=0.2530049956;
-double cs30=1.5180299739; double cs31=0.7590149869; double cs32=33.3966594236;
-double cs33=8.3491648559; double cs34=217.0782862628; double cs35=15.5055918758;
-double cs36=0.0025601696; double cs37=0.3686644222; double cs38=6.4516273890;
-double cs39=47.3119341841; double cs40=7.0967901272; double cs41=369.0330866085;
-double cs42=8.7865020627; double cs43=263.5950618888; double cs44=16.4746913675;
-double cs45=0.0028613660; double cs46=0.1287614710; double cs47=11.3310094474;
-double cs48=6.6097555108; double cs49=515.5609298206; double cs50=7.3651561406;
-double cs51=49.1010409380; double cs52=9.2064451758; double cs53=313.0191359728;
-double cs54=17.3899519988;
+//  float   cs0  = pow(PIHalf,2);
+//  float   cs1  = pow(2.7206990464,2);
+//  float cs2  = 2*pow(1.9238247452,2); float   cs3  = pow(1.7562036828,2); float cs4  = 2*pow(4.3018029072,2);
+//  float cs5  = 2*pow(2.1509014536,2); float   cs6  = pow(2.0779682205,2); float cs7  = 2*pow(1.7995732672,2);
+//  float cs8  = 2*pow(5.6907503408,2); float cs9  = 2*pow(2.3232390981,2); float   cs10 = pow(0.5890486225,2);
+//  float cs11 = 2*pow(2.6343055241,2); float cs12 = 2*pow(1.8627352998,2); float cs13 = 2*pow(6.9697172942,2);
+//  float cs14 = 2*pow(2.4641671809,2); float   cs15 = pow(0.6512177548,2); float cs16 = 2*pow(1.7834332706,2);
+//  float cs17 = 2*pow(9.4370418280,2); float cs18 = 2*pow(1.9263280966,2); float cs19 = 2*pow(8.1727179596,2);
+//  float cs20 = 2*pow(2.5844403427,2); float   cs21 = pow(0.3539741687,2); float cs22 = 2*pow(2.2940148014,2);
+//  float cs23 = 2*pow(1.8135779397,2); float cs24 = 2*pow(3.6271558793,2); float cs25 = 2*pow(1.9866750947,2);
+//  float cs26 = 2*pow(9.3183321738,2); float cs27 = 2*pow(2.6899707945,2); float   cs28 = pow(0.3802292509,2);
+//  float cs29 = 2*pow(0.3556718963,2); float cs30 = 2*pow(0.8712146618,2); float cs31 = 2*pow(0.6160417952,2);
+//  float cs32 = 2*pow(4.0863589798,2); float cs33 = 2*pow(2.0431794899,2); float cs34 = 2*pow(10.418212089,2);
+//  float cs35 = 2*pow(2.7843843014,2); float   cs36 = pow(0.0505981185,2); float cs37 = 2*pow(0.4293392727,2);
+//  float cs38 = 2*pow(1.7960550366,2); float cs39 = 2*pow(4.8637400313,2); float cs40 = 2*pow(1.8837184141,2);
+//  float cs41 = 2*pow(13.583686661,2); float cs42 = 2*pow(2.0960083567,2); float cs43 = 2*pow(11.480310577,2);
+//  float cs44 = 2*pow(2.8700776442,2); float   cs45 = pow(0.0534917379,2); float cs46 = 2*pow(0.2537335916,2);
+//  float cs47 = 2*pow(2.3802320735,2); float cs48 = 2*pow(1.8179322747,2); float cs49 = 2*pow(16.055543121,2);
+//  float cs50 = 2*pow(1.9190044477,2); float cs51 = 2*pow(4.9548481782,2); float cs52 = 2*pow(2.1455121971,2);
+//  float cs53 = 2*pow(12.510378411,2); float cs54 = 2*pow(2.9487244699,2);
+float cs0=2.4674011003; float cs1=7.4022033011; float cs2=7.4022033005;
+float cs3=3.0842513755; float cs4=37.0110165048; float cs5=9.2527541262;
+float cs6=4.3179519254; float cs7=6.4769278880; float cs8=64.7692788826;
+float cs9=10.7948798139; float cs10=0.3469782797; float cs11=13.8791311886;
+float cs12=6.9395655942; float cs13=97.1539183221; float cs14=12.1442397908;
+float cs15=0.4240845642; float cs16=6.3612684614; float cs17=178.1155169268;
+float cs18=7.4214798715; float cs19=133.5866376943; float cs20=13.3586637700;
+float cs21=0.1252977121; float cs22=10.5250078181; float cs23=6.5781298867;
+float cs24=26.3125195455; float cs25=7.8937558638; float cs26=173.6626290026;
+float cs27=14.4718857505; float cs28=0.1445742832; float cs29=0.2530049956;
+float cs30=1.5180299739; float cs31=0.7590149869; float cs32=33.3966594236;
+float cs33=8.3491648559; float cs34=217.0782862628; float cs35=15.5055918758;
+float cs36=0.0025601696; float cs37=0.3686644222; float cs38=6.4516273890;
+float cs39=47.3119341841; float cs40=7.0967901272; float cs41=369.0330866085;
+float cs42=8.7865020627; float cs43=263.5950618888; float cs44=16.4746913675;
+float cs45=0.0028613660; float cs46=0.1287614710; float cs47=11.3310094474;
+float cs48=6.6097555108; float cs49=515.5609298206; float cs50=7.3651561406;
+float cs51=49.1010409380; float cs52=9.2064451758; float cs53=313.0191359728;
+float cs54=17.3899519988;
 
   // The power spectrum is multiplied by an l-dependent prefactor that comes
   // from the normalization of the Wigner D matrices. This prefactor is
@@ -652,7 +677,7 @@ double cs54=17.3899519988;
   // possible dot-product the full prefactor is recovered.
 
    // SUM M's UP!
-  double prel0 = PI*sqrt(8.0/(1.0));
+  float prel0 = PI*sqrt(8.0/(1.0));
   for(int i = 0; i < Hs; i++){
     shiftT = 0;
     for(int j = 0; j < Ts; j++){
@@ -669,7 +694,7 @@ double cs54=17.3899519988;
     }
    }
   } if(lMax > 0){
-    double prel1 = PI*sqrt(8.0/(2.0*1.0+1.0));
+    float prel1 = PI*sqrt(8.0/(2.0*1.0+1.0));
     for(int i = 0; i < Hs; i++){
     shiftT = 0;
       for(int j = 0; j < Ts; j++){
@@ -689,7 +714,7 @@ double cs54=17.3899519988;
       }
     }
   }  if(lMax > 1){
-    double prel2 = PI*sqrt(8.0/(2.0*2.0+1.0));
+    float prel2 = PI*sqrt(8.0/(2.0*2.0+1.0));
     for(int i = 0; i < Hs; i++){
     shiftT = 0;
       for(int j = 0; j < Ts; j++){
@@ -711,7 +736,7 @@ double cs54=17.3899519988;
       }
     }
   }  if(lMax > 2){
-    double prel3 = PI*sqrt(8.0/(2.0*3.0+1.0));
+    float prel3 = PI*sqrt(8.0/(2.0*3.0+1.0));
     for(int i = 0; i < Hs; i++){
     shiftT = 0;
       for(int j = 0; j < Ts; j++){
@@ -735,7 +760,7 @@ double cs54=17.3899519988;
       }
     }
   }  if(lMax > 3){
-    double prel4 = PI*sqrt(8.0/(2.0*4.0+1.0));
+    float prel4 = PI*sqrt(8.0/(2.0*4.0+1.0));
     for(int i = 0; i < Hs; i++){
     shiftT = 0;
       for(int j = 0; j < Ts; j++){
@@ -761,7 +786,7 @@ double cs54=17.3899519988;
       }
     }
   }  if(lMax > 4) {
-    double prel5 = PI*sqrt(8.0/(2.0*5.0+1.0));
+    float prel5 = PI*sqrt(8.0/(2.0*5.0+1.0));
     for(int i = 0; i < Hs; i++){
     shiftT = 0;
       for(int j = 0; j < Ts; j++){
@@ -789,7 +814,7 @@ double cs54=17.3899519988;
       }
     }
   }  if(lMax > 5){
-    double prel6 = PI*sqrt(8.0/(2.0*6.0+1.0));
+    float prel6 = PI*sqrt(8.0/(2.0*6.0+1.0));
     for(int i = 0; i < Hs; i++){
     shiftT = 0;
       for(int j = 0; j < Ts; j++){
@@ -819,7 +844,7 @@ double cs54=17.3899519988;
       }
     }
   }  if(lMax > 6){
-    double prel7 = PI*sqrt(8.0/(2.0*7.0+1.0));
+    float prel7 = PI*sqrt(8.0/(2.0*7.0+1.0));
     for(int i = 0; i < Hs; i++){
     shiftT = 0;
       for(int j = 0; j < Ts; j++){
@@ -851,7 +876,7 @@ double cs54=17.3899519988;
       }
     }
   }  if(lMax > 7){
-    double prel8 = PI*sqrt(8.0/(2.0*8.0+1.0));
+    float prel8 = PI*sqrt(8.0/(2.0*8.0+1.0));
     for(int i = 0; i < Hs; i++){
     shiftT = 0;
       for(int j = 0; j < Ts; j++){
@@ -885,7 +910,7 @@ double cs54=17.3899519988;
       }
     }
   }  if(lMax > 8){
-    double prel9 = PI*sqrt(8.0/(2.0*9.0+1.0));
+    float prel9 = PI*sqrt(8.0/(2.0*9.0+1.0));
     for(int i = 0; i < Hs; i++){
     shiftT = 0;
       for(int j = 0; j < Ts; j++){
@@ -924,37 +949,37 @@ double cs54=17.3899519988;
 }
 //===========================================================================================
 //===========================================================================================
-int soap(double* c, double* Apos,double* Hpos,double* alphas,double* betas, int* typeNs, double rCut, int totalAN,int Nt,int Ns, int lMax, int Hs, double sigma);
-int soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas, int* typeNs, double rCut, int totalAN,int Nt,int Ns, int lMax, int Hs, double sigma){
+int soap(float* c, float* Apos,float* Hpos,float* alphas,float* betas, int* typeNs, float rCut, int totalAN,int Nt,int Ns, int lMax, int Hs, float sigma);
+int soap(float* c, float* Apos,float* Hpos, float* alphas,float* betas, int* typeNs, float rCut, int totalAN,int Nt,int Ns, int lMax, int Hs, float sigma){
 
-  double oOsigma = 1/sigma;
-  double oOsigma3O2 = sqrt(oOsigma*oOsigma*oOsigma);
+  float oOsigma = 1/sigma;
+  float oOsigma3O2 = sqrt(oOsigma*oOsigma*oOsigma);
 
   //printf("xxx\n");
-  double NsNs = Ns*Ns;
-  double* x  = (double*) malloc(sizeof(double)*totalAN);
-  double* y  = (double*) malloc(sizeof(double)*totalAN);
-  double* z  = (double*) malloc(sizeof(double)*totalAN);
-  double* z2 = (double*) malloc(sizeof(double)*totalAN);
-  double* z4 = (double*) malloc(sizeof(double)*totalAN);
-  double* z6 = (double*) malloc(sizeof(double)*totalAN);
-  double* z8 = (double*) malloc(sizeof(double)*totalAN);
-  double* r2 = (double*) malloc(sizeof(double)*totalAN);
-  double* r4 = (double*) malloc(sizeof(double)*totalAN);
-  double* r6 = (double*) malloc(sizeof(double)*totalAN);
-  double* r8 = (double*) malloc(sizeof(double)*totalAN);
-  double* ReIm2 = (double*) malloc(2*sizeof(double)*totalAN);// 2 -> Re + ixIm
-  double* ReIm3 = (double*) malloc(2*sizeof(double)*totalAN);// 2 -> Re + ixIm
-  double* ReIm4 = (double*) malloc(2*sizeof(double)*totalAN);// 2 -> Re + ixIm
-  double* ReIm5 = (double*) malloc(2*sizeof(double)*totalAN);// 2 -> Re + ixIm
-  double* ReIm6 = (double*) malloc(2*sizeof(double)*totalAN);// 2 -> Re + ixIm
-  double* ReIm7 = (double*) malloc(2*sizeof(double)*totalAN);// 2 -> Re + ixIm
-  double* ReIm8 = (double*) malloc(2*sizeof(double)*totalAN);// 2 -> Re + ixIm
-  double* ReIm9 = (double*) malloc(2*sizeof(double)*totalAN);// 2 -> Re + ixIm
-  double* exes = (double*) malloc (sizeof(double)*totalAN);
-  double* preCoef = (double*) malloc(96*sizeof(double)*totalAN);
-  double* bOa = (double*) malloc((lMax+1)*NsNs*sizeof(double));
-  double* aOa = (double*) malloc((lMax+1)*Ns*sizeof(double));
+  float NsNs = Ns*Ns;
+  float* x  = (float*) malloc(sizeof(float)*totalAN);
+  float* y  = (float*) malloc(sizeof(float)*totalAN);
+  float* z  = (float*) malloc(sizeof(float)*totalAN);
+  float* z2 = (float*) malloc(sizeof(float)*totalAN);
+  float* z4 = (float*) malloc(sizeof(float)*totalAN);
+  float* z6 = (float*) malloc(sizeof(float)*totalAN);
+  float* z8 = (float*) malloc(sizeof(float)*totalAN);
+  float* r2 = (float*) malloc(sizeof(float)*totalAN);
+  float* r4 = (float*) malloc(sizeof(float)*totalAN);
+  float* r6 = (float*) malloc(sizeof(float)*totalAN);
+  float* r8 = (float*) malloc(sizeof(float)*totalAN);
+  float* ReIm2 = (float*) malloc(2*sizeof(float)*totalAN);// 2 -> Re + ixIm
+  float* ReIm3 = (float*) malloc(2*sizeof(float)*totalAN);// 2 -> Re + ixIm
+  float* ReIm4 = (float*) malloc(2*sizeof(float)*totalAN);// 2 -> Re + ixIm
+  float* ReIm5 = (float*) malloc(2*sizeof(float)*totalAN);// 2 -> Re + ixIm
+  float* ReIm6 = (float*) malloc(2*sizeof(float)*totalAN);// 2 -> Re + ixIm
+  float* ReIm7 = (float*) malloc(2*sizeof(float)*totalAN);// 2 -> Re + ixIm
+  float* ReIm8 = (float*) malloc(2*sizeof(float)*totalAN);// 2 -> Re + ixIm
+  float* ReIm9 = (float*) malloc(2*sizeof(float)*totalAN);// 2 -> Re + ixIm
+  float* exes = (float*) malloc (sizeof(float)*totalAN);
+  float* preCoef = (float*) malloc(96*sizeof(float)*totalAN);
+  float* bOa = (float*) malloc((lMax+1)*NsNs*sizeof(float));
+  float* aOa = (float*) malloc((lMax+1)*Ns*sizeof(float));
   int Asize;
   //printf("xyx\n");
 
@@ -1018,8 +1043,8 @@ int soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas, int
   int t98 = 98*totalAN;  int t99 = 99*totalAN;
   //printf("xzx\n");
 
-  double* cnnd = (double*) malloc(100*Nt*Ns*Hs*sizeof(double));
-  double rCutrCut = rCut*rCut;
+  float* cnnd = (float*) malloc(100*Nt*Ns*Hs*sizeof(float));
+  float rCutrCut = rCut*rCut;
   for(int i = 0; i < 100*Nt*Ns*Hs; i++){cnnd[i] = 0.0;}
 
   //MAKESURE TO NULLIFY THE CNs!!!!!!!
@@ -1057,7 +1082,7 @@ int soap(double* c, double* Apos,double* Hpos, double* alphas,double* betas, int
   free(bOa);
   free(aOa);
 
-//  double* soapMat = (double*) malloc(Hs*3*(Ns*(Ns+1))/2*(lMax+1)*sizeof(double));// 3 -> aa, ab, bb
+//  float* soapMat = (float*) malloc(Hs*3*(Ns*(Ns+1))/2*(lMax+1)*sizeof(float));// 3 -> aa, ab, bb
   getP(c, cnnd, Ns, Nt, Hs, lMax);
   free(cnnd);
   return 0;

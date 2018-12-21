@@ -3,11 +3,11 @@
 #include <math.h>
 #include <stdlib.h>
 
-#define tot (double*) malloc(sizeof(double)*totalAN);
-#define totrs (double*) malloc(sizeof(double)*totalAN*rsize);
-#define sd sizeof(double)
-double* factorListSet(){ // OK
- double* c = (double* ) malloc(sd*1326);
+#define tot (float*) malloc(sizeof(float)*totalAN);
+#define totrs (float*) malloc(sizeof(float)*totalAN*rsize);
+#define sd sizeof(float)
+float* factorListSet(){ // OK
+ float* c = (float* ) malloc(sd*1326);
  c[0]=0.2820947917738781;
  c[1]=0.4886025119029199;
  c[2]= 0.3454941494713355;
@@ -1336,8 +1336,8 @@ double* factorListSet(){ // OK
  c[1325]=0.0;
   return c;
 }
-double* getws(){ // OK
- double* c = (double* ) malloc(sd*100);
+float* getws(){ // OK
+ float* c = (float* ) malloc(sd*100);
 c[0] = 7.34634490505672E-4;
 c[1] = 0.001709392653518105;
 c[2] = 0.002683925371553482;
@@ -1442,28 +1442,28 @@ return c;
 }
 
 //=========================================================
-double factorY(int l, int m, double* c){ // OK
+float factorY(int l, int m, float* c){ // OK
   return  c[(l*(l+1))/2 + m];//l+1
 }
 //=========================================================
-double* getoOr(double* r, int rsize){
-  double* oOr = (double*) malloc(sd*rsize);
+float* getoOr(float* r, int rsize){
+  float* oOr = (float*) malloc(sd*rsize);
   for(int w = 0; w < rsize; w++){
     oOr[w] = 1/r[w];
   }
   return oOr;
 }
 //=========================================================
-double* getrw2(double* r, int rsize){
-  double* rw2 = (double*) malloc(sd*rsize);
+float* getrw2(float* r, int rsize){
+  float* rw2 = (float*) malloc(sd*rsize);
   for(int w = 0; w < rsize; w++){
     rw2[w] = r[w]*r[w];
   }
   return rw2;
 }
 //=========================================================
-void expMs(double* rExpDiff, double alpha, double* r, double* ri, int isize, int rsize){
-  double rDiff;
+void expMs(float* rExpDiff, float alpha, float* r, float* ri, int isize, int rsize){
+  float rDiff;
   for(int i = 0; i < isize; i++){
     for(int w = 0; w < rsize; w++){
       rDiff = r[w] - ri[i];
@@ -1473,8 +1473,8 @@ void expMs(double* rExpDiff, double alpha, double* r, double* ri, int isize, int
   }
 }
 //=========================================================
-void expPs(double* rExpSum, double alpha, double* r, double* ri, int isize, int rsize){
-  double rSum;
+void expPs(float* rExpSum, float alpha, float* r, float* ri, int isize, int rsize){
+  float rSum;
   for(int i = 0; i < isize; i++){
     for(int w = 0; w < rsize; w++){
     rSum = r[w] + ri[i];
@@ -1484,14 +1484,14 @@ void expPs(double* rExpSum, double alpha, double* r, double* ri, int isize, int 
   }
 }
 //=========================================================
-int getFilteredPos(double* x, double* y, double* z,double* xNow, double* yNow, double* zNow, double* ri, double* rw, double rCut, double* oOri, double* oO4arri, double* minExp, double* pluExp, double alpha, double* Apos, double* Hpos,int* typeNs, int rsize, int Ihpos, int Itype){//OK
+int getFilteredPos(float* x, float* y, float* z,float* xNow, float* yNow, float* zNow, float* ri, float* rw, float rCut, float* oOri, float* oO4arri, float* minExp, float* pluExp, float alpha, float* Apos, float* Hpos,int* typeNs, int rsize, int Ihpos, int Itype){//OK
 
   int shiftType = 0;
   int icount = 0;
-  double ri2;
-  double oOa = 1/alpha;
-  double Xi; double Yi; double Zi;
-  double* oO4ari = (double*) malloc(sd*typeNs[Itype]);
+  float ri2;
+  float oOa = 1/alpha;
+  float Xi; float Yi; float Zi;
+  float* oO4ari = (float*) malloc(sd*typeNs[Itype]);
 
   for(int i = 0; i < Itype ; i++){
     shiftType += typeNs[i];
@@ -1511,7 +1511,7 @@ int getFilteredPos(double* x, double* y, double* z,double* xNow, double* yNow, d
     }
   }
   //countMax = isize ----------------------------
-  double* oOr = getoOr(rw, rsize);
+  float* oOr = getoOr(rw, rsize);
   for(int i = 0; i < icount; i++){
     for(int w = 0; w < rsize; w++){
       oO4arri[rsize*i + w] = oO4ari[i]*oOr[w];
@@ -1526,9 +1526,9 @@ int getFilteredPos(double* x, double* y, double* z,double* xNow, double* yNow, d
   return icount;
 }
 //=========================================================
-double* getFlir(double* oO4arri,double* ri, double* minExp, double* pluExp, int icount, int rsize, int lMax){//OK
-  double* Flir = (double*) malloc(sd*(lMax+1)*icount*rsize);
-//  double* rw =   getrw(100, 6);
+float* getFlir(float* oO4arri,float* ri, float* minExp, float* pluExp, int icount, int rsize, int lMax){//OK
+  float* Flir = (float*) malloc(sd*(lMax+1)*icount*rsize);
+//  float* rw =   getrw(100, 6);
 //  int count = 0;
   //l=0
   for(int i = 0; i < icount; i++){
@@ -1565,9 +1565,9 @@ double* getFlir(double* oO4arri,double* ri, double* minExp, double* pluExp, int 
 
 }
 //=========================================================
-double legendre_poly(int l, int m, double x){ // OK
+float legendre_poly(int l, int m, float x){ // OK
 
-  double fact,pll,pmm,pmmp1,somx2;
+  float fact,pll,pmm,pmmp1,somx2;
   int ll;
 
   if (m < 0 || m > l || fabs(x) > 1.0){ printf("ERROR: Bad arguments in routine legendre_poly"); exit(1);}
@@ -1591,7 +1591,7 @@ double legendre_poly(int l, int m, double x){ // OK
     if(l==(m+1)) return pmmp1;
     else{
       for(ll=m+2; ll<=l; ll++){
-        pll=(x*(2*ll-1)*pmmp1 - (ll+m-1)*pmm)/ (double) (ll-m);
+        pll=(x*(2*ll-1)*pmmp1 - (ll+m-1)*pmm)/ (float) (ll-m);
         pmm = pmmp1;
         pmmp1= pll;
 
@@ -1602,12 +1602,12 @@ double legendre_poly(int l, int m, double x){ // OK
 
 }
 //=========================================================
-double* getYlmi(double* x, double* y, double* z, double* oOri, double* cf, int icount, int lMax){ // OK
-  double* Ylmi = (double*) malloc(2*sd*(lMax+1)*(lMax+1)*icount);
-  double* legPol = (double*) malloc(sd*(lMax+1)*(lMax+1)*icount);
-  double* ChiCos= (double*) malloc(sd*(lMax+1)*icount);
-  double* ChiSin= (double*) malloc(sd*(lMax+1)*icount);
-  double myAtan2;
+float* getYlmi(float* x, float* y, float* z, float* oOri, float* cf, int icount, int lMax){ // OK
+  float* Ylmi = (float*) malloc(2*sd*(lMax+1)*(lMax+1)*icount);
+  float* legPol = (float*) malloc(sd*(lMax+1)*(lMax+1)*icount);
+  float* ChiCos= (float*) malloc(sd*(lMax+1)*icount);
+  float* ChiSin= (float*) malloc(sd*(lMax+1)*icount);
+  float myAtan2;
 
   for(int i = 0; i < icount; i++){
     for(int l = 0; l < lMax + 1; l++){
@@ -1642,16 +1642,16 @@ double* getYlmi(double* x, double* y, double* z, double* oOri, double* cf, int i
   return Ylmi;
 }
 //=========================================================
-double* getIntegrand(double* Flir, double* Ylmi,int rsize, int icount, int lMax){
+float* getIntegrand(float* Flir, float* Ylmi,int rsize, int icount, int lMax){
 
-  double* summed = (double*) malloc(2*sd*(lMax+1)*rsize*(lMax+1));
-  double realY;
-  double imagY;
+  float* summed = (float*) malloc(2*sd*(lMax+1)*rsize*(lMax+1));
+  float realY;
+  float imagY;
 
   for(int i = 0; i < 2*(lMax+1)*rsize*(lMax+1); i++){summed[i] = 0.0;}
 
   for(int l = 0; l < lMax+1; l++){
-    double summe = 0;
+    float summe = 0;
     for(int m = 0; m < l+1; m++){//l+1
      for(int i = 0; i < icount; i++){
       realY = Ylmi[2*(lMax+1)*icount*l + 2*icount*m + 2*i    ];
@@ -1667,10 +1667,10 @@ double* getIntegrand(double* Flir, double* Ylmi,int rsize, int icount, int lMax)
   return summed;
 }
 //=========================================================
-void getC(double* Cs, double* ws, double* rw2, double * gns, double* summed, double rCut,int lMax, int rsize, int gnsize){
+void getC(float* Cs, float* ws, float* rw2, float * gns, float* summed, float rCut,int lMax, int rsize, int gnsize){
 
   for(int i = 0; i < 2*(lMax+1)*(lMax+1)*gnsize; i++){ Cs[i] = 0.0;}
-  double  theSummedValue = 0;
+  float  theSummedValue = 0;
 
   for(int n = 0; n < gnsize; n++){
 
@@ -1687,7 +1687,7 @@ void getC(double* Cs, double* ws, double* rw2, double * gns, double* summed, dou
     }
 }
 //=========================================================
-void accumC(double* Cts, double* Cs, int lMax, int gnsize, int typeI){
+void accumC(float* Cts, float* Cs, int lMax, int gnsize, int typeI){
 
     for(int n = 0; n < gnsize; n++){
       for(int l = 0; l < lMax+1; l++){
@@ -1701,7 +1701,7 @@ void accumC(double* Cts, double* Cs, int lMax, int gnsize, int typeI){
     }
 }
 //=========================================================
-void getPs(double* Ps, double* Cts,  int Nt, int lMax, int gnsize){
+void getPs(float* Ps, float* Cts,  int Nt, int lMax, int gnsize){
   int NN = ((gnsize+1)*gnsize)/2;  int TT = ((Nt+1)*Nt)/2;
   int nshift = 0;
   for(int i = 0; i <TT*(lMax+1)*NN; i++){Ps[i] = 0.0;}
@@ -1739,7 +1739,7 @@ void getPs(double* Ps, double* Cts,  int Nt, int lMax, int gnsize){
 
 }
 //=========================================================
-void accumP(double* Phs, double* Ps, int Nt, int lMax, int gnsize, double rCut2, int Ihpos){
+void accumP(float* Phs, float* Ps, int Nt, int lMax, int gnsize, float rCut2, int Ihpos){
   int tshift=0;
   int NN = ((gnsize+1)*gnsize)/2;
   int TT = ((Nt+1)*Nt)/2;
@@ -1761,36 +1761,36 @@ void accumP(double* Phs, double* Ps, int Nt, int lMax, int gnsize, double rCut2,
 //=========================================================
 //=========================================================
 //=========================================================
-double* soap(double* c, double* Apos,double* Hpos, int* typeNs, double rCut, int totalAN,int Nt,int gnsize, int lMax, int Hs, double alpha, double* rw, double* gss);
-double* soap(double* c, double* Apos,double* Hpos, int* typeNs, double rCut, int totalAN,int Nt,int gnsize, int lMax, int Hs, double alpha, double* rw, double* gss){
+float* soap(float* c, float* Apos,float* Hpos, int* typeNs, float rCut, int totalAN,int Nt,int gnsize, int lMax, int Hs, float alpha, float* rw, float* gss);
+float* soap(float* c, float* Apos,float* Hpos, int* typeNs, float rCut, int totalAN,int Nt,int gnsize, int lMax, int Hs, float alpha, float* rw, float* gss){
 // everything same except last three
 
-  double* cf = factorListSet();
+  float* cf = factorListSet();
 
   int rsize = 100; // constant
-  double rCut2 = rCut*rCut;
+  float rCut2 = rCut*rCut;
 
 
 
-  double* x    = tot  double* y    = tot  double* z    = tot double* xNow    = tot double* yNow    = tot double* zNow    = tot
-  double* ris  = tot double* oOri = tot
+  float* x    = tot  float* y    = tot  float* z    = tot float* xNow    = tot float* yNow    = tot float* zNow    = tot
+  float* ris  = tot float* oOri = tot
 
-  double* ws  = getws();
-  double* oOr = getoOr(rw, rsize);  double* rw2 = getrw2(rw, rsize);
+  float* ws  = getws();
+  float* oOr = getoOr(rw, rsize);  float* rw2 = getrw2(rw, rsize);
 
-  double* oO4arri = totrs  double* minExp = totrs double* pluExp = totrs
+  float* oO4arri = totrs  float* minExp = totrs float* pluExp = totrs
 
   int Asize = 0;
-  double* Cs = (double*) malloc(2*sd*(lMax+1)*(lMax+1)*gnsize);
-  double* Cts = (double*) malloc(2*sd*(lMax+1)*(lMax+1)*gnsize*Nt);
-  double* Ps = (double*) malloc((Nt*(Nt+1))/2*sd*(lMax+1)*((gnsize+1)*gnsize)/2);
-//  double* Phs = (double*) malloc(Hs*(Nt*(Nt + 1))/2*sd*(lMax+1)*((gnsize+1)*gnsize)/2);
+  float* Cs = (float*) malloc(2*sd*(lMax+1)*(lMax+1)*gnsize);
+  float* Cts = (float*) malloc(2*sd*(lMax+1)*(lMax+1)*gnsize*Nt);
+  float* Ps = (float*) malloc((Nt*(Nt+1))/2*sd*(lMax+1)*((gnsize+1)*gnsize)/2);
+//  float* Phs = (float*) malloc(Hs*(Nt*(Nt + 1))/2*sd*(lMax+1)*((gnsize+1)*gnsize)/2);
   int icount;
 
   for(int Ihpos = 0; Ihpos < Hs; Ihpos++){
     for(int Itype = 0; Itype < Nt; Itype++){
 
-        double* Ylmi; double* Flir; double* summed;
+        float* Ylmi; float* Flir; float* summed;
 
         icount = getFilteredPos(x, y, z,xNow,yNow,zNow,ris,rw,rCut, oOri, oO4arri, minExp, pluExp, alpha, Apos, Hpos,typeNs, rsize, Ihpos, Itype);
 

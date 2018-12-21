@@ -94,20 +94,20 @@ def get_soap_locals(obj, Hpos, alp, bet, rCut=5.0, nMax=5, Lmax=5, crossOver=Tru
     Hsize = c_int(py_Hsize)
     Ntypes = c_int(py_Ntypes)
     totalAN = c_int(totalAN)
-    rCutHard = c_double(rCutHard)
+    rCutHard = c_float(rCutHard)
     Nsize = c_int(nMax)
-    c_eta = c_double(eta)
+    c_eta = c_float(eta)
     #convert int array to c_int array
     typeNs = (c_int * len(typeNs))(*typeNs)
-    # convert to c_double arrays
+    # convert to c_float arrays
     # alphas
-    alphas = (c_double * len(alp))(*alp.tolist())
+    alphas = (c_float * len(alp))(*alp.tolist())
     # betas
-    betas = (c_double * len(bet))(*bet.tolist())
+    betas = (c_float * len(bet))(*bet.tolist())
     #Apos
-    axyz = (c_double * len(Apos))(*Apos.tolist())
+    axyz = (c_float * len(Apos))(*Apos.tolist())
     #Hpos
-    hxyz = (c_double * len(Hpos))(*Hpos.tolist())
+    hxyz = (c_float * len(Hpos))(*Hpos.tolist())
     ### START SOAP###
     #path_to_so = os.path.dirname(os.path.abspath(__file__))
     _PATH_TO_SOAPLITE_SO = os.path.dirname(os.path.abspath(__file__))
@@ -116,16 +116,16 @@ def get_soap_locals(obj, Hpos, alp, bet, rCut=5.0, nMax=5, Lmax=5, crossOver=Tru
     if py_Ntypes == 1 or (not crossOver):
         substring = "lib/libsoapPySig."
         libsoap = CDLL(next((s for s in _SOAPLITE_SOFILES if substring in s), None))
-        libsoap.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),POINTER (c_double), POINTER (c_double), POINTER (c_int),c_double,c_int,c_int,c_int,c_int,c_int,c_double]
-        libsoap.soap.restype = POINTER (c_double)
-        c = (c_double*(int((nMax*(nMax+1))/2)*(Lmax+1)*py_Ntypes*py_Hsize))()
+        libsoap.soap.argtypes = [POINTER (c_float),POINTER (c_float), POINTER (c_float),POINTER (c_float), POINTER (c_float), POINTER (c_int),c_float,c_int,c_int,c_int,c_int,c_int,c_float]
+        libsoap.soap.restype = POINTER (c_float)
+        c = (c_float*(int((nMax*(nMax+1))/2)*(Lmax+1)*py_Ntypes*py_Hsize))()
         libsoap.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize,c_eta)
     else:
         substring = "lib/libsoapGTO."
         libsoapGTO = CDLL(next((s for s in _SOAPLITE_SOFILES if substring in s), None))
-        libsoapGTO.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),POINTER (c_double), POINTER (c_double), POINTER (c_int),c_double,c_int,c_int,c_int,c_int,c_int,c_double]
-        libsoapGTO.soap.restype = POINTER (c_double)
-        c = (c_double*(int((nMax*(nMax+1))/2)*(Lmax+1)*int((py_Ntypes*(py_Ntypes +1))/2)*py_Hsize))()
+        libsoapGTO.soap.argtypes = [POINTER (c_float),POINTER (c_float), POINTER (c_float),POINTER (c_float), POINTER (c_float), POINTER (c_int),c_float,c_int,c_int,c_int,c_int,c_int,c_float]
+        libsoapGTO.soap.restype = POINTER (c_float)
+        c = (c_float*(int((nMax*(nMax+1))/2)*(Lmax+1)*int((py_Ntypes*(py_Ntypes +1))/2)*py_Hsize))()
         libsoapGTO.soap( c, axyz, hxyz, alphas, betas, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize,c_eta)
 
     #   return c;
@@ -200,26 +200,26 @@ def get_soap_locals_gauss(obj, Hpos, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[],
     Hsize = c_int(py_Hsize)
     Ntypes = c_int(py_Ntypes)
     totalAN = c_int(totalAN)
-    rCutHard = c_double(rCutHard)
+    rCutHard = c_float(rCutHard)
     Nsize = c_int(nMax)
 
-    # convert double to c_double
-    c_eta = c_double(eta)
+    # convert float to c_float
+    c_eta = c_float(eta)
 
     #convert int array to c_int array
     typeNs = (c_int * len(typeNs))(*typeNs)
 
-    # convert to c_double arrays
+    # convert to c_float arrays
     # alphas
-#    alphas = (c_double * len(alp))(*alp.tolist())
+#    alphas = (c_float * len(alp))(*alp.tolist())
     # betas
-#    betas = (c_double * len(bet))(*bet.tolist())
+#    betas = (c_float * len(bet))(*bet.tolist())
     #Apos
-    axyz = (c_double * len(Apos))(*Apos.tolist())
+    axyz = (c_float * len(Apos))(*Apos.tolist())
     #Hpos
-    hxyz = (c_double * len(Hpos))(*Hpos.tolist())
-    rx = (c_double * 100)(*rx.tolist())
-    gss = (c_double * (100 * nMax))(*gss.tolist())
+    hxyz = (c_float * len(Hpos))(*Hpos.tolist())
+    rx = (c_float * 100)(*rx.tolist())
+    gss = (c_float * (100 * nMax))(*gss.tolist())
 
     ### START SOAP###
     #path_to_so = os.path.dirname(os.path.abspath(__file__))
@@ -229,18 +229,18 @@ def get_soap_locals_gauss(obj, Hpos, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[],
     # print(len(_SOAPLITE_SOFILES))
     substring = "lib/libsoapGeneral."
     libsoap = CDLL(next((s for s in _SOAPLITE_SOFILES if substring in s), None))
-    libsoap.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),
-            POINTER (c_int), c_double,
+    libsoap.soap.argtypes = [POINTER (c_float),POINTER (c_float), POINTER (c_float),
+            POINTER (c_int), c_float,
             c_int,c_int,c_int,c_int,c_int,
-            c_double, POINTER (c_double),POINTER (c_double)]
-    libsoap.soap.restype = POINTER (c_double)
+            c_float, POINTER (c_float),POINTER (c_float)]
+    libsoap.soap.restype = POINTER (c_float)
 
-    c = (c_double*(int((nMax*(nMax+1))/2)*(Lmax+1)*int((py_Ntypes*(py_Ntypes+1))/2)*py_Hsize))()
+    c = (c_float*(int((nMax*(nMax+1))/2)*(Lmax+1)*int((py_Ntypes*(py_Ntypes+1))/2)*py_Hsize))()
     libsoap.soap(c, axyz, hxyz, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize,c_eta,rx, gss)
 
     #New: c_eta = Double = 1.0
-    #New: rx = double list, size 100
-    #New: gss = double list, size 100*nMax
+    #New: rx = float list, size 100
+    #New: gss = float list, size 100*nMax
 
     #   return c;
 #    if(crossOver):
@@ -305,26 +305,26 @@ def get_soap_locals_poly(obj, Hpos, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[], 
     Hsize = c_int(py_Hsize)
     Ntypes = c_int(py_Ntypes)
     totalAN = c_int(totalAN)
-    rCutHard = c_double(rCutHard)
+    rCutHard = c_float(rCutHard)
     Nsize = c_int(nMax)
 
-    # convert double to c_double
-    c_eta = c_double(eta)
+    # convert float to c_float
+    c_eta = c_float(eta)
 
     #convert int array to c_int array
     typeNs = (c_int * len(typeNs))(*typeNs)
 
-    # convert to c_double arrays
+    # convert to c_float arrays
     # alphas
-#    alphas = (c_double * len(alp))(*alp.tolist())
+#    alphas = (c_float * len(alp))(*alp.tolist())
     # betas
-#    betas = (c_double * len(bet))(*bet.tolist())
+#    betas = (c_float * len(bet))(*bet.tolist())
     #Apos
-    axyz = (c_double * len(Apos))(*Apos.tolist())
+    axyz = (c_float * len(Apos))(*Apos.tolist())
     #Hpos
-    hxyz = (c_double * len(Hpos))(*Hpos.tolist())
-    rx = (c_double * 100)(*rx.tolist())
-    gss = (c_double * (100 * nMax))(*gss.tolist())
+    hxyz = (c_float * len(Hpos))(*Hpos.tolist())
+    rx = (c_float * 100)(*rx.tolist())
+    gss = (c_float * (100 * nMax))(*gss.tolist())
 
     ### START SOAP###
     #path_to_so = os.path.dirname(os.path.abspath(__file__))
@@ -334,18 +334,18 @@ def get_soap_locals_poly(obj, Hpos, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[], 
     # print(len(_SOAPLITE_SOFILES))
     substring = "lib/libsoapGeneral."
     libsoap = CDLL(next((s for s in _SOAPLITE_SOFILES if substring in s), None))
-    libsoap.soap.argtypes = [POINTER (c_double),POINTER (c_double), POINTER (c_double),
-            POINTER (c_int), c_double,
+    libsoap.soap.argtypes = [POINTER (c_float),POINTER (c_float), POINTER (c_float),
+            POINTER (c_int), c_float,
             c_int,c_int,c_int,c_int,c_int,
-            c_double, POINTER (c_double),POINTER (c_double)]
-    libsoap.soap.restype = POINTER (c_double)
+            c_float, POINTER (c_float),POINTER (c_float)]
+    libsoap.soap.restype = POINTER (c_float)
 
-    c = (c_double*(int((nMax*(nMax+1))/2)*(Lmax+1)*int((py_Ntypes*(py_Ntypes+1))/2)*py_Hsize))()
+    c = (c_float*(int((nMax*(nMax+1))/2)*(Lmax+1)*int((py_Ntypes*(py_Ntypes+1))/2)*py_Hsize))()
     libsoap.soap(c, axyz, hxyz, typeNs, rCutHard, totalAN, Ntypes, Nsize, lMax, Hsize,c_eta,rx, gss)
 
     #New: c_eta = Double = 1.0
-    #New: rx = double list, size 100
-    #New: gss = double list, size 100*nMax
+    #New: rx = float list, size 100
+    #New: gss = float list, size 100*nMax
 
     #   return c;
 #    if(crossOver):
