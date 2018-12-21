@@ -383,11 +383,11 @@ int getC(float* C, float* preCoef, float* x, float* y, float* z,float* r2, float
   float sumMe = 0; int NsNs = Ns*Ns;  int NsJ = 100*Ns*typeJ; int LNsNs;
   int LNs; int NsTsI = 100*Ns*Ntypes*posI;
   for(int k = 0; k < Ns; k++){
-    sumMe = 0; for(int i = 0; i < Asize; i++){ sumMe += exp(aOa[k]*r2[i]);}
+    sumMe = 0; for(int i = 0; i < Asize; i++){ sumMe += myExp(aOa[k]*r2[i]);}
     for(int n = 0; n < Ns; n++){ C[NsTsI + NsJ + n] += bOa[n*Ns + k]*sumMe; }
   } if(lMax > 0) { LNsNs=NsNs; LNs=Ns;
     for(int k = 0; k < Ns; k++){
-      for(int i = 0; i < Asize; i++){exes[i] = exp(aOa[LNs + k]*r2[i]);}//exponents
+      for(int i = 0; i < Asize; i++){exes[i] = myExp(aOa[LNs + k]*r2[i]);}//myExp
       sumMe = 0;/*c10*/ for(int i = 0; i < Asize; i++){sumMe += exes[i]*z[i];}
       for(int n = 0; n < Ns; n++){C[NsTsI + NsJ + Ns + n] += bOa[LNsNs + n*Ns + k]*sumMe;}
       sumMe = 0;/*c11Re*/ for(int i = 0; i < Asize; i++){sumMe += exes[i]*x[i];}
@@ -396,7 +396,7 @@ int getC(float* C, float* preCoef, float* x, float* y, float* z,float* r2, float
       for(int n = 0; n < Ns; n++){C[NsTsI + NsJ + Nx3 + n] += bOa[LNsNs + n*Ns + k]*sumMe;}
     }} if(lMax > 1) { LNsNs=2*NsNs; LNs=2*Ns;
     for(int k = 0; k < Ns; k++){
-      for(int i = 0; i < Asize; i++){exes[i] = exp(aOa[LNs + k]*r2[i]);}//exponents
+      for(int i = 0; i < Asize; i++){exes[i] = myExp(aOa[LNs + k]*r2[i]);}//myExp
       sumMe = 0;/*c20*/ for(int i = 0; i < Asize; i++){sumMe += exes[i]*preCoef[i];}
       for(int n = 0; n < Ns; n++){C[NsTsI + NsJ + Nx4 + n] += bOa[LNsNs + n*Ns + k]*sumMe; }
       sumMe = 0;/*c21Re*/ for(int i = 0; i < Asize; i++){sumMe += exes[i]*preCoef[totalAN + i];}
@@ -409,7 +409,7 @@ int getC(float* C, float* preCoef, float* x, float* y, float* z,float* r2, float
       for(int n = 0; n < Ns; n++){C[NsTsI + NsJ + Nx8 + n] += bOa[LNsNs + n*Ns + k]*sumMe; }
     }} if(lMax > 2) { LNsNs=3*NsNs; LNs=3*Ns;
     for(int k = 0; k < Ns; k++){
-      for(int i = 0; i < Asize; i++){exes[i] = exp(aOa[LNs + k]*r2[i]);}//exponents
+      for(int i = 0; i < Asize; i++){exes[i] = myExp(aOa[LNs + k]*r2[i]);}//myExp
       sumMe = 0;/*c30*/ for(int i = 0; i < Asize; i++){sumMe += exes[i]*(preCoef[t5+i]);}
       for(int n = 0; n < Ns; n++){C[NsTsI + NsJ + Nx9 + n] += bOa[LNsNs + n*Ns + k]*sumMe; }
       sumMe = 0;/*c31Re*/ for(int i = 0; i < Asize; i++){sumMe += exes[i]*(preCoef[t6+i]);}
@@ -426,7 +426,7 @@ int getC(float* C, float* preCoef, float* x, float* y, float* z,float* r2, float
       for(int n = 0; n < Ns; n++){C[NsTsI + NsJ + Nx15 + n] += bOa[LNsNs + n*Ns + k]*sumMe; }
     }} if(lMax > 3) { LNsNs=4*NsNs; LNs=4*Ns;
     for(int k = 0; k < Ns; k++){
-      for(int i = 0; i < Asize; i++){exes[i] = exp(aOa[LNs + k]*r2[i]);}//exponents
+      for(int i = 0; i < Asize; i++){exes[i] = myExp(aOa[LNs + k]*r2[i]);}//myExp
       sumMe = 0;/*c40*/ for(int i = 0; i < Asize; i++){sumMe += exes[i]*(preCoef[t12+i]);}
       for(int n = 0; n < Ns; n++){C[NsTsI + NsJ + Nx16 + n] += bOa[LNsNs + n*Ns + k]*sumMe; }
       sumMe = 0;/*c41Re*/ for(int i = 0; i < Asize; i++){sumMe += exes[i]*(preCoef[t13+i]);}
@@ -448,7 +448,7 @@ int getC(float* C, float* preCoef, float* x, float* y, float* z,float* r2, float
 
     }} if(lMax > 4) { LNsNs=5*NsNs; LNs=5*Ns;
     for(int k = 0; k < Ns; k++){
-      for(int i = 0; i < Asize; i++){exes[i] = exp(aOa[LNs + k]*r2[i]);}//exponents
+      for(int i = 0; i < Asize; i++){exes[i] = myExp(aOa[LNs + k]*r2[i]);}//myExp
       sumMe = 0;/*c50*/ for(int i = 0; i < Asize; i++){sumMe += exes[i]*(preCoef[t21+i]);}
       for(int n = 0; n < Ns; n++){C[NsTsI + NsJ + Nx25 + n] += bOa[LNsNs + n*Ns + k]*sumMe;}
       sumMe = 0;/*c51Re*/ for(int i = 0; i < Asize; i++){sumMe += exes[i]*(preCoef[t22+i]);}
@@ -473,7 +473,7 @@ int getC(float* C, float* preCoef, float* x, float* y, float* z,float* r2, float
       for(int n = 0; n < Ns; n++){C[NsTsI + NsJ + Nx35 + n] += bOa[LNsNs + n*Ns + k]*sumMe;}
     }} if(lMax > 5) { LNsNs=6*NsNs; LNs=6*Ns;
     for(int k = 0; k < Ns; k++){
-      for(int i = 0; i < Asize; i++){exes[i] = exp(aOa[LNs + k]*r2[i]);}//exponents
+      for(int i = 0; i < Asize; i++){exes[i] = myExp(aOa[LNs + k]*r2[i]);}//myExp
       sumMe = 0;/*c60*/ for(int i = 0; i < Asize; i++){sumMe += exes[i]*(preCoef[t32+i]);}
       for(int n = 0; n < Ns; n++){C[NsTsI + NsJ + Nx36 + n] += bOa[LNsNs + n*Ns + k]*sumMe;}
       sumMe = 0;/*c61Re*/ for(int i = 0; i < Asize; i++){sumMe += exes[i]*(preCoef[t33+i]);}
@@ -502,7 +502,7 @@ int getC(float* C, float* preCoef, float* x, float* y, float* z,float* r2, float
       for(int n = 0; n < Ns; n++){C[NsTsI + NsJ + Nx48 + n] += bOa[LNsNs + n*Ns + k]*sumMe;}
     }} if(lMax > 6) { LNsNs=7*NsNs; LNs=7*Ns;
     for(int k = 0; k < Ns; k++){
-      for(int i = 0; i < Asize; i++){exes[i] = exp(aOa[LNs + k]*r2[i]);}//exponents
+      for(int i = 0; i < Asize; i++){exes[i] = myExp(aOa[LNs + k]*r2[i]);}//myExp
       sumMe = 0;/*c70*/ for(int i = 0; i < Asize; i++){sumMe += exes[i]*(preCoef[t45+i]);}
       for(int n = 0; n < Ns; n++){C[NsTsI + NsJ + Nx49 + n] += bOa[LNsNs + n*Ns + k]*sumMe;}
       sumMe = 0;/*c71Re*/ for(int i = 0; i < Asize; i++){sumMe += exes[i]*(preCoef[t46+i]);}
@@ -535,7 +535,7 @@ int getC(float* C, float* preCoef, float* x, float* y, float* z,float* r2, float
       for(int n = 0; n < Ns; n++){C[NsTsI + NsJ + Nx63 + n] += bOa[LNsNs + n*Ns + k]*sumMe;}
     }} if(lMax > 7) { LNsNs=8*NsNs; LNs=8*Ns;
     for(int k = 0; k < Ns; k++){
-      for(int i = 0; i < Asize; i++){exes[i] = exp(aOa[LNs + k]*r2[i]);}//exponents
+      for(int i = 0; i < Asize; i++){exes[i] = myExp(aOa[LNs + k]*r2[i]);}//myExp
       sumMe = 0;/*c80*/ for(int i = 0; i < Asize; i++){sumMe += exes[i]*(preCoef[t60+i]);}
       for(int n = 0; n < Ns; n++){C[NsTsI + NsJ + Nx64 + n] += bOa[LNsNs + n*Ns + k]*sumMe;}
       sumMe = 0;/*c81Re*/ for(int i = 0; i < Asize; i++){sumMe += exes[i]*(preCoef[t61+i]);}
@@ -572,7 +572,7 @@ int getC(float* C, float* preCoef, float* x, float* y, float* z,float* r2, float
       for(int n = 0; n < Ns; n++){C[NsTsI + NsJ + Nx80 + n] += bOa[LNsNs + n*Ns + k]*sumMe;}
     }} if(lMax > 8) { LNsNs=9*NsNs; LNs=9*Ns;
     for(int k = 0; k < Ns; k++){
-      for(int i = 0; i < Asize; i++){exes[i] = exp(aOa[LNs + k]*r2[i]);}//exponents
+      for(int i = 0; i < Asize; i++){exes[i] = myExp(aOa[LNs + k]*r2[i]);}//myExp
       sumMe = 0;/*c90*/ for(int i = 0; i < Asize; i++){sumMe += exes[i]*(preCoef[t77+i]);}
       for(int n = 0; n < Ns; n++){C[NsTsI + NsJ + Nx81 + n] += bOa[LNsNs + n*Ns + k]*sumMe;}
       sumMe = 0;/*c91Re*/ for(int i = 0; i < Asize; i++){sumMe += exes[i]*(preCoef[t78+i]);}
