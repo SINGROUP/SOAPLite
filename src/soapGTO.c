@@ -13,8 +13,9 @@ float myExp(float x,float* xxx){
     return 0;}
   else if (x > 0){
     float myFloat = 100*x;
-    float myFloor = xxx[(int) myFloat];
-    return 100*(xxx[(int) ceil(myFloat)] - myFloor)*x;
+    int myInt = (int) myFloat;
+    float myFloor = xxx[myInt];
+    return 100*(xxx[myInt+1] - myFloor)*(x - 0.01 * (float) myInt);
   }
   else{
     return exp(x);
