@@ -15,7 +15,7 @@ float myExp(float x,float* xxx){
     float myFloat = 100*x;
     int myInt = (int) myFloat;
     float myFloor = xxx[myInt];
-    return 100*(xxx[myInt+1] - myFloor)*(x - 0.01 * (float) myInt);
+    return 100*(xxx[myInt + 1] - myFloor)*(x - 0.01 * (float) myInt);
   }
   else{
     return exp(x);
@@ -52,27 +52,40 @@ void getMulDouble(float* c1, float* c3, int Asize){
   }
 }
 //================================================================
-int getFilteredPos(float* x, float* y, float* z, float* Apos, float* Hpos, int* typeNs, float rCutSqr, int Ihpos, int Itype){
+//int getFilteredPos(float* x, float* y, float* z, float* Apos, float* Hpos, int* typeNs, float rCutSqr, int Ihpos, int Itype){
+//
+//  int shiftType = 0; int count = 0;
+//  float X = 0; float Y = 0; float Z = 0;
+//
+//    for(int i = 0; i < Itype ; i++){
+//      shiftType += typeNs[i];
+//    }
+//
+//    for(int i = 0; i < typeNs[Itype]; i++){
+//      X = Apos[3*shiftType + 3*i    ] - Hpos[3*Ihpos    ];
+//      Y = Apos[3*shiftType + 3*i + 1] - Hpos[3*Ihpos + 1];
+//      Z = Apos[3*shiftType + 3*i + 2] - Hpos[3*Ihpos + 2];
+//      if( X*X + Y*Y + Z*Z < rCutSqr ){
+//        x[count] = X;
+//        y[count] = Y;
+//        z[count] = Z;
+//        count++;
+//      }
+//    }
+//  return count;
+//}
+//================================================================
+void getNeig(int* indx, float* x, float* y, float* z, float* Apos, float* Hpos, int typeN*, int hN,int Nt, int* nA, int tI, int hI){
 
-  int shiftType = 0; int count = 0;
-  float X = 0; float Y = 0; float Z = 0;
-
-    for(int i = 0; i < Itype ; i++){
-      shiftType += typeNs[i];
-    }
-
-    for(int i = 0; i < typeNs[Itype]; i++){
-      X = Apos[3*shiftType + 3*i    ] - Hpos[3*Ihpos    ];
-      Y = Apos[3*shiftType + 3*i + 1] - Hpos[3*Ihpos + 1];
-      Z = Apos[3*shiftType + 3*i + 2] - Hpos[3*Ihpos + 2];
-      if( X*X + Y*Y + Z*Z < rCutSqr ){
-        x[count] = X;
-        y[count] = Y;
-        z[count] = Z;
-        count++;
+      int tN = typeN[hI*hN + tI]
+      int aN = nA[hI*hN + tN];
+    
+      for(int i = 0; i < aN  ; i++){
+        x[i] = Apos[indx[aN*Nt*hI + aN*tI + i]] - Hpos[nH];
+        y[i] = Apos[indx[aN*Nt*hI + aN*tI + i]] - Hpos[nH];
+        z[i] = Apos[indx[aN*Nt*hI + aN*tI + i]] - Hpos[nH];
       }
-    }
-  return count;
+
 }
 //================================================================
 float* getRsZs(float* x, float* y, float* z,float* r2,float* r4,float* r6,float* r8,float* z2,float* z4,float* z6,float* z8, int size){
@@ -1246,6 +1259,8 @@ float*  xxx = malloc(sizeof(float)*1000);
   getAlphaBeta(aOa,bOa,alphas,betas,Ns,lMax,oOsigma,oOsigma3O2);
   for(int i = 0; i < Hs; i++){
     for(int j = 0; j < Nt; j++){
+//      Asize = getFilteredPos(x, y, z, Apos, Hpos,typeNs, rCutrCut, i, j);
+        getNeig(indx, x, y, z, Apos, Hpos, typeNs, Hs, Nt, nA, j, i);
       Asize = getFilteredPos(x, y, z, Apos, Hpos,typeNs, rCutrCut, i, j);
       getRsZs(x, y, z, r2,r4,r6,r8,z2,z4,z6,z8, Asize);
       getCfactors(preCoef,Asize,x,y,z,z2,z4,z6,z8,r2,r4,r6,r8,ReIm2,ReIm3,ReIm4,ReIm5,ReIm6,ReIm7,ReIm8,ReIm9, totalAN, lMax, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24, t25, t26, t27, t28, t29, t30, t31, t32, t33, t34, t35, t36, t37, t38, t39, t40, t41, t42, t43, t44, t45, t46, t47, t48, t49, t50, t51, t52, t53, t54, t55, t56, t57, t58, t59, t60, t61, t62, t63, t64, t65, t66, t67, t68, t69, t70, t71, t72, t73, t74, t75, t76, t77, t78, t79, t80, t81, t82, t83, t84, t85, t86, t87, t88, t89, t90, t91, t92, t93, t94, t95, t96, t97, t98, t99);
