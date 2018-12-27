@@ -1,6 +1,7 @@
 import soaplite
 import datetime
 import ase
+import ase.io
 import numpy as np
 from soaplite import genBasis
 from numpy import genfromtxt
@@ -17,11 +18,11 @@ atoms = ase.io.read("Structs/au40cu40.xyz")
 Hpos = genfromtxt('Structs/au40cu40H.dat').tolist()
 
 #-------------- set Basis Function (rCut--soft, N_max) Environment ----------------
-myAlphas, myBetas = genBasis.getBasisFunc(10.0, 5) # input:(rCut, NradBas)
+myAlphas, myBetas = genBasis.getBasisFunc(10.0, 5) # input:(rCut, nMax)
 
 #-------------- run local chemical environments on desired points ----------------
 start = time.time()
-x = soaplite.get_soap_locals(atoms, Hpos, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=6,crossOver=True, eta=1.5)
+x = soaplite.get_soap_locals(atoms, Hpos, myAlphas, myBetas, rCut=10.0, nMax=5, Lmax=6,crossOver=True, eta=1.5)
 endTime = time.time()
 totalTime = endTime - start
 print("Soap ran in seconds:", totalTime)
@@ -29,7 +30,7 @@ np.savetxt('au40cu40H.txt',x)
 
 #-------------- run local chemical environments on each atom ----------------
 start = time.time()
-y = soaplite.get_soap_structure(atoms, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=6,crossOver=True, eta=1.5)
+y = soaplite.get_soap_structure(atoms, myAlphas, myBetas, rCut=10.0, nMax=5, Lmax=6,crossOver=True, eta=1.5)
 endTime = time.time()
 totalTime = endTime - start
 
@@ -39,7 +40,7 @@ np.savetxt('structure_test.txt',y)
 Hpos = [[0,0,0]]
 atoms = ase.io.read("onePoint.xyz")
 start = time.time()
-y = soaplite.get_soap_locals(atoms,Hpos, myAlphas, myBetas, rCut=10.0, NradBas=5, Lmax=6,crossOver=True, eta=1.5)
+y = soaplite.get_soap_locals(atoms,Hpos, myAlphas, myBetas, rCut=10.0, nMax=5, Lmax=6,crossOver=True, eta=1.5)
 endTime = time.time()
 totalTime = endTime - start
 
