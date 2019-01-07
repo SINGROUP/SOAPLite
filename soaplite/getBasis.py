@@ -306,25 +306,20 @@ def getPoly(rCut, nMax, functionList=[]):
             basisFunctions.append(lambda rr, i=i, rCut=rCut: (rCut - np.clip(rr, 0, rCut))**(i+2))
         functionList = basisFunctions
 
-        # Calculate the functions on a grid
-        nr = 10000
-        functions = np.zeros((nMax, nr))
-        rspace = np.linspace(0, rCut, nr)
-        for n in range(nMax):
-            functions[n, :] = (rCut-rspace)**(n+2)
-
-        # Calculate the weight matrix that orthonormalizes the set
+        # Calculate the overlap of the different polynomial functions in a
+        # matrix S. These overlaps defined through the dot product over the
+        # radial coordinate are analytically calculable: Integrate[(rc - r)^(a
+        # + 2) (rc - r)^(b + 2) r^2, {r, 0, rc}]. Then the weights B that make
+        # the basis orthonormal are given by B=S^{-1/2}
         S = np.zeros((nMax, nMax))
-        for i in range(nMax):
-            for j in range(nMax):
-                overlap = np.trapz(rspace**2*functions[i, :]*functions[j, :], dx=(rCut)/nr)
-                S[i, j] = overlap
-
+        for i in range(1, nMax+1):
+            for j in range(1, nMax+1):
+                S[i-1, j-1] = (2*(rCut)**(7+i+j))/((5+i+j)*(6+i+j)*(7+i+j))
         betas = sqrtm(np.linalg.inv(S))
 
         fs = np.zeros([nMax, len(x)])
-        for n in range(nMax):
-            fs[n, :] = (rCut-np.clip(rx, 0, rCut))**(n+2)
+        for n in range(1, nMax+1):
+            fs[n-1, :] = (rCut-np.clip(rx, 0, rCut))**(n+2)
 
         gss = np.dot(betas, fs)
 
