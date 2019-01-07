@@ -283,14 +283,13 @@ def get_periodic_soap_structure_gauss(obj,  rCut=5.0, nMax=5, Lmax=5,  all_atomt
 # POLYNOMIAL FROM HERE, NOT GTOs
 #=================================================================
 def get_soap_locals_poly(obj, Hpos, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[], eta=1.0):
-###    rCutHard = rCut #// + 5; #//??? I don't think it's needed for the general case. (user's responsibility for cutting.)
-    rCutHard = rCut  + 5;
-    nMax,rx,gss=getBasis.getPoly(rCut,nMax)
+    rCutHard = rCut + 5
+    nMax, rx, gss = getBasis.getPoly(rCut, nMax)
 
     assert Lmax <= 20, "l cannot exceed 20. Lmax={}".format(Lmax)
     assert Lmax >= 0, "l cannot be negative.Lmax={}".format(Lmax)
-    assert rCutHard < 17.0001 , "hard redius cuttof cannot be larger than 17 Angs. rCut={}".format(rCutHard)
-    assert rCutHard > 1.9999 , "hard redius cuttof cannot be lower than 1 Ang. rCut={}".format(rCutHard)
+    assert rCutHard < 17.0001, "hard radius cuttof cannot be larger than 17 Angs. rCut={}".format(rCutHard)
+    assert rCutHard > 1.9999, "hard radius cuttof cannot be lower than 1 Ang. rCut={}".format(rCutHard)
     # get clusgeo internal format for c-code
     Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj, all_atomtypes)
     Hpos = np.array(Hpos) + np.array([1e-5, 1e-5, 1e-5])
