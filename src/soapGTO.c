@@ -63,7 +63,6 @@ void getMulDouble(double* c1, double* c3, int Asize){
 //================================================================
 void getNeig(int* indx, float* x, float* y, float* z, float* Apos, float* Hpos, int typeN*, int hN,int Nt, int* nA, int tI, int hI){
 
-      int tN = typeN[hI*hN + tI]
       int aN = nA[hI*hN + tN];
     
       for(int i = 0; i < aN  ; i++){
