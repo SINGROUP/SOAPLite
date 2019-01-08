@@ -1506,7 +1506,11 @@ int getFilteredPos(double* x, double* y, double* z,double* xNow, double* yNow, d
     if(ri2 < rCut*rCut + 25){ // 25 -> halo +5 Ang
       xNow[icount] = Xi; yNow[icount] = Yi; zNow[icount] = Zi;
       ri[icount] = sqrt(ri2);
-      oOri[icount] = 1/ri[icount];
+      if(ri[icount] > 1e-5){
+        oOri[icount] = 1/ri[icount];
+      }else{
+        oOri[icount] = 1e9;
+      }
       oO4ari[icount] = 0.25*oOa*oOri[icount];
       icount++;
     }
@@ -1613,7 +1617,8 @@ double* getYlmi(double* x, double* y, double* z, double* oOri, double* cf, int i
   for(int i = 0; i < icount; i++){
     for(int l = 0; l < lMax + 1; l++){
       for(int m = 0; m < l+1; m++){
-        legPol[icount*(lMax+1)*l + icount*m + i] = legendre_poly(l,m,z[i]*oOri[i]);
+        if(oOri[i]>1e6){legPol[icount*(lMax+1)*l + icount*m + i] = legendre_poly(l,m,1);}
+        else{legPol[icount*(lMax+1)*l + icount*m + i] = legendre_poly(l,m,z[i]*oOri[i]);}
       }
     }
 
