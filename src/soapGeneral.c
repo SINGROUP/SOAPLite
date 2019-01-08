@@ -6,6 +6,7 @@
 #define tot (double*) malloc(sizeof(double)*totalAN);
 #define totrs (double*) malloc(sizeof(double)*totalAN*rsize);
 #define sd sizeof(double)
+#define PI 3.14159265359
 double* factorListSet(){ // OK
  double* c = (double* ) malloc(sd*1326);
  c[0]=0.2820947917738781;
@@ -1711,21 +1712,29 @@ void getPs(double* Ps, double* Cts,  int Nt, int lMax, int gnsize){
     for(int t2 = t1; t2 < Nt; t2++){
       for(int l = 0; l < lMax+1; l++){
 
+      // The power spectrum is multiplied by an l-dependent prefactor that comes
+      // from the normalization of the Wigner D matrices. This prefactor is
+      // mentioned in the arrata of the original SOAP paper: On representing
+      // chemical environments, Phys. Rev. B 87, 184115 (2013). Here the square
+      // root of the prefactor in the dot-product kernel is used, so that after a
+      // possible dot-product the full prefactor is recovered.
+      double prefactor = PI*sqrt(8/(2*l+1));
+
       nshift = 0;
       for(int n = 0; n < gnsize; n++){
         for(int nd = n; nd < gnsize; nd++){
            for(int m = 0; m < l+1; m++){//l+1
               if(m==0){
                 Ps[tshift*(lMax+1)*NN + l*NN + nshift ]
-                 +=  Cts[2*t1*(lMax+1)*(lMax+1)*gnsize + 2*(lMax+1)*(lMax+1)*n  + l*2*(lMax+1)] // m=0
-                     *Cts[2*t2*(lMax+1)*(lMax+1)*gnsize + 2*(lMax+1)*(lMax+1)*nd + l*2*(lMax+1)]; // m=0
+                 +=  prefactor*(Cts[2*t1*(lMax+1)*(lMax+1)*gnsize + 2*(lMax+1)*(lMax+1)*n  + l*2*(lMax+1)] // m=0
+                     *Cts[2*t2*(lMax+1)*(lMax+1)*gnsize + 2*(lMax+1)*(lMax+1)*nd + l*2*(lMax+1)]); // m=0
               }else{
 
                 Ps[tshift*(lMax+1)*NN + l*NN + nshift]
-                 +=  2*(Cts[2*t1*(lMax+1)*(lMax+1)*gnsize + 2*(lMax+1)*(lMax+1)*n  + l*2*(lMax+1) + 2*m]
+                 +=  prefactor*(2*(Cts[2*t1*(lMax+1)*(lMax+1)*gnsize + 2*(lMax+1)*(lMax+1)*n  + l*2*(lMax+1) + 2*m]
                       *Cts[2*t2*(lMax+1)*(lMax+1)*gnsize + 2*(lMax+1)*(lMax+1)*nd + l*2*(lMax+1) + 2*m]
 		   + Cts[2*t1*(lMax+1)*(lMax+1)*gnsize + 2*(lMax+1)*(lMax+1)*n  + l*2*(lMax+1) + 2*m + 1]
-                      *Cts[2*t2*(lMax+1)*(lMax+1)*gnsize + 2*(lMax+1)*(lMax+1)*nd + l*2*(lMax+1) + 2*m + 1]);
+                      *Cts[2*t2*(lMax+1)*(lMax+1)*gnsize + 2*(lMax+1)*(lMax+1)*nd + l*2*(lMax+1) + 2*m + 1]));
               }
             }
 
