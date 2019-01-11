@@ -292,7 +292,7 @@ def get_soap_locals_poly(obj, Hpos, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[], 
     assert rCutHard > 1.9999, "hard radius cuttof cannot be lower than 1 Ang. rCut={}".format(rCutHard)
     # get clusgeo internal format for c-code
     Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj, all_atomtypes)
-#    Hpos = np.array(Hpos) + np.array([1e-5, 1e-5, 1e-5])
+    Hpos = np.array(Hpos)
     py_Hsize = Hpos.shape[0]
 
     # flatten arrays
