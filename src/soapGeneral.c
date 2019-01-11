@@ -1504,7 +1504,7 @@ int getFilteredPos(double* x, double* y, double* z,double* xNow, double* yNow, d
     Zi = Apos[3*shiftType + 3*i + 2] - Hpos[3*Ihpos + 2];
     ri2 = Xi*Xi + Yi*Yi + Zi*Zi;
     if(ri2<=1e-12) isCenter[0] = 1;
-    if(ri2 < rCut*rCut + 25 && ri2 > 1e-12){ // 25 -> halo +5 Ang
+    if(ri2 < (rCut + 5)*(rCut + 5) && ri2 > 1e-12){ // 25 -> halo +5 Ang
       ri[icount] = sqrt(ri2);
       xNow[icount] = Xi; yNow[icount] = Yi; zNow[icount] = Zi;
       oOri[icount] = 1/ri[icount];
