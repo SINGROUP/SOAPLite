@@ -1677,7 +1677,6 @@ void getC(double* Cs, double* ws, double* rw2, double * gns, double* summed, dou
   for(int n = 0; n < gnsize; n++){
     //for i0 case
     if(isCenter[0]==1){
-      printf("%d\n",isCenter[0]);
       for(int rw = 0; rw < rsize; rw++){
         Cs[2*(lMax+1)*(lMax+1)*n] += 0.5*0.564189583547756*rw2[rw]*ws[rw]*gns[rsize*n + rw]*exp(-alpha*rw2[rw]);
       }
