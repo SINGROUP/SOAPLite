@@ -1485,7 +1485,7 @@ void expPs(double* rExpSum, double alpha, double* r, double* ri, int isize, int 
   }
 }
 //=========================================================
-int getFilteredPos(double* x, double* y, double* z,double* xNow, double* yNow, double* zNow, double* ri, double* rw, double rCut, double* oOri, double* oO4arri, double* minExp, double* pluExp, double alpha, double* Apos, double* Hpos,int* typeNs, int rsize, int Ihpos, int Itype){//OK
+int getFilteredPos(double* x, double* y, double* z,double* xNow, double* yNow, double* zNow, double* ri, double* rw, double rCut, double* oOri, double* oO4arri, double* minExp, double* pluExp,int* isCenter, double alpha, double* Apos, double* Hpos,int* typeNs, int rsize, int Ihpos, int Itype){//OK
 
   int shiftType = 0;
   int icount = 0;
@@ -1503,14 +1503,11 @@ int getFilteredPos(double* x, double* y, double* z,double* xNow, double* yNow, d
     Yi = Apos[3*shiftType + 3*i + 1] - Hpos[3*Ihpos + 1];
     Zi = Apos[3*shiftType + 3*i + 2] - Hpos[3*Ihpos + 2];
     ri2 = Xi*Xi + Yi*Yi + Zi*Zi;
-    if(ri2 < rCut*rCut + 25){ // 25 -> halo +5 Ang
-      xNow[icount] = Xi; yNow[icount] = Yi; zNow[icount] = Zi;
+    if(ri2<=1e12) isCenter[0] = 1;
+    if(ri2 < rCut*rCut + 25 && ri2 > 1e-12){ // 25 -> halo +5 Ang
       ri[icount] = sqrt(ri2);
-      if(ri[icount] > 1e-5){
-        oOri[icount] = 1/ri[icount];
-      }else{
-        oOri[icount] = 1e9;
-      }
+      xNow[icount] = Xi; yNow[icount] = Yi; zNow[icount] = Zi;
+      oOri[icount] = 1/ri[icount];
       oO4ari[icount] = 0.25*oOa*oOri[icount];
       icount++;
     }
@@ -1617,8 +1614,7 @@ double* getYlmi(double* x, double* y, double* z, double* oOri, double* cf, int i
   for(int i = 0; i < icount; i++){
     for(int l = 0; l < lMax + 1; l++){
       for(int m = 0; m < l+1; m++){
-        if(oOri[i]>1e6){legPol[icount*(lMax+1)*l + icount*m + i] = legendre_poly(l,m,1);}
-        else{legPol[icount*(lMax+1)*l + icount*m + i] = legendre_poly(l,m,z[i]*oOri[i]);}
+        legPol[icount*(lMax+1)*l + icount*m + i] = legendre_poly(l,m,z[i]*oOri[i]);
       }
     }
 
@@ -1673,13 +1669,18 @@ double* getIntegrand(double* Flir, double* Ylmi,int rsize, int icount, int lMax)
   return summed;
 }
 //=========================================================
-void getC(double* Cs, double* ws, double* rw2, double * gns, double* summed, double rCut,int lMax, int rsize, int gnsize){
+void getC(double* Cs, double* ws, double* rw2, double * gns, double* summed, double rCut,int lMax, int rsize, int gnsize,int* isCenter, double alpha){
 
   for(int i = 0; i < 2*(lMax+1)*(lMax+1)*gnsize; i++){ Cs[i] = 0.0;}
   double  theSummedValue = 0;
 
   for(int n = 0; n < gnsize; n++){
-
+    //for i0 case
+    if(isCenter[0]==1){
+      for(int rw = 0; rw < rsize; rw++){
+        Cs[2*(lMax+1)*(lMax+1)*n] += 3.544907702*rw2[rw]*ws[rw]*gns[rsize*n + rw]*exp(-alpha*ws[rw]*ws[rw]);
+      }
+    }
     for(int l = 0; l < lMax+1; l++){
       for(int m = 0; m < l+1; m++){ // l+1
         for(int rw = 0; rw < rsize; rw++){
@@ -1691,6 +1692,7 @@ void getC(double* Cs, double* ws, double* rw2, double * gns, double* summed, dou
      }
       }
     }
+  isCenter[0] = 0;
 }
 //=========================================================
 void accumC(double* Cts, double* Cs, int lMax, int gnsize, int typeI){
@@ -1781,11 +1783,11 @@ double* soap(double* c, double* Apos,double* Hpos, int* typeNs, double rCut, int
 // everything same except last three
 
   double* cf = factorListSet();
+  int* isCenter = malloc( sizeof(int) );
+  isCenter[0] = 0;
 
   int rsize = 100; // constant
   double rCut2 = rCut*rCut;
-
-
 
   double* x    = tot  double* y    = tot  double* z    = tot double* xNow    = tot double* yNow    = tot double* zNow    = tot
   double* ris  = tot double* oOri = tot
@@ -1805,14 +1807,15 @@ double* soap(double* c, double* Apos,double* Hpos, int* typeNs, double rCut, int
     for(int Itype = 0; Itype < Nt; Itype++){
 
         double* Ylmi; double* Flir; double* summed;
+        isCenter[0] = 0;
 
-        icount = getFilteredPos(x, y, z,xNow,yNow,zNow,ris,rw,rCut, oOri, oO4arri, minExp, pluExp, alpha, Apos, Hpos,typeNs, rsize, Ihpos, Itype);
+        icount = getFilteredPos(x, y, z,xNow,yNow,zNow,ris,rw,rCut, oOri, oO4arri, minExp, pluExp,isCenter, alpha, Apos, Hpos,typeNs, rsize, Ihpos, Itype);
 
         Flir   = getFlir(oO4arri, ris, minExp, pluExp, icount, rsize, lMax);
         Ylmi   = getYlmi(xNow, yNow, zNow, oOri,cf,icount, lMax);
         summed = getIntegrand(Flir, Ylmi, rsize, icount, lMax);
 
-        getC(Cs, ws, rw2, gss, summed, rCut,lMax, rsize, gnsize);
+        getC(Cs, ws, rw2, gss, summed, rCut,lMax, rsize, gnsize,isCenter,alpha);
         accumC(Cts, Cs, lMax, gnsize, Itype);
 
         free(Flir); free(Ylmi); free(summed);
