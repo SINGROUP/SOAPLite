@@ -1503,7 +1503,7 @@ int getFilteredPos(double* x, double* y, double* z,double* xNow, double* yNow, d
     Yi = Apos[3*shiftType + 3*i + 1] - Hpos[3*Ihpos + 1];
     Zi = Apos[3*shiftType + 3*i + 2] - Hpos[3*Ihpos + 2];
     ri2 = Xi*Xi + Yi*Yi + Zi*Zi;
-    if(ri2<=1e12) isCenter[0] = 1;
+    if(ri2<=1e-12) isCenter[0] = 1;
     if(ri2 < rCut*rCut + 25 && ri2 > 1e-12){ // 25 -> halo +5 Ang
       ri[icount] = sqrt(ri2);
       xNow[icount] = Xi; yNow[icount] = Yi; zNow[icount] = Zi;
@@ -1677,8 +1677,9 @@ void getC(double* Cs, double* ws, double* rw2, double * gns, double* summed, dou
   for(int n = 0; n < gnsize; n++){
     //for i0 case
     if(isCenter[0]==1){
+      printf("%d\n",isCenter[0]);
       for(int rw = 0; rw < rsize; rw++){
-        Cs[2*(lMax+1)*(lMax+1)*n] += 3.544907702*rw2[rw]*ws[rw]*gns[rsize*n + rw]*exp(-alpha*ws[rw]*ws[rw]);
+        Cs[2*(lMax+1)*(lMax+1)*n] += 0.5*0.564189583547756*rw2[rw]*ws[rw]*gns[rsize*n + rw]*exp(-alpha*rw2[rw]);
       }
     }
     for(int l = 0; l < lMax+1; l++){
