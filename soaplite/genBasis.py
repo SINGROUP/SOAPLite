@@ -45,7 +45,7 @@ def getOrthNorm(X):
 
 def getBasisFunc(rcut, n):
     # These are the values for where the different basis functions should decay
-    # to: evenly space between 1Å and rcut.
+    # to: evenly space between 1angstrom and rcut.
     a = np.linspace(1, rcut, n)
     threshold = 1e-3
 
