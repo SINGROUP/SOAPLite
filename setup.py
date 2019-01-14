@@ -1,6 +1,3 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-from builtins import (bytes, str, open, super, range,
-                      zip, round, input, int, pow, object)
 from setuptools import setup, find_packages, Extension
 
 ext_list = []
@@ -28,12 +25,13 @@ if __name__ == "__main__":
     setup(
         name="soaplite",
         url="https://github.com/SINGROUP/SOAPLite",
-        version="1.0.1",
+        version="1.0.2",
         description=("fast lightweight smooth overlap atomic position (SOAP) calculator. see github.com/SINGROUP/SOAPLite for detailed documentations."), author="Eiaki V. Morooka", author_email="eiaki.morooka@aalto.fi",
         packages=find_packages(),
         install_requires=[
             "numpy",
             "scipy",
+            "future",
             "ase"
         ],
         python_requires='>=2.2, <4',
