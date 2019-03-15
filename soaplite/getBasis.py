@@ -5,8 +5,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.linalg import *
 
-w = np.zeros(100);
-x = np.zeros(100);
+w = np.zeros(100)
+x = np.zeros(100)
+
 w[0] = 7.34634490505672E-4;
 w[1] = 0.001709392653518105;
 w[2] = 0.002683925371553482;
@@ -299,65 +300,43 @@ def getGns(rCut,nMax,functionList=[]):
 
     return nMax,rx,gss
 #---------------------------------------------------
-def getPoly(rCut, nMax, functionList=[]):
+def getPoly(rCut, nMax):
+    """Used to calculate discrete vectors for the polynomial basis functions.
+
+    Args:
+        rCut(float): Radial cutoff
+        nMax(int): Number of polynomial radial functions
+    """
     rCutVeryHard = rCut+5.0
     rx = 0.5*rCutVeryHard*(x + 1)
 
-    if not functionList:
-        basisFunctions = []
-        for i in range(1, nMax + 1):
-            basisFunctions.append(lambda rr, i=i, rCut=rCut: (rCut - np.clip(rr, 0, rCut))**(i+2))
-        functionList = basisFunctions
+    basisFunctions = []
+    for i in range(1, nMax + 1):
+        basisFunctions.append(lambda rr, i=i, rCut=rCut: (rCut - np.clip(rr, 0, rCut))**(i+2))
 
-        # Calculate the overlap of the different polynomial functions in a
-        # matrix S. These overlaps defined through the dot product over the
-        # radial coordinate are analytically calculable: Integrate[(rc - r)^(a
-        # + 2) (rc - r)^(b + 2) r^2, {r, 0, rc}]. Then the weights B that make
-        # the basis orthonormal are given by B=S^{-1/2}
-        S = np.zeros((nMax, nMax))
-        for i in range(1, nMax+1):
-            for j in range(1, nMax+1):
-                S[i-1, j-1] = (2*(rCut)**(7+i+j))/((5+i+j)*(6+i+j)*(7+i+j))
-        betas = sqrtm(np.linalg.inv(S))
+    # Calculate the overlap of the different polynomial functions in a
+    # matrix S. These overlaps defined through the dot product over the
+    # radial coordinate are analytically calculable: Integrate[(rc - r)^(a
+    # + 2) (rc - r)^(b + 2) r^2, {r, 0, rc}]. Then the weights B that make
+    # the basis orthonormal are given by B=S^{-1/2}
+    S = np.zeros((nMax, nMax))
+    for i in range(1, nMax+1):
+        for j in range(1, nMax+1):
+            S[i-1, j-1] = (2*(rCut)**(7+i+j))/((5+i+j)*(6+i+j)*(7+i+j))
+    betas = sqrtm(np.linalg.inv(S))
 
-        fs = np.zeros([nMax, len(x)])
-        for n in range(1, nMax+1):
-            fs[n-1, :] = (rCut-np.clip(rx, 0, rCut))**(n+2)
+    # If the result is complex, the calculation is currently halted.
+    if (betas.dtype == np.complex128):
+        raise ValueError(
+            "Could not calculate normalization factors for the polynomial basis"
+            " in the domain of real numbers. Lowering the number of radial "
+            "basis functions is advised."
+        )
 
-        gss = np.dot(betas, fs)
+    fs = np.zeros([nMax, len(x)])
+    for n in range(1, nMax+1):
+        fs[n-1, :] = (rCut-np.clip(rx, 0, rCut))**(n+2)
 
-    else:
-        if nMax != len(functionList):
-            print("nMax Doesn't match number of functions!")
-            exit(1)
-
-        mat = np.zeros([nMax,nMax])
-        gss = np.zeros([nMax,len(x)])
-        #  print("nMax",nMax)
-
-        y = np.zeros([nMax,len(rx)])
-        for i in range(0,nMax):
-            y[i,:] = functionList[i](rx)
-
-        for i in range(0,nMax):
-            for j in range(0,nMax):
-                mat[i,j] = rCutVeryHard*0.5*np.sum(w*rx*rx*y[i,:]*y[j,:])
-
-        #  print("M:",mat)
-        invMat = sqrtm(inv(mat))
-        #  print("invmat",invMat)
-        #  print("inv:", invMat)
-        for n in range(0,nMax):
-            for a in range(0,nMax):
-                gss[n,:] = gss[n,:] + invMat[n,a]*y[a,:]
-
-        # for i in range(nMax):
-            # plt.plot(x, gss[i])
+    gss = np.dot(betas, fs)
 
     return nMax, rx, gss
-
-if __name__=="__main__":
-    nMax,rx,gss=getGns(2.0,10)
-    plt.show()
-
-## example nMax, rx, gss = getGns([np.exp, np.sin, ...., np.cos])
