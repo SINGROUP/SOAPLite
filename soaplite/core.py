@@ -8,15 +8,19 @@ from soaplite import getBasis
 import numpy as np
 
 
-#=================================================================
-def _format_ase2clusgeo(obj, all_atomtypes=[]):
+def _format_ase2clusgeo(obj, all_atomtypes=None):
     """ Takes an ase Atoms object and returns numpy arrays and integers
     which are read by the internal clusgeo. Apos is currently a flattened
     out numpy array
+
+    Args:
+        obj():
+        all_atomtypes():
+        sort():
     """
     #atoms metadata
     totalAN = len(obj)
-    if all_atomtypes:
+    if all_atomtypes is not None:
         atomtype_set = set(all_atomtypes)
     else:
         atomtype_set = set(obj.get_atomic_numbers())
@@ -40,7 +44,6 @@ def _format_ase2clusgeo(obj, all_atomtypes=[]):
     return Apos, typeNs, Ntypes, atomtype_lst, totalAN
 
 
-#=================================================================
 def _get_supercell(obj, rCut=5.0):
     rCutHard = rCut + 5  # Giving extra space for hard cutOff
     """ Takes atoms object (with a defined cell) and a radial cutoff.
@@ -60,28 +63,50 @@ def _get_supercell(obj, rCut=5.0):
     p1 = np.dot(a1, b1) / np.dot(b1, b1) * b1
     p2 = np.dot(a2, b2) / np.dot(b2, b2) * b2
     p3 = np.dot(a3, b3) / np.dot(b3, b3) * b3
-    xyz_arr = np.linalg.norm(np.array([p1,p2,p3]), axis = 1)
+    xyz_arr = np.linalg.norm(np.array([p1, p2, p3]), axis=1)
     cell_images = np.ceil(rCutHard/xyz_arr)
     nx = int(cell_images[0])
     ny = int(cell_images[1])
     nz = int(cell_images[2])
-    suce = obj * (1 + 2*nx, 1+ 2*ny,1+2*nz)
+    suce = obj * (1+2*nx, 1+2*ny, 1+2*nz)
     shift = obj.get_cell()
 
     shifted_suce = suce.copy()
-    shifted_suce.translate(-shift[0]*nx -shift[1]*ny - shift[2]*nz)
+    shifted_suce.translate(-shift[0]*nx - shift[1]*ny - shift[2]*nz)
 
     return shifted_suce
 
-def get_soap_locals(obj, Hpos, alp, bet, rCut=5.0, nMax=5, Lmax=5, crossOver=True, all_atomtypes=[], eta=1.0):
-    rCutHard = rCut + 5;
+
+def get_soap_locals(obj, Hpos, alp, bet, rCut=5.0, nMax=5, Lmax=5, crossOver=True, all_atomtypes=None, eta=1.0):
+    """Get the RBF basis SOAP output for the given positions in a finite system.
+
+    Args:
+        obj(ase.Atoms): Atomic structure for which the SOAP output is
+            calculated.
+        Hpos: Positions at which to calculate SOAP
+        alp: Alphas
+        bet: Betas
+        rCut: Radial cutoff.
+        nMax: Maximum number of radial basis functions
+        Lmax: Maximum spherical harmonics degree
+        crossOver:
+        all_atomtypes: Can be used to specify the atomic elements for which to
+            calculate the output. If given the output is calculated only for the
+            given species and is ordered by atomic number.
+        eta: The gaussian smearing width.
+
+    Returns:
+        np.ndarray: SOAP output for the given positions.
+    """
+    rCutHard = rCut + 5
     assert Lmax <= 9, "l cannot exceed 9. Lmax={}".format(Lmax)
     assert Lmax >= 0, "l cannot be negative.Lmax={}".format(Lmax)
-    assert rCutHard < 17.0001 , "hard redius cuttof cannot be larger than 17 Angs. rCut={}".format(rCutHard)
-    assert rCutHard > 1.999 , "hard redius cuttof cannot be lower than 1 Ang. rCut={}".format(rCutHard)
-    assert nMax >= 2 , "number of basis functions cannot be lower than 2. nMax={}".format(nMax)
-    assert nMax <= 13 , "number of basis functions cannot exceed 12. nMax={}".format(nMax)
-    assert eta >= 0.0001 , "Eta cannot be zero or negative. nMax={}".format(eta)
+    assert rCutHard < 17.0001, "hard radius cuttof cannot be larger than 17 Angs. rCut={}".format(rCutHard)
+    assert rCutHard > 1.999, "hard redius cuttof cannot be lower than 1 Ang. rCut={}".format(rCutHard)
+    assert nMax >= 2, "number of basis functions cannot be lower than 2. nMax={}".format(nMax)
+    assert nMax <= 13, "number of basis functions cannot exceed 12. nMax={}".format(nMax)
+    assert eta >= 0.0001, "Eta cannot be zero or negative. nMax={}".format(eta)
+
     # get clusgeo internal format for c-code
     Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj, all_atomtypes)
     Hpos = np.array(Hpos)
@@ -141,54 +166,98 @@ def get_soap_locals(obj, Hpos, alp, bet, rCut=5.0, nMax=5, Lmax=5, crossOver=Tru
     a = np.ctypeslib.as_array(c)
     a = a.reshape(shape)
 
-    # Make the prefactor correction
-    # for l in range(Lmax+1):
-        # prefactor = np.pi*np.sqrt(8/(2*l+1))
-        # if crossOver:
-            # n_types = int(nMax*(nMax+1)/2*py_Ntypes*(py_Ntypes+1)/2)
-        # else:
-            # n_types = int(nMax*(nMax+1)/2*py_Ntypes)
-        # start = l*n_types
-        # end = (l+1)*n_types
-        # a[:, start:end] *= prefactor
-
     return a
 
-#=================================================================
-def get_soap_structure(obj, alp, bet, rCut=5.0, nMax=5, Lmax=5, crossOver=True, all_atomtypes=[], eta=1.0):
-    Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj, all_atomtypes)
-    Hpos = Apos.copy().reshape((-1,3))
-    arrsoap = get_soap_locals(obj, Hpos, alp, bet,  rCut, nMax, Lmax, crossOver, all_atomtypes=all_atomtypes, eta=eta)
-    return arrsoap
-#=================================================================
-def get_periodic_soap_locals(obj, Hpos, alp, bet, rCut=5.0, nMax=5, Lmax=5,crossOver=True, all_atomtypes=[], eta=1.0):
-    # get supercells
-    suce = _get_supercell(obj, rCut)
 
+def get_soap_structure(obj, alp, bet, rCut=5.0, nMax=5, Lmax=5, crossOver=True, all_atomtypes=None, eta=1.0):
+    """Get the RBF basis SOAP output for atoms in a finite structure.
+
+    Args:
+        obj(ase.Atoms): Atomic structure for which the SOAP output is
+            calculated.
+        alp: Alphas
+        bet: Betas
+        rCut: Radial cutoff.
+        nMax: Maximum nmber of radial basis functions
+        Lmax: Maximum spherical harmonics degree
+        crossOver:
+        all_atomtypes: Can be used to specify the atomic elements for which to
+            calculate the output. If given the output is calculated only for the
+            given species.
+        eta: The gaussian smearing width.
+
+    Returns:
+        np.ndarray: SOAP output for the given structure.
+    """
+    Hpos = obj.get_positions()
+    arrsoap = get_soap_locals(obj, Hpos, alp, bet,  rCut, nMax, Lmax, crossOver, all_atomtypes=all_atomtypes, eta=eta)
+
+    return arrsoap
+
+
+def get_periodic_soap_locals(obj, Hpos, alp, bet, rCut=5.0, nMax=5, Lmax=5, crossOver=True, all_atomtypes=None, eta=1.0):
+    """Get the RBF basis SOAP output for the given position in a periodic system.
+
+    Args:
+        obj(ase.Atoms): Atomic structure for which the SOAP output is
+            calculated.
+        alp: Alphas
+        bet: Betas
+        rCut: Radial cutoff.
+        nMax: Maximum nmber of radial basis functions
+        Lmax: Maximum spherical harmonics degree
+        crossOver:
+        all_atomtypes: Can be used to specify the atomic elements for which to
+            calculate the output. If given the output is calculated only for the
+            given species.
+        eta: The gaussian smearing width.
+
+    Returns:
+        np.ndarray: SOAP output for the given position.
+    """
+    suce = _get_supercell(obj, rCut)
     arrsoap = get_soap_locals(suce, Hpos, alp, bet, rCut, nMax=nMax, Lmax=Lmax, crossOver=crossOver, all_atomtypes=all_atomtypes, eta=eta)
 
     return arrsoap
-#=================================================================
-def get_periodic_soap_structure(obj, alp, bet, rCut=5.0, nMax=5, Lmax=5, crossOver=True, all_atomtypes=[], eta=1.0):
-    Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj, all_atomtypes)
-    Hpos = obj.get_positions().reshape((-1,3))
-    suce = _get_supercell(obj, rCut)
 
+
+def get_periodic_soap_structure(obj, alp, bet, rCut=5.0, nMax=5, Lmax=5, crossOver=True, all_atomtypes=None, eta=1.0):
+    """Get the RBF basis SOAP output for atoms in the given periodic system.
+
+    Args:
+        obj(ase.Atoms): Atomic structure for which the SOAP output is
+            calculated.
+        alp: Alphas
+        bet: Betas
+        rCut: Radial cutoff.
+        nMax: Maximum nmber of radial basis functions
+        Lmax: Maximum spherical harmonics degree
+        crossOver:
+        all_atomtypes: Can be used to specify the atomic elements for which to
+            calculate the output. If given the output is calculated only for the
+            given species.
+        eta: The gaussian smearing width.
+
+    Returns:
+        np.ndarray: SOAP output for the given system.
+    """
+    Hpos = obj.get_positions()
+    suce = _get_supercell(obj, rCut)
     arrsoap = get_soap_locals(suce, Hpos, alp, bet, rCut, nMax, Lmax, crossOver, all_atomtypes=all_atomtypes, eta=eta)
+
     return arrsoap
-#=================================================================
+
 #=================================================================
 # GAUSSIAN FROM HERE, NOT GTOs
 #=================================================================
-def get_soap_locals_gauss(obj, Hpos, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[], eta=1.0):
-###    rCutHard = rCut #// + 5; #//??? I don't think it's needed for the general case. (user's responsibility for cutting.)
-    rCutHard = rCut  + 5;
-    nMax,rx,gss=getBasis.getGns(rCut,nMax)
+def get_soap_locals_gauss(obj, Hpos, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=None, eta=1.0):
+    rCutHard = rCut + 5
+    nMax, rx, gss = getBasis.getGns(rCut, nMax)
 
     assert Lmax <= 20, "l cannot exceed 20. Lmax={}".format(Lmax)
     assert Lmax >= 0, "l cannot be negative.Lmax={}".format(Lmax)
-    assert rCutHard < 17.0001 , "hard redius cuttof cannot be larger than 17 Angs. rCut={}".format(rCutHard)
-    assert rCutHard > 1.9999 , "hard redius cuttof cannot be lower than 1 Ang. rCut={}".format(rCutHard)
+    assert rCutHard < 17.0001, "hard redius cuttof cannot be larger than 17 Angs. rCut={}".format(rCutHard)
+    assert rCutHard > 1.9999, "hard radius cuttof cannot be lower than 1 Ang. rCut={}".format(rCutHard)
     # get clusgeo internal format for c-code
     Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj, all_atomtypes)
 #    Hpos = np.array(Hpos) + np.array([1e-6, 1e-6, 1e-6])
@@ -250,7 +319,7 @@ def get_soap_locals_gauss(obj, Hpos, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[],
 #        crosTypes = int((py_Ntypes*(py_Ntypes+1))/2)
 #        return np.ctypeslib.as_array( c, shape=(py_Hsize,int((nMax*(nMax+1))/2)*(Lmax+1)*crosTypes))
 #    else:
-    shape = (py_Hsize,int((nMax*(nMax+1))/2)*(Lmax+1)*int((py_Ntypes*(py_Ntypes+1))/2))
+    shape = (py_Hsize, int((nMax*(nMax+1))/2)*(Lmax+1)*int((py_Ntypes*(py_Ntypes+1))/2))
 #    return np.ctypeslib.as_array( c, shape=(py_Hsize, int((nMax*(nMax+1))/2)*(Lmax+1)*int((py_Ntypes*(py_Ntypes+1))/2)))
 #    return np.ctypeslib.as_array( c, shape)
 
@@ -259,33 +328,33 @@ def get_soap_locals_gauss(obj, Hpos, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[],
     a = np.ctypeslib.as_array(c)
     a = a.reshape(shape)
     return a
-#=================================================================
-def get_soap_structure_gauss(obj, rCut=5.0, nMax=5, Lmax=5,  all_atomtypes=[], eta=1.0):
-    Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj, all_atomtypes)
-    Hpos = Apos.copy().reshape((-1,3))
-    arrsoap = get_soap_locals_gauss(obj, Hpos, rCut, nMax, Lmax, all_atomtypes=all_atomtypes,eta=eta)
+
+
+def get_soap_structure_gauss(obj, rCut=5.0, nMax=5, Lmax=5,  all_atomtypes=None, eta=1.0):
+    Hpos = obj.get_positions
+    arrsoap = get_soap_locals_gauss(obj, Hpos, rCut, nMax, Lmax, all_atomtypes=all_atomtypes, eta=eta)
+
     return arrsoap
-#=================================================================
-def get_periodic_soap_locals_gauss(obj, Hpos,  rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[], eta=1.0):
-    # get supercells
+
+
+def get_periodic_soap_locals_gauss(obj, Hpos,  rCut=5.0, nMax=5, Lmax=5, all_atomtypes=None, eta=1.0):
     suce = _get_supercell(obj, rCut)
-
-    arrsoap = get_soap_locals_gauss(obj, Hpos, rCut, nMax, Lmax, all_atomtypes=all_atomtypes,eta=eta)
+    arrsoap = get_soap_locals_gauss(suce, Hpos, rCut, nMax, Lmax, all_atomtypes=all_atomtypes, eta=eta)
 
     return arrsoap
-#=================================================================
-def get_periodic_soap_structure_gauss(obj,  rCut=5.0, nMax=5, Lmax=5,  all_atomtypes=[], eta=1.0):
-    Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj, all_atomtypes)
-    Hpos = obj.get_positions().reshape((-1,3))
+
+
+def get_periodic_soap_structure_gauss(obj,  rCut=5.0, nMax=5, Lmax=5,  all_atomtypes=None, eta=1.0):
+    Hpos = obj.get_positions()
     suce = _get_supercell(obj, rCut)
+    arrsoap = get_soap_locals_gauss(suce, Hpos, rCut, nMax, Lmax, all_atomtypes=all_atomtypes, eta=eta)
 
-    arrsoap = get_soap_locals_gauss(obj, Hpos, rCut, nMax, Lmax, all_atomtypes=all_atomtypes,eta=eta)
     return arrsoap
-#=================================================================
+
 #=================================================================
 # POLYNOMIAL FROM HERE, NOT GTOs
 #=================================================================
-def get_soap_locals_poly(obj, Hpos, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[], eta=1.0):
+def get_soap_locals_poly(obj, Hpos, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=None, eta=1.0):
     rCutHard = rCut + 5
     nMax, rx, gss = getBasis.getPoly(rCut, nMax)
 
@@ -354,7 +423,7 @@ def get_soap_locals_poly(obj, Hpos, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[], 
 #        crosTypes = int((py_Ntypes*(py_Ntypes+1))/2)
 #        return np.ctypeslib.as_array( c, shape=(py_Hsize,int((nMax*(nMax+1))/2)*(Lmax+1)*crosTypes))
 #    else:
-    shape = (py_Hsize,int((nMax*(nMax+1))/2)*(Lmax+1)*int((py_Ntypes*(py_Ntypes+1))/2))
+    shape = (py_Hsize, int((nMax*(nMax+1))/2)*(Lmax+1)*int((py_Ntypes*(py_Ntypes+1))/2))
 #    return np.ctypeslib.as_array( c, shape=(py_Hsize, int((nMax*(nMax+1))/2)*(Lmax+1)*int((py_Ntypes*(py_Ntypes+1))/2)))
 #    return np.ctypeslib.as_array( c, shape)
 
@@ -363,25 +432,25 @@ def get_soap_locals_poly(obj, Hpos, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[], 
     a = np.ctypeslib.as_array(c)
     a = a.reshape(shape)
     return a
-#=================================================================
-def get_soap_structure_poly(obj, rCut=5.0, nMax=5, Lmax=5,  all_atomtypes=[], eta=1.0):
-    Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj, all_atomtypes)
-    Hpos = Apos.copy().reshape((-1,3))
-    arrsoap = get_soap_locals_poly(obj, Hpos, rCut, nMax, Lmax, all_atomtypes=all_atomtypes,eta=eta)
-    return arrsoap
-#=================================================================
-def get_periodic_soap_locals_poly(obj, Hpos,  rCut=5.0, nMax=5, Lmax=5, all_atomtypes=[], eta=1.0):
-    # get supercells
-    suce = _get_supercell(obj, rCut)
 
-    arrsoap = get_soap_locals_poly(obj, Hpos, rCut, nMax, Lmax, all_atomtypes=all_atomtypes,eta=eta)
+
+def get_soap_structure_poly(obj, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=None, eta=1.0):
+    Hpos = obj.get_positions()
+    arrsoap = get_soap_locals_poly(obj, Hpos, rCut, nMax, Lmax, all_atomtypes=all_atomtypes, eta=eta)
 
     return arrsoap
-#=================================================================
-def get_periodic_soap_structure_poly(obj,  rCut=5.0, nMax=5, Lmax=5,  all_atomtypes=[], eta=1.0):
-    Apos, typeNs, py_Ntypes, atomtype_lst, totalAN = _format_ase2clusgeo(obj, all_atomtypes)
-    Hpos = obj.get_positions().reshape((-1,3))
-    suce = _get_supercell(obj, rCut)
 
-    arrsoap = get_soap_locals_poly(obj, Hpos, rCut, nMax, Lmax, all_atomtypes=all_atomtypes,eta=eta)
+
+def get_periodic_soap_locals_poly(obj, Hpos, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=None, eta=1.0):
+    suce = _get_supercell(obj, rCut)
+    arrsoap = get_soap_locals_poly(suce, Hpos, rCut, nMax, Lmax, all_atomtypes=all_atomtypes, eta=eta)
+
+    return arrsoap
+
+
+def get_periodic_soap_structure_poly(obj, rCut=5.0, nMax=5, Lmax=5, all_atomtypes=None, eta=1.0):
+    Hpos = obj.get_positions()
+    suce = _get_supercell(obj, rCut)
+    arrsoap = get_soap_locals_poly(suce, Hpos, rCut, nMax, Lmax, all_atomtypes=all_atomtypes, eta=eta)
+
     return arrsoap
