@@ -10,7 +10,11 @@ documentation, please read soapDoc.pdf in this repository and visit [DScribe](ht
 
 ## Getting Started
 
-This is a low level, lightweight and fast implementation of SOAP for machine learning in quantum chemistry and materials physics. Inputting structure and SOAP parameters, SOAPLite will spit out the SOAP spectra of local points in space. For a higher level inplementation with kernel methods and Neural Networks, please use [DScribe](https://github.com/SINGROUP/dscribe) instead.
+This is a low level, lightweight and fast implementation of SOAP for machine
+learning in quantum chemistry and materials physics. When given a structure and
+SOAP parameters, SOAPLite will spit out the SOAP spectra of local points in
+space. For a higher level interface, please use
+[DScribe](https://github.com/SINGROUP/dscribe) instead.
 
 Here is an example of the python interface:
 ```python
